@@ -9,7 +9,7 @@ ADD https://api.github.com/repos/sebastian-raubach/rpi-weather-client/git/refs/h
 # Clone the GridScore server code and client code
 RUN echo "Pulling GitHub branch: $BRANCH"
 RUN apk add --no-cache git && \
-    git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/rpi-weather-server.git /opt/rpi-weather-server
+    git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/rpi-weather-server.git /opt/rpi-weather-server && \
     git clone -b "$BRANCH" --single-branch --depth 1 https://github.com/sebastian-raubach/rpi-weather-client.git /opt/rpi-weather-client
 
 # Build the client code
