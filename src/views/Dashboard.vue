@@ -60,7 +60,7 @@ export default {
   },
   mounted: function () {
     this.now = new Date()
-    this.minusTF = new Date(this.now.getTime() - 2 * (24 * 60 * 60 * 1000))
+    this.minusTF = new Date(this.now.getTime() - (24 * 60 * 60 * 1000))
     this.getData()
   }
 }
