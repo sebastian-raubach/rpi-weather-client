@@ -145,7 +145,7 @@ export default {
             x0: this.toFormattedDate(this.sunrise),
             y0: 0,
             x1: this.toFormattedDate(this.sunrise),
-            y1: 100,
+            y1: 1,
             line: {
               color: 'grey',
               width: 1.5,
@@ -160,7 +160,7 @@ export default {
             x0: this.toFormattedDate(this.sunset),
             y0: 0,
             x1: this.toFormattedDate(this.sunset),
-            y1: 100,
+            y1: 1,
             line: {
               color: 'grey',
               width: 1.5,

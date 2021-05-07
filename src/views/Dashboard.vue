@@ -7,14 +7,18 @@
         </b-card>
       </b-col>
       <b-col cols=12 md=4 lg=2 class="h-100 order-first order-md-last">
-        <b-card no-body class="text-center h-100 mb-4" v-for="(trace, tIndex) in variable.traces" :key="`card-${index}-${tIndex}`">
-          <b-card-header>
-            <h1 :style="{ color: trace.color }"><i :class="trace.icon" /></h1>
-          </b-card-header>
-          <b-card-body class="h-100">
-            <h3>{{ dataFile[dataFile.length - 1][trace.y] }}</h3>
-          </b-card-body>
-        </b-card>
+        <b-row>
+          <b-col cols=6 md=12 v-for="(trace, tIndex) in variable.traces" :key="`card-${index}-${tIndex}`" class="mb-4">
+            <b-card no-body class="text-center h-100">
+              <b-card-header>
+                <h1 :style="{ color: trace.color }"><i :class="trace.icon" /></h1>
+              </b-card-header>
+              <b-card-body class="h-100">
+                <h3>{{ dataFile[dataFile.length - 1][trace.y] }}</h3>
+              </b-card-body>
+            </b-card>
+          </b-col>
+        </b-row>
       </b-col>
     </b-row>
   </div>
@@ -56,7 +60,7 @@ export default {
   },
   mounted: function () {
     this.now = new Date()
-    this.minusTF = new Date(this.now.getTime() - (24 * 60 * 60 * 1000))
+    this.minusTF = new Date(this.now.getTime() - 2 * (24 * 60 * 60 * 1000))
     this.getData()
   }
 }
