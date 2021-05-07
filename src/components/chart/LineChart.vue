@@ -3,29 +3,39 @@
 </template>
 
 <script>
+const SunCalc = require('suncalc')
+const sunDates = SunCalc.getTimes(new Date(), 56.498942, -3.018231)
+
 export default {
   props: {
     data: {
       type: Array,
       default: () => []
     },
-    x: {
-      type: String,
-      default: null
+    traces: {
+      type: Array,
+      default: () => []
     },
-    y: {
+    xTitle: {
       type: String,
-      default: null
+      default: 'x'
+    },
+    yTitle: {
+      type: String,
+      default: 'y'
     }
   },
   watch: {
     data: function () {
       this.update()
     },
-    x: function () {
+    traces: function () {
       this.update()
     },
-    y: function () {
+    xTitle: function () {
+      this.update()
+    },
+    yTitle: function () {
       this.update()
     }
   },
@@ -61,19 +71,46 @@ export default {
     update: function () {
       this.$plotly.purge(this.$refs.chart)
 
-      if (!this.data) {
+      if (!this.data || !this.traces) {
         return
       }
 
-      const data = [{
-        x: this.unpack(this.data, this.x),
-        y: this.unpack(this.data, this.y),
-        type: 'line',
-        mode: 'lines',
-        marker: {
-          color: '#A3CB38'
+      let minDate = null
+      let maxDate = null
+
+      const data = this.traces.map(t => {
+        const x = this.unpack(this.data, t.x)
+        const xDates = x.map(t => new Date(t))
+        const minX = new Date(Math.min.apply(null, xDates))
+        const maxX = new Date(Math.max.apply(null, xDates))
+
+        if (minDate) {
+          minDate = new Date(Math.min.apply(null, [minDate, minX]))
+        } else {
+          minDate = minX
         }
-      }]
+        if (maxDate) {
+          maxDate = new Date(Math.max.apply(null, [maxDate, maxX]))
+        } else {
+          maxDate = maxX
+        }
+
+        return {
+          x: x,
+          y: this.unpack(this.data, t.y),
+          type: 'line',
+          name: this.traces.length < 2 ? null : t.y,
+          mode: 'lines',
+          marker: {
+            color: t.color
+          },
+          legenditem: {
+            textfont: {
+              color: 'white'
+            }
+          }
+        }
+      })
 
       const layout = {
         margin: { l: 50, r: 10, t: 10, b: 50, autoexpand: true },
@@ -84,13 +121,57 @@ export default {
         xaxis: {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },
-          title: { text: this.x, font: { color: 'white' } }
+          title: { text: this.xTitle, font: { color: 'white' } }
         },
         yaxis: {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },
-          title: { text: this.y, font: { color: 'white' } }
+          title: { text: this.yTitle, font: { color: 'white' } }
+        },
+        legend: { orientation: 'h', x: 1, y: 1, xanchor: 'right', font: { color: 'white' } },
+        type: 'line'
+      }
+
+      const containsSunrise = this.sunrise.getTime() >= minDate.getTime() && this.sunrise.getTime() <= maxDate.getTime()
+      const containsSunset = this.sunset.getTime() >= minDate.getTime() && this.sunset.getTime() <= maxDate.getTime()
+
+      console.log(minDate, maxDate)
+
+      if (containsSunrise || containsSunset) {
+        const shapes = []
+
+        if (containsSunrise) {
+          shapes.push({
+            type: 'line',
+            yref: 'paper',
+            x0: this.toFormattedDate(this.sunrise),
+            y0: 0,
+            x1: this.toFormattedDate(this.sunrise),
+            y1: 100,
+            line: {
+              color: 'grey',
+              width: 1.5,
+              dash: 'dot'
+            }
+          })
         }
+        if (containsSunset) {
+          shapes.push({
+            type: 'line',
+            yref: 'paper',
+            x0: this.toFormattedDate(this.sunset),
+            y0: 0,
+            x1: this.toFormattedDate(this.sunset),
+            y1: 100,
+            line: {
+              color: 'grey',
+              width: 1.5,
+              dash: 'dot'
+            }
+          })
+        }
+
+        layout.shapes = shapes
       }
 
       const config = {
@@ -103,6 +184,8 @@ export default {
     }
   },
   mounted: function () {
+    this.sunrise = sunDates.sunrise
+    this.sunset = sunDates.sunset
     this.update()
   }
 }

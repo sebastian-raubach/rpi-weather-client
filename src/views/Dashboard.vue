@@ -1,18 +1,18 @@
 <template>
   <div v-if="dataFile && dataFile.length > 0">
     <b-row v-for="(variable, index) in variables" :key="`variable-${index}`" class="my-4">
-      <b-col cols=12 sm=10>
+      <b-col cols=12 md=8 lg=10>
         <b-card>
-          <LineChart :data="dataFile" x="created" :y="variable.y" />
+          <LineChart :data="dataFile" :traces="variable.traces" xTitle="Time" :yTitle="variable.yTitle" />
         </b-card>
       </b-col>
-      <b-col cols=12 sm=2 class="h-100">
-        <b-card no-body class="text-center h-100">
+      <b-col cols=12 md=4 lg=2 class="h-100 order-first order-md-last">
+        <b-card no-body class="text-center h-100 mb-4" v-for="(trace, tIndex) in variable.traces" :key="`card-${index}-${tIndex}`">
           <b-card-header>
-            <h1><component :is="variable.icon" /></h1>
+            <h1 :style="{ color: trace.color }"><i :class="trace.icon" /></h1>
           </b-card-header>
           <b-card-body class="h-100">
-            <h3>{{ dataFile[dataFile.length - 1][variable.y] }}</h3>
+            <h3>{{ dataFile[dataFile.length - 1][trace.y] }}</h3>
           </b-card-body>
         </b-card>
       </b-col>
@@ -23,14 +23,9 @@
 <script>
 import LineChart from '@/components/chart/LineChart'
 
-import { BIconThermometer, BIconDropletFill, BIconGeoFill } from 'bootstrap-vue'
-
 export default {
   name: 'Dashboard',
   components: {
-    BIconDropletFill,
-    BIconGeoFill,
-    BIconThermometer,
     LineChart
   },
   data: function () {
@@ -40,40 +35,20 @@ export default {
       minusTF: null,
       dataFile: null,
       variables: [{
-        y: 'ambient_temp',
-        icon: BIconThermometer
+        traces: [{ x: 'created', y: 'ambient_temp', icon: 'bi-thermometer-half', color: '#A3CB38' }, { x: 'created', y: 'ground_temp', icon: 'bi-thermometer-low', color: '#009432' }],
+        yTitle: 'Temperature'
       }, {
-        y: 'ground_temp',
-        icon: BIconGeoFill
+        traces: [{ x: 'created', y: 'wind_speed', icon: 'bi-wind', color: '#B53471' }, { x: 'created', y: 'wind_gust', icon: 'bi-tornado', color: '#833471' }],
+        yTitle: 'Wind'
       }, {
-        y: 'rainfall',
-        icon: BIconDropletFill
-      }, {
-        y: 'humidity',
-        icon: BIconDropletFill
-      }, {
-        y: 'wind_speed',
-        icon: BIconDropletFill
-      }, {
-        y: 'wind_gust',
-        icon: BIconDropletFill
-      }, {
-        y: 'pi_temp',
-        icon: BIconDropletFill
+        traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7' }, { x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD' }],
+        yTitle: 'Rainfall/Humidity'
       }]
     }
   },
-  watch: {
-    dataFile: function () {
-      this.updateChart()
-    }
-  },
   methods: {
-    updateChart: function () {
-      console.log(this.dataFile)
-    },
     getData: function () {
-      this.apiGetData(this.toISOTimestamp(this.minusTF), this.toISOTimestamp(this.now))
+      this.apiGetData(this.minusTF, this.now)
         .then(result => {
           this.dataFile = result
         })

@@ -10,11 +10,13 @@
   "dependencies": {
     "axios": "~0.21.1",
     "bootstrap": "~4.5.3",
+    "bootstrap-icons": "^1.4.1",
     "bootstrap-vue": "~2.21.2",
     "bootswatch": "~5.0.0",
     "core-js": "~3.6.5",
     "plotly.js": "~1.58.4",
     "register-service-worker": "~1.7.1",
+    "suncalc": "^1.8.0",
     "vue": "~2.6.11",
     "vue-router": "~3.2.0",
     "vuex": "~3.4.0",

@@ -9,4 +9,6 @@
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
 @import '~bootswatch/dist/superhero/bootswatch';
+
+@import "~bootstrap-icons/font/bootstrap-icons.css";
 </style>
