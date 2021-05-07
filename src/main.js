@@ -24,6 +24,9 @@ if (process.env.VUE_APP_BASE_URL) {
 
 store.commit('ON_SERVER_URL_CHANGED', baseUrl)
 
+const axiosDefaults = require('axios/lib/defaults')
+axiosDefaults.baseURL = baseUrl
+
 Vue.mixin(mixin)
 
 Vue.use({

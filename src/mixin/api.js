@@ -1,13 +1,16 @@
-import { mapGetters } from 'vuex'
+import dayjs from 'dayjs'
+
+const qs = require('qs')
 const axios = require('axios').default
 
+axios.interceptors.request.use(config => {
+  config.paramsSerializer = (params) => qs.stringify(params, {
+    serializeDate: (date) => dayjs(date).format('YYYY-MM-DDTHH:mm:ssZ')
+  })
+  return config
+})
+
 export default {
-  computed: {
-    /** Mapgetters exposing the store configuration */
-    ...mapGetters([
-      'storeServerUrl'
-    ])
-  },
   methods: {
     /**
      * Sends an axios REST request to the server with the given parameter configuration
@@ -38,7 +41,6 @@ export default {
       }
 
       return axios({
-        baseURL: this.storeServerUrl,
         url: url,
         params: requestParams,
         data: requestData,

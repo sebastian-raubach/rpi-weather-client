@@ -135,8 +135,6 @@ export default {
       const containsSunrise = this.sunrise.getTime() >= minDate.getTime() && this.sunrise.getTime() <= maxDate.getTime()
       const containsSunset = this.sunset.getTime() >= minDate.getTime() && this.sunset.getTime() <= maxDate.getTime()
 
-      console.log(minDate, maxDate)
-
       if (containsSunrise || containsSunset) {
         const shapes = []
 
