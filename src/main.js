@@ -6,13 +6,17 @@ import store from '@/store'
 import mixin from '@/mixin/api'
 
 import {
+  ButtonPlugin,
   CardPlugin,
+  FormDatepickerPlugin,
   LayoutPlugin
 } from 'bootstrap-vue'
 
 Vue.config.productionTip = false
 
+Vue.use(ButtonPlugin)
 Vue.use(CardPlugin)
+Vue.use(FormDatepickerPlugin)
 Vue.use(LayoutPlugin)
 
 // Set base URL based on environment

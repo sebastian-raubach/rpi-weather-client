@@ -95,9 +95,17 @@ export default {
           maxDate = maxX
         }
 
+        let y = this.unpack(this.data, t.y)
+
+        if (t.mode === 'smooth') {
+          y = this.smooth(y, 2)
+        } else if (t.mode === 'cumulative') {
+          y = this.cumulative(y)
+        }
+
         return {
           x: x,
-          y: this.unpack(this.data, t.y),
+          y: y,
           type: 'line',
           name: this.traces.length < 2 ? null : t.y,
           mode: 'lines',
@@ -179,6 +187,31 @@ export default {
       }
 
       this.$plotly.newPlot(this.$refs.chart, data, layout, config)
+    },
+    smooth: function (data, range) {
+      const result = []
+
+      for (let i = 0; i < data.length; i++) {
+        const values = data.slice(Math.max(0, i - range), Math.min(data.length - 1, i + range + 1))
+
+        result.push(values.reduce((a, b) => a + b, 0) / values.length)
+      }
+
+      return result
+    },
+    cumulative: function (data) {
+      const result = []
+
+      let total = 0
+      data.forEach(d => {
+        if (d !== undefined && d !== null) {
+          total += d
+        }
+
+        result.push(total)
+      })
+
+      return result
     }
   },
   mounted: function () {
