@@ -58,6 +58,9 @@ export default {
       }, {
         traces: [{ x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', mode: 'smooth' }],
         yTitle: 'Humidity'
+      }, {
+        traces: [{ x: 'created', y: 'pi_temp', icon: 'bi-cpu', color: '#EA2027', mode: 'smooth' }],
+        yTitle: 'Pi Temperature'
       }]
     }
   },
