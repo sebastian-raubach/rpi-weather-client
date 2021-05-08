@@ -53,8 +53,11 @@ export default {
         traces: [{ x: 'created', y: 'wind_speed', icon: 'bi-wind', color: '#B53471', mode: 'smooth' }, { x: 'created', y: 'wind_gust', icon: 'bi-tornado', color: '#833471', mode: 'smooth' }],
         yTitle: 'Wind'
       }, {
-        traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7', mode: 'cumulative' }, { x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', mode: 'smooth' }],
-        yTitle: 'Rainfall/Humidity'
+        traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7', mode: 'cumulative' }],
+        yTitle: 'Rainfall'
+      }, {
+        traces: [{ x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', mode: 'smooth' }],
+        yTitle: 'Humidity'
       }]
     }
   },
