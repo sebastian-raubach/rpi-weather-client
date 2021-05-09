@@ -24,6 +24,10 @@ export default {
     sunriseSunset: {
       type: Array,
       default: () => []
+    },
+    yRange: {
+      type: Array,
+      default: null
     }
   },
   watch: {
@@ -37,6 +41,9 @@ export default {
       this.update()
     },
     yTitle: function () {
+      this.update()
+    },
+    sunriseSunset: function () {
       this.update()
     }
   },
@@ -140,6 +147,10 @@ export default {
         legend: { orientation: 'h', x: 1, y: 1, xanchor: 'right', font: { color: 'white' } },
         type: 'line',
         shapes: []
+      }
+
+      if (this.yRange) {
+        layout.yaxis.range = this.yRange
       }
 
       this.sunriseSunset.forEach(ss => {

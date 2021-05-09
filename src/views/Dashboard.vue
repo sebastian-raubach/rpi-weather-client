@@ -8,7 +8,7 @@
       <b-row v-for="(variable, index) in variables" :key="`variable-${index}`" class="my-4">
         <b-col cols=12 md=8 lg=10>
           <b-card>
-            <LineChart :data="dataFile" :traces="variable.traces" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
+            <LineChart :data="dataFile" :traces="variable.traces" :yRange="variable.yRange" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
           </b-card>
         </b-col>
         <b-col cols=12 md=4 lg=2 class="h-100 order-first order-md-last">
@@ -57,7 +57,8 @@ export default {
         yTitle: 'Rainfall'
       }, {
         traces: [{ x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', mode: 'smooth' }],
-        yTitle: 'Humidity'
+        yTitle: 'Humidity',
+        yRange: [0, 100]
       }, {
         traces: [{ x: 'created', y: 'pressure', icon: 'bi-speedometer', color: '#12CBC4', mode: 'smooth' }],
         yTitle: 'Pressure'
