@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mt-4">
     <b-form-datepicker v-model="startDate" />
     <b-form-datepicker v-model="endDate" />
     <b-button variant="primary" @click="getData">Update</b-button>
@@ -8,7 +8,7 @@
       <b-row v-for="(variable, index) in variables" :key="`variable-${index}`" class="my-4">
         <b-col cols=12 md=8 lg=10>
           <b-card>
-            <LineChart :data="dataFile" :traces="variable.traces" xTitle="Time" :yTitle="variable.yTitle" />
+            <LineChart :data="dataFile" :traces="variable.traces" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
           </b-card>
         </b-col>
         <b-col cols=12 md=4 lg=2 class="h-100 order-first order-md-last">
@@ -33,6 +33,8 @@
 <script>
 import LineChart from '@/components/chart/LineChart'
 
+const SunCalc = require('suncalc')
+
 export default {
   name: 'Dashboard',
   components: {
@@ -42,15 +44,13 @@ export default {
     return {
       chartData: null,
       endDate: null,
-      endTime: null,
       startDate: null,
-      startTime: null,
       dataFile: null,
       variables: [{
-        traces: [{ x: 'created', y: 'ambient_temp', icon: 'bi-thermometer-half', color: '#A3CB38', mode: 'smooth' }, { x: 'created', y: 'ground_temp', icon: 'bi-thermometer-low', color: '#009432', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'ambientTemp', icon: 'bi-thermometer-half', color: '#A3CB38', mode: 'smooth' }, { x: 'created', y: 'groundTemp', icon: 'bi-thermometer-low', color: '#009432', mode: 'smooth' }],
         yTitle: 'Temperature'
       }, {
-        traces: [{ x: 'created', y: 'wind_speed', icon: 'bi-wind', color: '#B53471', mode: 'smooth' }, { x: 'created', y: 'wind_gust', icon: 'bi-tornado', color: '#833471', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'windSpeed', icon: 'bi-wind', color: '#B53471', mode: 'smooth' }, { x: 'created', y: 'windGust', icon: 'bi-tornado', color: '#833471', mode: 'smooth' }],
         yTitle: 'Wind'
       }, {
         traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7', mode: 'cumulative' }],
@@ -59,28 +59,48 @@ export default {
         traces: [{ x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', mode: 'smooth' }],
         yTitle: 'Humidity'
       }, {
-        traces: [{ x: 'created', y: 'pi_temp', icon: 'bi-cpu', color: '#EA2027', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'pressure', icon: 'bi-speedometer', color: '#12CBC4', mode: 'smooth' }],
+        yTitle: 'Pressure'
+      }, {
+        traces: [{ x: 'created', y: 'piTemp', icon: 'bi-cpu', color: '#EA2027', mode: 'smooth' }],
         yTitle: 'Pi Temperature'
       }]
     }
   },
+  computed: {
+    sunriseSunsetArray: function () {
+      const result = []
+
+      if (this.start && this.end) {
+        const current = new Date(this.start)
+
+        while (current < this.end) {
+          const sunDates = SunCalc.getTimes(new Date(current.getFullYear(), current.getMonth(), current.getDate(), 12, 0, 0, 0, 0), 56.498942, -3.018231)
+          result.push(sunDates)
+          current.setDate(current.getDate() + 1)
+        }
+      }
+
+      return result
+    },
+    start: function () {
+      if (this.startDate) {
+        return new Date(`${this.toFormattedDate(this.startDate)} 00:00:01`)
+      } else {
+        return null
+      }
+    },
+    end: function () {
+      if (this.endDate) {
+        return new Date(`${this.toFormattedDate(this.endDate)} 23:59:59`)
+      } else {
+        return null
+      }
+    }
+  },
   methods: {
     getData: function () {
-      let startDateTime = new Date(this.startDate)
-      let endDateTime = new Date(this.endDate)
-
-      const sTime = this.startTime.split(':')
-      const eTime = this.endTime.split(':')
-
-      startDateTime = new Date(startDateTime.getTime() + parseInt(sTime[2]) * 1000)
-      startDateTime = new Date(startDateTime.getTime() + parseInt(sTime[1]) * 60 * 1000)
-      startDateTime = new Date(startDateTime.getTime() + parseInt(sTime[0]) * 60 * 60 * 1000)
-
-      endDateTime = new Date(endDateTime.getTime() + parseInt(eTime[2]) * 1000)
-      endDateTime = new Date(endDateTime.getTime() + parseInt(eTime[1]) * 60 * 1000)
-      endDateTime = new Date(endDateTime.getTime() + parseInt(eTime[0]) * 60 * 60 * 1000)
-
-      this.apiGetData(startDateTime, endDateTime)
+      this.apiGetData(this.start, this.end)
         .then(result => {
           this.dataFile = result
         })
@@ -89,8 +109,6 @@ export default {
   mounted: function () {
     this.endDate = new Date()
     this.startDate = new Date(this.endDate.getTime() - (24 * 60 * 60 * 1000))
-    this.endTime = this.endDate.toTimeString().split(' ')[0]
-    this.startTime = this.startDate.toTimeString().split(' ')[0]
     this.getData()
   }
 }

@@ -3,9 +3,6 @@
 </template>
 
 <script>
-const SunCalc = require('suncalc')
-const sunDates = SunCalc.getTimes(new Date(), 56.498942, -3.018231)
-
 export default {
   props: {
     data: {
@@ -23,6 +20,10 @@ export default {
     yTitle: {
       type: String,
       default: 'y'
+    },
+    sunriseSunset: {
+      type: Array,
+      default: () => []
     }
   },
   watch: {
@@ -50,7 +51,7 @@ export default {
 
           if (key === 'Date') {
             isDate = true
-          } else if (dataPoint.split('-').length === 3 && !isNaN(Date.parse(dataPoint))) {
+          } else if (typeof dataPoint === 'string' && !isNaN(Date.parse(dataPoint))) {
             isDate = true
           }
 
@@ -137,48 +138,45 @@ export default {
           title: { text: this.yTitle, font: { color: 'white' } }
         },
         legend: { orientation: 'h', x: 1, y: 1, xanchor: 'right', font: { color: 'white' } },
-        type: 'line'
+        type: 'line',
+        shapes: []
       }
 
-      const containsSunrise = this.sunrise.getTime() >= minDate.getTime() && this.sunrise.getTime() <= maxDate.getTime()
-      const containsSunset = this.sunset.getTime() >= minDate.getTime() && this.sunset.getTime() <= maxDate.getTime()
-
-      if (containsSunrise || containsSunset) {
-        const shapes = []
+      this.sunriseSunset.forEach(ss => {
+        const containsSunrise = ss.sunrise.getTime() >= minDate.getTime() && ss.sunrise.getTime() <= maxDate.getTime()
+        const containsSunset = ss.sunset.getTime() >= minDate.getTime() && ss.sunset.getTime() <= maxDate.getTime()
 
         if (containsSunrise) {
-          shapes.push({
+          layout.shapes.push({
             type: 'line',
             yref: 'paper',
-            x0: this.toFormattedDate(this.sunrise),
+            x0: this.toFormattedDateTime(ss.sunrise),
             y0: 0,
-            x1: this.toFormattedDate(this.sunrise),
+            x1: this.toFormattedDateTime(ss.sunrise),
             y1: 1,
             line: {
-              color: 'grey',
+              color: '#F79F1F',
               width: 1.5,
               dash: 'dot'
             }
           })
         }
         if (containsSunset) {
-          shapes.push({
+          layout.shapes.push({
             type: 'line',
             yref: 'paper',
-            x0: this.toFormattedDate(this.sunset),
+            x0: this.toFormattedDateTime(ss.sunset),
             y0: 0,
-            x1: this.toFormattedDate(this.sunset),
+            x1: this.toFormattedDateTime(ss.sunset),
             y1: 1,
             line: {
-              color: 'grey',
+              color: '#9980FA',
               width: 1.5,
               dash: 'dot'
             }
           })
         }
-
-        layout.shapes = shapes
-      }
+      })
 
       const config = {
         displayModeBar: false,
@@ -215,8 +213,6 @@ export default {
     }
   },
   mounted: function () {
-    this.sunrise = sunDates.sunrise
-    this.sunset = sunDates.sunset
     this.update()
   }
 }

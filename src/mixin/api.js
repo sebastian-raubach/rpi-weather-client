@@ -52,12 +52,10 @@ export default {
     },
     apiGetData: function (start, end) {
       return new Promise((resolve, reject) => {
-        this.axios({ url: 'data', params: { start: start, end: end }, headers: { Accept: 'text/plain' }, responseType: 'blob' })
+        this.axios({ url: 'data', params: { start: start, end: end }, headers: { Accept: 'application/json' } })
           .then(result => {
             if (result && result.data) {
-              const reader = new FileReader()
-              reader.onload = () => resolve(this.$plotly.d3.tsv.parse(reader.result))
-              reader.readAsText(result.data)
+              resolve(result.data)
             } else {
               resolve(null)
             }
@@ -65,8 +63,20 @@ export default {
           .catch(error => reject(error))
       })
     },
+    toFormattedDateTime: function (dt) {
+      return `${this.toFormattedDate(dt)} ${this.toFormattedTime(dt)}`
+    },
     toFormattedDate: function (dt) {
-      return `${dt.getFullYear().toString().padStart(4, '0')}-${(dt.getMonth() + 1).toString().padStart(2, '0')}-${dt.getDate().toString().padStart(2, '0')} ${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}`
+      if (typeof dt !== 'object') {
+        dt = new Date(dt)
+      }
+      return `${dt.getFullYear().toString().padStart(4, '0')}-${(dt.getMonth() + 1).toString().padStart(2, '0')}-${dt.getDate().toString().padStart(2, '0')}`
+    },
+    toFormattedTime: function (dt) {
+      if (typeof dt !== 'object') {
+        dt = new Date(dt)
+      }
+      return `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}`
     }
   }
 }
