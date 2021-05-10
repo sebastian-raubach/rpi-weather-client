@@ -19,7 +19,7 @@
                   <h1 :style="{ color: trace.color }"><i :class="trace.icon" /></h1>
                 </b-card-header>
                 <b-card-body class="h-100">
-                  <h3>{{ aggregatedValues[index][tIndex] }}</h3>
+                  <h3>{{ aggregatedValues[index][tIndex].toFixed(2) }}</h3>
                 </b-card-body>
               </b-card>
             </b-col>
