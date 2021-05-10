@@ -6,20 +6,20 @@
 
     <div v-if="dataFile && dataFile.length > 0">
       <b-row v-for="(variable, index) in variables" :key="`variable-${index}`" class="my-4">
-        <b-col cols=12 md=8 lg=10>
+        <b-col cols=12 lg=10>
           <b-card>
             <LineChart :data="dataFile" :traces="variable.traces" :yRange="variable.yRange" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
           </b-card>
         </b-col>
-        <b-col cols=12 md=4 lg=2 class="h-100 order-first order-md-last">
+        <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
           <b-row>
-            <b-col cols=6 md=12 v-for="(trace, tIndex) in variable.traces" :key="`card-${index}-${tIndex}`" class="mb-4">
+            <b-col cols=6 lg=12 v-for="(trace, tIndex) in variable.traces" :key="`card-${index}-${tIndex}`" class="mb-4">
               <b-card no-body class="text-center h-100">
                 <b-card-header>
                   <h1 :style="{ color: trace.color }"><i :class="trace.icon" /></h1>
                 </b-card-header>
                 <b-card-body class="h-100">
-                  <h3>{{ dataFile[dataFile.length - 1][trace.y] }}</h3>
+                  <h3>{{ aggregatedValues[index][tIndex] }}</h3>
                 </b-card-body>
               </b-card>
             </b-col>
@@ -48,27 +48,42 @@ export default {
       dataFile: null,
       variables: [{
         traces: [{ x: 'created', y: 'ambientTemp', icon: 'bi-thermometer-half', color: '#A3CB38', mode: 'smooth' }, { x: 'created', y: 'groundTemp', icon: 'bi-thermometer-low', color: '#009432', mode: 'smooth' }],
-        yTitle: 'Temperature'
+        yTitle: 'Temperature [°C]'
       }, {
         traces: [{ x: 'created', y: 'windSpeed', icon: 'bi-wind', color: '#B53471', mode: 'smooth' }, { x: 'created', y: 'windGust', icon: 'bi-tornado', color: '#833471', mode: 'smooth' }],
-        yTitle: 'Wind'
+        yTitle: 'Wind [kph]'
       }, {
         traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7', mode: 'cumulative' }],
-        yTitle: 'Rainfall'
+        yTitle: 'Rainfall [mm]'
       }, {
         traces: [{ x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', mode: 'smooth' }],
-        yTitle: 'Humidity',
+        yTitle: 'Humidity [%]',
         yRange: [0, 100]
       }, {
         traces: [{ x: 'created', y: 'pressure', icon: 'bi-speedometer', color: '#12CBC4', mode: 'smooth' }],
-        yTitle: 'Pressure'
+        yTitle: 'Pressure [hpa]'
       }, {
         traces: [{ x: 'created', y: 'piTemp', icon: 'bi-cpu', color: '#EA2027', mode: 'smooth' }],
-        yTitle: 'Pi Temperature'
+        yTitle: 'Pi Temperature [°C]'
       }]
     }
   },
   computed: {
+    aggregatedValues: function () {
+      if (!this.dataFile) {
+        return null
+      }
+
+      return this.variables.map(v => {
+        return v.traces.map(t => {
+          if (t.mode === 'cumulative') {
+            return this.dataFile.map(df => df[t.y]).filter(dp => dp !== undefined && dp !== null).reduce((a, b) => a + b, 0)
+          } else {
+            return this.dataFile[this.dataFile.length - 1][t.y]
+          }
+        })
+      })
+    },
     sunriseSunsetArray: function () {
       const result = []
 
