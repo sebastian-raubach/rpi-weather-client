@@ -8,6 +8,7 @@ import mixin from '@/mixin/api'
 import {
   ButtonPlugin,
   CardPlugin,
+  FormPlugin,
   FormDatepickerPlugin,
   LayoutPlugin
 } from 'bootstrap-vue'
@@ -16,6 +17,7 @@ Vue.config.productionTip = false
 
 Vue.use(ButtonPlugin)
 Vue.use(CardPlugin)
+Vue.use(FormPlugin)
 Vue.use(FormDatepickerPlugin)
 Vue.use(LayoutPlugin)
 
