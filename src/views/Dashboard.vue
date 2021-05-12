@@ -19,7 +19,7 @@
                   <h1 :style="{ color: trace.color }"><i :class="trace.icon" /></h1>
                 </b-card-header>
                 <b-card-body class="h-100">
-                  <h3>{{ aggregatedValues[index][tIndex].toFixed(2) }}</h3>
+                  <h3 v-if="aggregatedValues[index][tIndex] !== undefined">{{ aggregatedValues[index][tIndex].toFixed(2) }}</h3>
                 </b-card-body>
               </b-card>
             </b-col>
@@ -47,23 +47,23 @@ export default {
       startDate: null,
       dataFile: null,
       variables: [{
-        traces: [{ x: 'created', y: 'ambientTemp', icon: 'bi-thermometer-half', color: '#A3CB38', mode: 'smooth' }, { x: 'created', y: 'groundTemp', icon: 'bi-thermometer-low', color: '#009432', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'ambientTemp', icon: 'bi-thermometer-half', color: '#A3CB38', aggregation: 'smooth' }, { x: 'created', y: 'groundTemp', icon: 'bi-thermometer-low', color: '#009432', aggregation: 'smooth' }],
         yTitle: 'Temperature [°C]'
       }, {
-        traces: [{ x: 'created', y: 'windSpeed', icon: 'bi-wind', color: '#B53471', mode: 'smooth' }, { x: 'created', y: 'windGust', icon: 'bi-tornado', color: '#833471', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'windSpeed', icon: 'bi-wind', color: '#B53471', aggregation: 'smooth' }, { x: 'created', y: 'windGust', icon: 'bi-tornado', color: '#833471', mode: 'markers', aggregation: 'smooth' }],
         yTitle: 'Wind [kph]'
       }, {
-        traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7', mode: 'cumulative' }],
+        traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7', aggregation: 'cumulative' }],
         yTitle: 'Rainfall [mm]'
       }, {
-        traces: [{ x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'humidity', icon: 'bi-water', color: '#0652DD', aggregation: 'smooth' }],
         yTitle: 'Humidity [%]',
         yRange: [0, 100]
       }, {
-        traces: [{ x: 'created', y: 'pressure', icon: 'bi-speedometer', color: '#12CBC4', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'pressure', icon: 'bi-speedometer', color: '#12CBC4', aggregation: 'smooth' }],
         yTitle: 'Pressure [hpa]'
       }, {
-        traces: [{ x: 'created', y: 'piTemp', icon: 'bi-cpu', color: '#EA2027', mode: 'smooth' }],
+        traces: [{ x: 'created', y: 'piTemp', icon: 'bi-cpu', color: '#EA2027', aggregation: 'smooth' }],
         yTitle: 'Pi Temperature [°C]'
       }]
     }
@@ -76,7 +76,7 @@ export default {
 
       return this.variables.map(v => {
         return v.traces.map(t => {
-          if (t.mode === 'cumulative') {
+          if (t.aggregation === 'cumulative') {
             return this.dataFile.map(df => df[t.y]).filter(dp => dp !== undefined && dp !== null).reduce((a, b) => a + b, 0)
           } else {
             return this.dataFile[this.dataFile.length - 1][t.y]

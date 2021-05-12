@@ -105,9 +105,9 @@ export default {
 
         let y = this.unpack(this.data, t.y)
 
-        if (t.mode === 'smooth') {
+        if (t.aggregation === 'smooth') {
           y = this.smooth(y, 2)
-        } else if (t.mode === 'cumulative') {
+        } else if (t.aggregation === 'cumulative') {
           y = this.cumulative(y)
         }
 
@@ -116,7 +116,7 @@ export default {
           y: y,
           type: 'line',
           name: this.traces.length < 2 ? null : t.y,
-          mode: 'lines',
+          mode: t.mode || 'lines',
           marker: {
             color: t.color
           },
