@@ -10,7 +10,8 @@ import {
   CardPlugin,
   FormPlugin,
   FormDatepickerPlugin,
-  LayoutPlugin
+  LayoutPlugin,
+  NavbarPlugin
 } from 'bootstrap-vue'
 
 Vue.config.productionTip = false
@@ -20,6 +21,7 @@ Vue.use(CardPlugin)
 Vue.use(FormPlugin)
 Vue.use(FormDatepickerPlugin)
 Vue.use(LayoutPlugin)
+Vue.use(NavbarPlugin)
 
 // Set base URL based on environment
 let baseUrl = './api/'

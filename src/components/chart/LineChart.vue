@@ -153,6 +153,8 @@ export default {
         layout.yaxis.range = this.yRange
       }
 
+      layout.xaxis.range = [minDate, maxDate]
+
       this.sunriseSunset.forEach(ss => {
         const containsSunrise = ss.sunrise.getTime() >= minDate.getTime() && ss.sunrise.getTime() <= maxDate.getTime()
         const containsSunset = ss.sunset.getTime() >= minDate.getTime() && ss.sunset.getTime() <= maxDate.getTime()

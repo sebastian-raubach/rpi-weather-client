@@ -2,11 +2,39 @@
   <div class="mt-4">
     <h1 v-if="moonPhase" class="mb-3">{{ new Date().toLocaleDateString() }}</h1>
 
-    <ul class="sunmoon">
-      <li class="moon"><i :class="`${moonPhase.icon} mr-3`" /> {{ moonPhase.name }}</li>
-      <li class="sunrise"><i class="bi-sunrise mr-3" /> {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }}</li>
-      <li class="sunset"><i class="bi-sunset mr-3" /> {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</li>
-    </ul>
+    <b-row>
+      <b-col cols=12 sm=4 class="mb-4">
+        <b-card no-body class="text-center h-100">
+          <b-card-header>
+            <h1 class="moon"><i :class="moonPhase.icon" /></h1>
+          </b-card-header>
+          <b-card-body class="h-100">
+            <h3>{{ moonPhase.name }}</h3>
+          </b-card-body>
+        </b-card>
+      </b-col>
+      <b-col cols=12 sm=4 class="mb-4">
+        <b-card no-body class="text-center h-100">
+          <b-card-header>
+            <h1 class="sunrise"><i class="bi-sunrise" /></h1>
+          </b-card-header>
+          <b-card-body class="h-100">
+            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }}</h3>
+          </b-card-body>
+        </b-card>
+      </b-col>
+      <b-col cols=12 sm=4 class="mb-4">
+        <b-card no-body class="text-center h-100">
+          <b-card-header>
+            <h1 class="sunset"><i class="bi-sunset" /></h1>
+          </b-card-header>
+          <b-card-body class="h-100">
+            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</h3>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
+
     <b-form @submit.prevent="getData">
       <b-form-datepicker v-model="startDate" />
       <b-form-datepicker v-model="endDate" />
