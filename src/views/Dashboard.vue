@@ -1,6 +1,12 @@
 <template>
   <div class="mt-4">
-    <h1 v-if="moonPhase" class="mb-3">{{ new Date().toLocaleDateString() }} - {{ moonPhase.name }} <i :class="moonPhase.icon" /></h1>
+    <h1 v-if="moonPhase" class="mb-3">{{ new Date().toLocaleDateString() }}</h1>
+
+    <ul class="sunmoon">
+      <li class="moon"><i :class="`${moonPhase.icon} mr-3`" /> {{ moonPhase.name }}</li>
+      <li class="sunrise"><i class="bi-sunrise mr-3" /> {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }}</li>
+      <li class="sunset"><i class="bi-sunset mr-3" /> {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</li>
+    </ul>
     <b-form @submit.prevent="getData">
       <b-form-datepicker v-model="startDate" />
       <b-form-datepicker v-model="endDate" />
@@ -173,5 +179,15 @@ export default {
   -moz-transform: scaleX(-1);
   -webkit-transform: scaleX(-1);
   -ms-transform: scaleX(-1);
+}
+
+.moon i {
+  color: #FFC312;
+}
+.sunrise i {
+  color: #F79F1F;
+}
+.sunset i {
+  color: #9980FA;
 }
 </style>
