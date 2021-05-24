@@ -14,13 +14,16 @@
         </b-card>
       </b-col>
       <b-col cols=12 sm=4 class="mb-4">
-        <b-card no-body class="text-center h-100">
+        <b-card no-body class="text-center h-100 position-relative">
           <b-card-header>
             <h1 class="sunrise"><i class="bi-sunrise" /></h1>
           </b-card-header>
           <b-card-body class="h-100">
             <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }}</h3>
           </b-card-body>
+          <div class="pt-3 px-3 chart-container position-absolute">
+            <canvas ref="sunriseCanvas" height="100"/>
+          </div>
         </b-card>
       </b-col>
       <b-col cols=12 sm=4 class="mb-4">
@@ -31,6 +34,9 @@
           <b-card-body class="h-100">
             <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</h3>
           </b-card-body>
+          <div class="pt-3 px-3 chart-container position-absolute">
+            <canvas ref="sunsetCanvas" height="100"/>
+          </div>
         </b-card>
       </b-col>
     </b-row>
@@ -77,6 +83,8 @@ import WindRose from '@/components/chart/WindRose'
 
 import RangeMap from '@/plugin/rangemap'
 
+import Chart from 'chart.js'
+
 const SunCalc = require('suncalc')
 
 export default {
@@ -115,12 +123,12 @@ export default {
       moonPhases: new RangeMap([
         { min: 0, max: 0.125, value: { name: 'New Moon', icon: 'bi-circle' } },
         { min: 0.125, max: 0.250, value: { name: 'Waxing Crescent', icon: 'bi-circle' } },
-        { min: 0.250, max: 0.375, value: { name: 'First Quarter', icon: 'bi-circle-half' } },
-        { min: 0.375, max: 0.500, value: { name: 'Waxing Gibbous', icon: 'bi-circle-half' } },
+        { min: 0.250, max: 0.375, value: { name: 'First Quarter', icon: 'bi-circle-half icon-flipped' } },
+        { min: 0.375, max: 0.500, value: { name: 'Waxing Gibbous', icon: 'bi-circle-half icon-flipped' } },
         { min: 0.500, max: 0.625, value: { name: 'Full Moon', icon: 'bi-circle-fill' } },
         { min: 0.625, max: 0.750, value: { name: 'Waning Gibbous', icon: 'bi-circle-fill' } },
-        { min: 0.750, max: 0.875, value: { name: 'Last Quarter', icon: 'bi-circle-half icon-flipped' } },
-        { min: 0.875, max: 1.000, value: { name: 'Waning Crescent', icon: 'bi-circle-half icon-flipped' } }
+        { min: 0.750, max: 0.875, value: { name: 'Last Quarter', icon: 'bi-circle-half' } },
+        { min: 0.875, max: 1.000, value: { name: 'Waning Crescent', icon: 'bi-circle-half' } }
       ])
     }
   },
@@ -147,6 +155,31 @@ export default {
             return this.dataFile[this.dataFile.length - 1][t.y]
           }
         })
+      })
+    },
+    sunrisesSunsets: function () {
+      const result = []
+
+      const today = new Date()
+      for (let i = 7; i >= 1; i--) {
+        const d = new Date()
+        d.setDate(today.getDate() - i)
+        result.push(d)
+      }
+      result.push(today)
+      for (let i = 1; i <= 7; i++) {
+        const d = new Date()
+        d.setDate(today.getDate() + i)
+        result.push(d)
+      }
+
+      return result.map(d => {
+        const sunDates = SunCalc.getTimes(new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0, 0, 0), 56.498942, -3.018231)
+
+        return {
+          sunrise: sunDates.sunrise,
+          sunset: sunDates.sunset
+        }
       })
     },
     sunriseSunsetArray: function () {
@@ -179,7 +212,126 @@ export default {
       }
     }
   },
+  watch: {
+    dataFile: function () {
+      this.updateSunriseSunset()
+    }
+  },
   methods: {
+    updateSunriseSunset: function () {
+      let minSunrise = Number.MAX_VALUE
+      let minSunset = Number.MAX_VALUE
+
+      const today = new Date()
+      let mapped = this.sunrisesSunsets.map(d => {
+        const fixedDaySunrise = new Date(today.getFullYear(), today.getMonth(), today.getDate(), d.sunrise.getHours(), d.sunrise.getMinutes(), d.sunrise.getSeconds(), 0)
+        const timeSunrise = fixedDaySunrise.getTime()
+        if (timeSunrise < minSunrise) {
+          minSunrise = timeSunrise
+        }
+
+        const fixedDaySunset = new Date(today.getFullYear(), today.getMonth(), today.getDate(), d.sunset.getHours(), d.sunset.getMinutes(), d.sunset.getSeconds(), 0)
+        const timeSunset = fixedDaySunset.getTime()
+        if (timeSunset < minSunset) {
+          minSunset = timeSunset
+        }
+
+        return {
+          sunrise: timeSunrise,
+          sunriseText: fixedDaySunrise.toLocaleTimeString(),
+          sunset: timeSunset,
+          sunsetText: fixedDaySunset.toLocaleTimeString()
+        }
+      })
+
+      mapped = mapped.map(d => {
+        return {
+          sunrise: Math.round((d.sunrise - minSunrise) / 1000.0 / 60.0) + 5,
+          sunriseText: d.sunriseText,
+          sunset: Math.round((d.sunset - minSunset) / 1000.0 / 60.0) + 5,
+          sunsetText: d.sunsetText
+        }
+      })
+
+      /* eslint-disable no-new */
+      new Chart(this.$refs.sunriseCanvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: this.sunrisesSunsets.map(s => s.sunrise.toLocaleDateString()),
+          datasets: [{
+            backgroundColor: mapped.map((d, i) => i === 7 ? '#F79F1F' : 'rgba(255,255,255,0.3)'),
+            borderColor: 'rgba(255,255,255,0.3)',
+            hoverBackgroundColor: 'rgba(255,255,255,0.3)',
+            hoverBorderColor: 'rgba(255,255,255,0.3)',
+            data: mapped.map(d => d.sunrise)
+          }]
+        },
+        options: {
+          tooltips: {
+            callbacks: {
+              label: tooltipItem => mapped[tooltipItem.index].sunriseText
+            }
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          scales: {
+            yAxes: [{
+              display: false,
+              ticks: {
+                suggestedMin: 0,
+                beginAtZero: true,
+                suggestedMax: this.maxValue
+              }
+            }],
+            xAxes: [{
+              display: false
+            }]
+          }
+        }
+      })
+      /* eslint-disable no-new */
+      new Chart(this.$refs.sunsetCanvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: this.sunrisesSunsets.map(s => s.sunset.toLocaleDateString()),
+          datasets: [{
+            backgroundColor: mapped.map((d, i) => i === 7 ? '#9980FA' : 'rgba(255,255,255,0.3)'),
+            borderColor: 'rgba(255,255,255,0.3)',
+            hoverBackgroundColor: 'rgba(255,255,255,0.3)',
+            hoverBorderColor: 'rgba(255,255,255,0.3)',
+            data: mapped.map(d => d.sunset)
+          }]
+        },
+        options: {
+          tooltips: {
+            callbacks: {
+              label: tooltipItem => mapped[tooltipItem.index].sunsetText
+            }
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          legend: {
+            display: false
+          },
+          scales: {
+            yAxes: [{
+              display: false,
+              ticks: {
+                suggestedMin: 0,
+                beginAtZero: true,
+                suggestedMax: this.maxValue
+              }
+            }],
+            xAxes: [{
+              display: false
+            }]
+          }
+        }
+      })
+    },
     getData: function () {
       this.apiGetData(this.start, this.end)
         .then(result => {
@@ -217,5 +369,16 @@ export default {
 }
 .sunset i {
   color: #9980FA;
+}
+
+.chart-container {
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+}
+</style>
+<style>
+.card .card-body {
+  z-index: 1;
 }
 </style>
