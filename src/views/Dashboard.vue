@@ -257,7 +257,7 @@ export default {
         data: {
           labels: this.sunrisesSunsets.map(s => s.sunrise.toLocaleDateString()),
           datasets: [{
-            backgroundColor: mapped.map((d, i) => i === 7 ? '#F79F1F' : 'rgba(255,255,255,0.3)'),
+            backgroundColor: mapped.map((d, i) => i === 7 ? 'rgba(247,159,31,.5)' : 'rgba(255,255,255,.3)'),
             borderColor: 'rgba(255,255,255,0.3)',
             hoverBackgroundColor: 'rgba(255,255,255,0.3)',
             hoverBorderColor: 'rgba(255,255,255,0.3)',
@@ -296,7 +296,7 @@ export default {
         data: {
           labels: this.sunrisesSunsets.map(s => s.sunset.toLocaleDateString()),
           datasets: [{
-            backgroundColor: mapped.map((d, i) => i === 7 ? '#9980FA' : 'rgba(255,255,255,0.3)'),
+            backgroundColor: mapped.map((d, i) => i === 7 ? 'rgba(153,128,250,.5)' : 'rgba(255,255,255,.3)'),
             borderColor: 'rgba(255,255,255,0.3)',
             hoverBackgroundColor: 'rgba(255,255,255,0.3)',
             hoverBorderColor: 'rgba(255,255,255,0.3)',
@@ -403,10 +403,5 @@ export default {
   bottom: 0;
   width: 100%;
   height: 100px;
-}
-</style>
-<style>
-.card .card-body {
-  z-index: 1;
 }
 </style>
