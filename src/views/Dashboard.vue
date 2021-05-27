@@ -81,8 +81,6 @@
 import LineChart from '@/components/chart/LineChart'
 import WindRose from '@/components/chart/WindRose'
 
-import RangeMap from '@/plugin/rangemap'
-
 import Chart from 'chart.js'
 
 const SunCalc = require('suncalc')
@@ -120,16 +118,16 @@ export default {
         traces: [{ x: 'created', y: 'piTemp', icon: 'bi-cpu', color: '#EA2027', aggregation: 'smooth' }],
         yTitle: 'Pi Temperature [°C]'
       }],
-      moonPhases: new RangeMap([
-        { min: 0, max: 0.125, value: { name: 'New Moon', icon: 'bi-circle' } },
-        { min: 0.125, max: 0.250, value: { name: 'Waxing Crescent', icon: 'bi-circle' } },
-        { min: 0.250, max: 0.375, value: { name: 'First Quarter', icon: 'bi-circle-half icon-flipped' } },
-        { min: 0.375, max: 0.500, value: { name: 'Waxing Gibbous', icon: 'bi-circle-half icon-flipped' } },
-        { min: 0.500, max: 0.625, value: { name: 'Full Moon', icon: 'bi-circle-fill' } },
-        { min: 0.625, max: 0.750, value: { name: 'Waning Gibbous', icon: 'bi-circle-fill' } },
-        { min: 0.750, max: 0.875, value: { name: 'Last Quarter', icon: 'bi-circle-half' } },
-        { min: 0.875, max: 1.000, value: { name: 'Waning Crescent', icon: 'bi-circle-half' } }
-      ])
+      moonPhases: [
+        { name: 'New Moon', icon: 'bi-circle' },
+        { name: 'Waxing Crescent', icon: 'bi-circle' },
+        { name: 'First Quarter', icon: 'bi-circle-half icon-flipped' },
+        { name: 'Waxing Gibbous', icon: 'bi-circle-half icon-flipped' },
+        { name: 'Full Moon', icon: 'bi-circle-fill' },
+        { name: 'Waning Gibbous', icon: 'bi-circle-fill' },
+        { name: 'Last Quarter', icon: 'bi-circle-half' },
+        { name: 'Waning Crescent', icon: 'bi-circle-half' }
+      ]
     }
   },
   computed: {
@@ -339,9 +337,39 @@ export default {
         })
     },
     getMoonPhase: function () {
-      const moon = SunCalc.getMoonIllumination(new Date())
+      const today = new Date()
+      const day = today.getDate()
+      let month = today.getMonth() + 1
+      let year = today.getFullYear()
 
-      this.moonPhase = this.moonPhases.getValue(moon.phase)
+      if (month < 3) {
+        year--
+        month += 12
+      }
+
+      ++month
+
+      const c = 365.25 * year
+      const e = 30.6 * month
+      // jd is total days elapsed
+      let jd = c + e + day - 694039.09
+      // divide by the moon cycle
+      jd /= 29.5305882
+      // jd is total days elapsed
+      let b = parseInt(jd)
+      // subtract integer part to leave fractional part of original jd
+      jd -= b
+      // scale fraction from 0-8 and round
+      b = Math.round(jd * 8)
+
+      // 0 and 8 are the same so turn 8 into 0
+      if (b >= 8) {
+        b = 0
+      }
+
+      this.moonPhase = this.moonPhases[b]
+      // const moon = SunCalc.getMoonIllumination(new Date())
+      // this.moonPhase = this.moonPhases.getValue(moon.phase)
     }
   },
   mounted: function () {
