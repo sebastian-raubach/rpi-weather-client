@@ -24,6 +24,10 @@ export default {
     data: {
       type: Array,
       default: () => []
+    },
+    windType: {
+      type: String,
+      default: 'windSpeed'
     }
   },
   data: function () {
@@ -75,9 +79,9 @@ export default {
       if (this.data && this.data.length > 0) {
         const counts = this.windCategories.ranges.map(r => { return { name: r.value.name, color: r.value.color, counts: this.wd.map(_ => 0), total: 0 } })
 
-        this.data.filter(d => d.windAverage !== undefined && d.windAverage !== null && d.windSpeed !== undefined && d.windSpeed !== null)
+        this.data.filter(d => d.windAverage !== undefined && d.windAverage !== null && d[this.windType] !== undefined && d[this.windType] !== null)
           .forEach(d => {
-            const speed = d.windSpeed
+            const speed = d[this.windType]
             const direction = d.windAverage
 
             const speedCategory = this.windCategories.getValue(speed).name
@@ -91,7 +95,7 @@ export default {
             }
           })
 
-        const winds = this.data.filter(d => d.windAverage !== undefined && d.windAverage !== null && d.windSpeed !== undefined && d.windSpeed !== null)
+        const winds = this.data.filter(d => d.windAverage !== undefined && d.windAverage !== null && d[this.windType] !== undefined && d[this.windType] !== null)
 
         if (winds.length > 0) {
           this.currentWind = this.windDirections.getValue(winds[winds.length - 1].windAverage)
