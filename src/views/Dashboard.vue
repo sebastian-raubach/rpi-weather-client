@@ -72,7 +72,9 @@
         </b-col>
       </b-row>
 
-      <WindRose :data="dataFile" />
+      <WindRose :data="dataFile" windType="windSpeed" />
+
+      <WindRose :data="dataFile" windType="windGust" />
     </div>
   </div>
 </template>
