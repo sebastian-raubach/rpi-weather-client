@@ -28,6 +28,10 @@ export default {
     yRange: {
       type: Array,
       default: null
+    },
+    shapes: {
+      type: Array,
+      default: null
     }
   },
   watch: {
@@ -86,6 +90,11 @@ export default {
       let minDate = null
       let maxDate = null
 
+      let shapes = this.shapes ? this.shapes.concat() : []
+
+      let minY = Number.MAX_SAFE_INTEGER
+      let maxY = -Number.MAX_SAFE_INTEGER
+
       const data = this.traces.map(t => {
         const x = this.unpack(this.data, t.x)
         const xDates = x.map(t => new Date(t))
@@ -111,6 +120,9 @@ export default {
           y = this.cumulative(y)
         }
 
+        minY = Math.min(minY, Math.min.apply(null, y))
+        maxY = Math.max(maxY, Math.max.apply(null, y))
+
         return {
           x: x,
           y: y,
@@ -127,6 +139,19 @@ export default {
           }
         }
       })
+
+      if (shapes) {
+        shapes = shapes.filter(s => s.y1 > minY && s.y0 < maxY)
+          .map(s => {
+            if (s.y0 < minY) {
+              s.y0 = minY
+            }
+            if (s.y1 > maxY) {
+              s.y1 = maxY
+            }
+            return s
+          })
+      }
 
       const layout = {
         margin: { l: 50, r: 10, t: 10, b: 50, autoexpand: true },
@@ -146,7 +171,7 @@ export default {
         },
         legend: { orientation: 'h', x: 1, y: 1, xanchor: 'right', font: { color: 'white' } },
         type: 'line',
-        shapes: []
+        shapes: shapes
       }
 
       if (this.yRange) {

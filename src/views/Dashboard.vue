@@ -53,7 +53,7 @@
       <b-row v-for="(variable, index) in variables" :key="`variable-${index}`" class="my-4">
         <b-col cols=12 lg=10>
           <b-card>
-            <LineChart :data="dataFile" :traces="variable.traces" :yRange="variable.yRange" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
+            <LineChart :data="dataFile" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
           </b-card>
         </b-col>
         <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
@@ -72,9 +72,28 @@
         </b-col>
       </b-row>
 
-      <WindRose :data="dataFile" windType="windSpeed" />
-
-      <WindRose :data="dataFile" windType="windGust" />
+      <b-row class="my-4">
+        <b-col cols=12 lg=10>
+          <b-row>
+            <b-col cols=12 lg=6>
+              <WindRose :data="dataFile" windType="windSpeed" @current-wind-direction="setWindDirection" />
+            </b-col>
+            <b-col cols=12 lg=6>
+              <WindRose :data="dataFile" windType="windGust" @current-wind-direction="setWindDirection" />
+            </b-col>
+          </b-row>
+        </b-col>
+        <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
+          <b-card no-body class="text-center h-100 mb-4">
+            <b-card-header>
+              <h1 :style="{ color: '#006266' }"><i class="bi-compass" /></h1>
+            </b-card-header>
+            <b-card-body class="h-100">
+              <h3>{{ currentWindDirection }}</h3>
+            </b-card-body>
+          </b-card>
+        </b-col>
+      </b-row>
     </div>
   </div>
 </template>
@@ -94,18 +113,32 @@ export default {
     WindRose
   },
   data: function () {
+    const windCategories = [
+      { min: 0, max: 1, value: { name: 'Calm', color: '#E3F2FD' } },
+      { min: 1, max: 6, value: { name: 'Light Air', color: '#BBDEFB' } },
+      { min: 6, max: 12, value: { name: 'Light Breeze', color: '#90CAF9' } },
+      { min: 12, max: 20, value: { name: 'Gentle Breeze', color: '#64B5F6' } },
+      { min: 20, max: 30, value: { name: 'Moderate Breeze', color: '#42A5F5' } },
+      { min: 30, max: 40, value: { name: 'Fresh Breeze', color: '#2196F3' } },
+      { min: 40, max: 50, value: { name: 'Strong Breeze', color: '#1E88E5' } },
+      { min: 50, max: 62, value: { name: 'Near Gale', color: '#1976D2' } },
+      { min: 62, max: 75, value: { name: 'Gale', color: '#1565C0' } },
+      { min: 75, max: 89, value: { name: 'Strong Gale', color: '#0D47A1' } },
+      { min: 89, max: 103, value: { name: 'Storm', color: '#D32F2F' } },
+      { min: 103, max: 118, value: { name: 'Violent Storm', color: '#C62828' } },
+      { min: 118, max: Number.MAX_SAFE_INTEGER, value: { name: 'Hurricane', color: '#B71C1C' } }
+    ]
     return {
       moonPhase: null,
       chartData: null,
       endDate: null,
       startDate: null,
       dataFile: null,
+      currentWindDirection: null,
+      windCategories: windCategories,
       variables: [{
         traces: [{ x: 'created', y: 'ambientTemp', icon: 'bi-thermometer-half', color: '#A3CB38', aggregation: 'smooth' }, { x: 'created', y: 'groundTemp', icon: 'bi-thermometer-low', color: '#009432', aggregation: 'smooth' }],
         yTitle: 'Temperature [°C]'
-      }, {
-        traces: [{ x: 'created', y: 'windSpeed', icon: 'bi-wind', color: '#B53471', aggregation: 'smooth' }, { x: 'created', y: 'windGust', icon: 'bi-tornado', color: '#833471', mode: 'markers', aggregation: 'smooth' }],
-        yTitle: 'Wind [kph]'
       }, {
         traces: [{ x: 'created', y: 'rainfall', icon: 'bi-cloud-rain', color: '#1289A7', aggregation: 'cumulative' }],
         yTitle: 'Rainfall [mm]'
@@ -119,6 +152,26 @@ export default {
       }, {
         traces: [{ x: 'created', y: 'piTemp', icon: 'bi-cpu', color: '#EA2027', aggregation: 'smooth' }],
         yTitle: 'Pi Temperature [°C]'
+      }, {
+        traces: [{ x: 'created', y: 'windSpeed', icon: 'bi-wind', color: '#B53471', aggregation: 'smooth' }, { x: 'created', y: 'windGust', icon: 'bi-tornado', color: '#833471', mode: 'markers', aggregation: 'smooth' }],
+        yTitle: 'Wind [kph]',
+        shapes: windCategories.map(wc => {
+          return {
+            type: 'rect',
+            xref: 'paper',
+            yref: 'y',
+            x0: 0,
+            x1: 1,
+            y0: wc.min,
+            y1: wc.max,
+            fillcolor: wc.value.color,
+            layer: 'below',
+            opacity: 0.5,
+            line: {
+              width: 0
+            }
+          }
+        })
       }],
       moonPhases: [
         { name: 'New Moon', icon: 'bi-circle' },
@@ -218,6 +271,9 @@ export default {
     }
   },
   methods: {
+    setWindDirection: function (direction) {
+      this.currentWindDirection = direction
+    },
     updateSunriseSunset: function () {
       let minSunrise = Number.MAX_VALUE
       let minSunset = Number.MAX_VALUE

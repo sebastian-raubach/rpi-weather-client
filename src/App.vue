@@ -23,4 +23,8 @@
 @import '~bootswatch/dist/superhero/bootswatch';
 
 @import "~bootstrap-icons/font/bootstrap-icons.css";
+
+.b-form-datepicker .b-calendar-nav .btn {
+  color: white;
+}
 </style>

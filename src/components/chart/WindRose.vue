@@ -1,19 +1,5 @@
 <template>
-  <b-row class="my-4">
-    <b-col cols=12 lg=10>
-      <div ref="windChart" />
-    </b-col>
-    <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
-      <b-card no-body class="text-center h-100 mb-4">
-        <b-card-header>
-          <h1 :style="{ color: '#006266' }"><i class="bi-compass" /></h1>
-        </b-card-header>
-        <b-card-body class="h-100">
-          <h3>{{ currentWind }}</h3>
-        </b-card-body>
-      </b-card>
-    </b-col>
-  </b-row>
+  <div ref="windChart" />
 </template>
 
 <script>
@@ -32,7 +18,6 @@ export default {
   },
   data: function () {
     return {
-      currentWind: null,
       wd: ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'],
       windDirections: new RangeMap([
         { min: 337.5, max: 22.5, value: 'N', mode: 'invert' },
@@ -98,9 +83,7 @@ export default {
         const winds = this.data.filter(d => d.windAverage !== undefined && d.windAverage !== null && d[this.windType] !== undefined && d[this.windType] !== null)
 
         if (winds.length > 0) {
-          this.currentWind = this.windDirections.getValue(winds[winds.length - 1].windAverage)
-        } else {
-          this.currentWind = null
+          this.$emit('current-wind-direction', this.windDirections.getValue(winds[winds.length - 1].windAverage))
         }
 
         const data = counts.filter(c => c.total > 0).map(c => {
