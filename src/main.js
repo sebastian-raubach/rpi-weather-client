@@ -5,6 +5,8 @@ import router from '@/router'
 import store from '@/store'
 import mixin from '@/mixin/api'
 
+import mitt from 'mitt'
+
 import {
   ButtonPlugin,
   CardPlugin,
@@ -13,6 +15,8 @@ import {
   LayoutPlugin,
   NavbarPlugin
 } from 'bootstrap-vue'
+
+const emitter = mitt()
 
 Vue.config.productionTip = false
 
@@ -42,6 +46,8 @@ Vue.use({
     // Make custom plotly available
     Vue.prototype.$plotly = require('@/plugin/custom-plotly')
     window.Plotly = Vue.prototype.$plotly
+
+    Vue.prototype.$emitter = emitter
   }
 })
 

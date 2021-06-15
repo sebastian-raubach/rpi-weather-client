@@ -1,9 +1,11 @@
 <template>
   <div>
-    <b-navbar toggleable="lg" type="dark" variant="dark">
+    <b-navbar toggleable="lg" type="dark" variant="dark" sticky class="d-flex justify-content-between">
       <b-navbar-brand :to="{ name: 'Dashboard' }">
         <img src="img/logo.svg" height="40px" alt="Weather">
       </b-navbar-brand>
+
+      <b-button @click="refresh"><BIconArrowRepeat /></b-button>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -15,6 +17,21 @@
     </b-container>
   </div>
 </template>
+
+<script>
+import { BIconArrowRepeat } from 'bootstrap-vue'
+
+export default {
+  components: {
+    BIconArrowRepeat
+  },
+  methods: {
+    refresh: function () {
+      this.$emitter.emit('refresh')
+    }
+  }
+}
+</script>
 
 <style lang="scss">
 @import '~bootswatch/dist/superhero/variables';

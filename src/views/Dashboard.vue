@@ -435,6 +435,11 @@ export default {
     this.startDate = new Date(this.endDate.getTime() - (24 * 60 * 60 * 1000))
     this.getData()
     this.getMoonPhase()
+
+    this.$emitter.on('refresh', this.getData)
+  },
+  beforeDestroy: function () {
+    this.$emitter.off('refresh', this.getData)
   }
 }
 </script>
