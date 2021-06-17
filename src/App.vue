@@ -7,10 +7,10 @@
 
       <b-button @click="refresh"><BIconArrowRepeat /></b-button>
 
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <!-- <b-navbar-toggle target="nav-collapse"></b-navbar-toggle> -->
 
-      <b-collapse id="nav-collapse" is-nav>
-      </b-collapse>
+      <!-- <b-collapse id="nav-collapse" is-nav>
+      </b-collapse> -->
     </b-navbar>
     <b-container fluid>
       <router-view/>
