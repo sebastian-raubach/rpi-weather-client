@@ -11,6 +11,7 @@ import {
   ButtonPlugin,
   CardPlugin,
   FormPlugin,
+  FormSelectPlugin,
   FormDatepickerPlugin,
   LayoutPlugin,
   NavbarPlugin
@@ -23,6 +24,7 @@ Vue.config.productionTip = false
 Vue.use(ButtonPlugin)
 Vue.use(CardPlugin)
 Vue.use(FormPlugin)
+Vue.use(FormSelectPlugin)
 Vue.use(FormDatepickerPlugin)
 Vue.use(LayoutPlugin)
 Vue.use(NavbarPlugin)
