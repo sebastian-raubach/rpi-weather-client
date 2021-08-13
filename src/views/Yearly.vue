@@ -59,13 +59,13 @@ export default {
       this.$plotly.purge(this.$refs.boxplot)
 
       const data = this.months.map((m, i) => {
-        const x = this.data.filter(d => {
+        const y = this.data.filter(d => {
           const date = new Date(d.date)
           return date.getMonth() === i
         }).map(d => (d && d[this.aggregation]) ? d[this.aggregation][this.climate] : null)
 
         return {
-          x: x,
+          y: y,
           type: 'box',
           name: m,
           visible: true,
@@ -88,12 +88,12 @@ export default {
         xaxis: {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },
-          title: { text: 'Value', font: { color: 'white' } }
+          title: { text: 'Month', font: { color: 'white' } }
         },
         yaxis: {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },
-          title: { text: 'Month', font: { color: 'white' } }
+          title: { text: 'Value', font: { color: 'white' } }
         }
       }
 
@@ -116,9 +116,9 @@ export default {
         current.setDate(current.getDate() + 1)
       }
 
-      const x = Array.from(Array(31).keys()).map(i => i + 1)
-      const y = Array.from(Array(12).keys()).map(i => i + 1)
-      const z = y.map(yi => x.map(xi => {
+      const y = Array.from(Array(31).keys()).map(i => i + 1)
+      const x = Array.from(Array(12).keys()).map(i => i + 1)
+      const z = y.map(xi => x.map(yi => {
         const date = new Date(this.year, yi - 1, xi)
         // We've moved into next month
         if (date.getMonth() !== yi - 1) {
@@ -143,21 +143,22 @@ export default {
 
       const layout = {
         margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
+        height: 700,
         dragmode: false,
         autosize: true,
         paper_bgcolor: '#4e5d6c',
         plot_bgcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
-        xaxis: {
+        yaxis: {
           tickmode: 'array',
-          tickvals: x,
-          ticktext: x,
+          tickvals: y,
+          ticktext: y,
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },
           title: { text: 'Day', font: { color: 'white' } }
         },
-        yaxis: {
+        xaxis: {
           tickmode: 'array',
-          tickvals: y,
+          tickvals: x,
           ticktext: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },
