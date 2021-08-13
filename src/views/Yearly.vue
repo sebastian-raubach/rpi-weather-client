@@ -28,13 +28,13 @@ export default {
       months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       colors: ['#EA2027', '#EE5A24', '#F79F1F', '#FFC312', '#C4E538', '#A3CB38', '#009432', '#006266', '#1B1464', '#0652DD', '#1289A7', '#12CBC4'],
       gradients: {
-        rainfall: [[0, 'rgba(255, 255, 255, .2)'], [1, '#0652DD']],
+        rainfall: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#0652DD']],
         ambientTemp: [[0, '#0652DD'], [0.5, 'white'], [1, '#EA2027']],
         groundTemp: [[0, '#0652DD'], [0.5, 'white'], [1, '#EA2027']],
-        pressure: [[0, 'rgba(255, 255, 255, .2)'], [1, '#12CBC4']],
-        humidity: [[0, 'rgba(255, 255, 255, .2)'], [1, '#0652DD']],
-        windSpeed: [[0, 'rgba(255, 255, 255, .2)'], [1, '#B53471']],
-        windGust: [[0, 'rgba(255, 255, 255, .2)'], [1, '#833471']],
+        pressure: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#12CBC4']],
+        humidity: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#0652DD']],
+        windSpeed: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#B53471']],
+        windGust: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#833471']],
         windAverage: [[0, '#ED4C67'], [1, '#6F1E51']]
       }
     }
@@ -140,6 +140,8 @@ export default {
         },
         colorscale: this.gradients[this.climate]
       }]
+
+      console.log(data)
 
       const layout = {
         margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
