@@ -37,6 +37,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import '~weather-icons2/css/weather-icons.css';
+
 @import '~bootswatch/dist/superhero/variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
