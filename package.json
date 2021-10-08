@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "~0.21.1",
+    "axios": "^0.21.4",
     "bootstrap": "~4.5.3",
     "bootstrap-icons": "^1.4.1",
     "bootstrap-vue": "~2.21.2",
@@ -23,6 +23,7 @@
     "suncalc": "^1.8.0",
     "vue": "~2.6.11",
     "vue-router": "~3.2.0",
+    "vuetrend": "^0.3.4",
     "vuex": "~3.4.0",
     "vuex-persistedstate": "~4.0.0-beta.3",
     "weather-icons2": "^2.0.10"

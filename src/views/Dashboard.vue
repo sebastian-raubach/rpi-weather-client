@@ -51,7 +51,7 @@
       <h2 class="my-3">Last measurement: {{ lastMeasurementDateTime }}</h2>
       <b-row class="my-4">
         <b-col cols=12 sm=6 md=4 v-for="(variable, index) in variables" :key="`variable-${index}`" class="mb-4">
-          <b-card class="variable-card" no-body>
+          <b-card :class="`variable-card ${variable.visible ? 'active' : null}`" no-body>
             <div class="bg" :style="{ backgroundImage: `url(${variable.bgImage ? variable.bgImage : 'https://images.unsplash.com/photo-1479621051492-5a6f9bd9e51a?dpr=2&auto=compress,format&fit=crop&w=1199&h=811&q=80&cs=tinysrgb&crop='})` }" />
             <b-card-body class="position-relative d-flex flex-column align-items-center justify-content-center">
               <div>
@@ -64,6 +64,14 @@
                 <div class="minmax" v-if="minMax[index] && minMax[index][0] !== undefined">
                   <h6 class="text-light"><i class="bi-arrow-down"/> {{ minMax[index][0].min }} <i class="bi-arrow-up"/> {{ minMax[index][0].max }}</h6>
                 </div>
+                <trend
+                  :data="dataFile.slice(Math.max(dataFile.length - 120, 0)).map(df => df[variable.traces[0].y])"
+                  :gradient="['white', variable.traces[0].color]"
+                  gradientDirection="bottom"
+                  :stroke-width="3"
+                  stroke-linecap="round"
+                  auto-draw
+                  smooth />
                 <a href="#" class="stretched-link" @click.prevent="onVariableClicked(index)" />
               </div>
             </b-card-body>
@@ -128,13 +136,16 @@ import WindRose from '@/components/chart/WindRose'
 
 import Chart from 'chart.js'
 
+import Trend from 'vuetrend'
+
 const SunCalc = require('suncalc')
 
 export default {
   name: 'Dashboard',
   components: {
     LineChart,
-    WindRose
+    WindRose,
+    Trend
   },
   data: function () {
     const windCategories = [
@@ -529,6 +540,9 @@ export default {
 
 .variable-card:hover .bg {
   filter: grayscale(0%) brightness(75%);
+}
+.variable-card.active .bg {
+  filter: grayscale(0%) brightness(60%);
 }
 
 .variable-card .bg {
