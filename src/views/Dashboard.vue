@@ -228,7 +228,7 @@ export default {
         { name: 'Full Moon', icon: 'wi wi-moon-full' },
         { name: 'Waning Gibbous', icon: 'wi wi-moon-waning-gibbous-3' },
         { name: 'Last Quarter', icon: 'wi wi-moon-third-quarter' },
-        { name: 'Waning Crescent', icon: 'wi wi-moon-alt-waning-crescent-3' }
+        { name: 'Waning Crescent', icon: 'wi wi-moon-waning-crescent-3' }
       ]
     }
   },
