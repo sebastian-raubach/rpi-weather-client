@@ -52,7 +52,7 @@
       <b-row class="my-4">
         <b-col cols=12 sm=6 md=4 v-for="(variable, index) in variables" :key="`variable-${index}`" class="mb-4">
           <b-card :class="`variable-card ${variable.visible ? 'active' : null}`" no-body>
-            <div class="bg" :style="{ backgroundImage: `url(${variable.bgImage ? variable.bgImage : 'https://images.unsplash.com/photo-1479621051492-5a6f9bd9e51a?dpr=2&auto=compress,format&fit=crop&w=1199&h=811&q=80&cs=tinysrgb&crop='})` }" />
+            <div class="bg" :style="{ backgroundImage: `url(${variable.bgImage})` }" />
             <b-card-body class="position-relative d-flex flex-column align-items-center justify-content-center">
               <div>
                 <div class="icon">
