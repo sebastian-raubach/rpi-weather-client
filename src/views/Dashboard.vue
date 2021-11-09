@@ -66,7 +66,7 @@
                   <h6 class="text-light"><i class="bi-arrow-down"/> {{ minMax[index][0].min }} <i class="bi-arrow-up"/> {{ minMax[index][0].max }}</h6>
                 </div>
                 <trend
-                  :data="dataFile.slice(Math.max(dataFile.length - 120, 0)).map(df => df[variable.traces[0].y])"
+                  :data="dataFile.slice(Math.max(dataFile.length - 288, 0)).map(df => df[variable.traces[0].y])"
                   :gradient="['white', variable.traces[0].color]"
                   gradientDirection="bottom"
                   :stroke-width="3"
