@@ -3,17 +3,7 @@
     <h1 v-if="moonPhase" class="mb-3">{{ new Date().toLocaleDateString() }}</h1>
 
     <b-row>
-      <b-col cols=12 sm=4 class="mb-4">
-        <b-card no-body class="text-center h-100">
-          <b-card-header>
-            <h1 class="moon"><i :class="moonPhase.icon" /></h1>
-          </b-card-header>
-          <b-card-body class="h-100">
-            <h3>{{ moonPhase.name }}</h3>
-          </b-card-body>
-        </b-card>
-      </b-col>
-      <b-col cols=12 sm=4 class="mb-4">
+      <b-col cols=6 sm=4 class="mb-4">
         <b-card no-body class="text-center h-100 position-relative">
           <b-card-header>
             <h1 class="sunrise"><i class="wi wi-sunrise" /></h1>
@@ -26,7 +16,7 @@
           </div>
         </b-card>
       </b-col>
-      <b-col cols=12 sm=4 class="mb-4">
+      <b-col cols=6 sm=4 class="mb-4">
         <b-card no-body class="text-center h-100">
           <b-card-header>
             <h1 class="sunset"><i class="wi wi-sunset" /></h1>
@@ -39,13 +29,24 @@
           </div>
         </b-card>
       </b-col>
+      <b-col cols=6 sm=4 class="mb-4">
+        <b-card no-body class="text-center h-100">
+          <b-card-header>
+            <h1 class="moon"><i :class="moonPhase.icon" /></h1>
+          </b-card-header>
+          <b-card-body class="h-100">
+            <h3>{{ moonPhase.name }}</h3>
+          </b-card-body>
+        </b-card>
+      </b-col>
+      <b-col cols=6 sm=4 class="mb-4">
+        <b-form @submit.prevent="getData">
+          <b-form-datepicker v-model="startDate" />
+          <b-form-datepicker v-model="endDate" />
+          <b-button type="submit" variant="primary">Update</b-button>
+        </b-form>
+      </b-col>
     </b-row>
-
-    <b-form @submit.prevent="getData">
-      <b-form-datepicker v-model="startDate" />
-      <b-form-datepicker v-model="endDate" />
-      <b-button type="submit" variant="primary">Update</b-button>
-    </b-form>
 
     <div v-if="dataFile && dataFile.length > 0">
       <h2 class="my-3">Last measurement: {{ lastMeasurementDateTime }}</h2>
