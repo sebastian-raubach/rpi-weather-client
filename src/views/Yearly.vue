@@ -1,10 +1,13 @@
 <template>
   <div class="mt-4">
     <b-row>
-      <b-col cols=12 md=6>
+      <b-col cols=12 md=4>
+        <b-form-select :options="years" v-model="year" />
+      </b-col>
+      <b-col cols=12 md=4>
         <b-form-select :options="climateOptions" v-model="climate" />
       </b-col>
-      <b-col cols=12 md=6>
+      <b-col cols=12 md=4>
         <b-form-select :options="aggregationOptions" v-model="aggregation" />
       </b-col>
     </b-row>
@@ -17,9 +20,8 @@
 export default {
   data: function () {
     return {
-      start: null,
-      end: null,
       year: new Date().getFullYear(),
+      years: [],
       data: null,
       climateOptions: ['ambientTemp', 'groundTemp', 'pressure', 'humidity', 'windAverage', 'windSpeed', 'windGust', 'rainfall'],
       aggregationOptions: ['min', 'max', 'avg', 'stdv'],
@@ -39,6 +41,14 @@ export default {
       }
     }
   },
+  computed: {
+    start: function () {
+      return this.year ? new Date(this.year, 0, 1) : new Date()
+    },
+    end: function () {
+      return this.year ? new Date(this.year, 11, 31) : new Date()
+    }
+  },
   watch: {
     data: function () {
       this.update()
@@ -48,6 +58,9 @@ export default {
     },
     aggregation: function () {
       this.update()
+    },
+    year: function () {
+      this.getData()
     }
   },
   methods: {
@@ -141,8 +154,6 @@ export default {
         colorscale: this.gradients[this.climate]
       }]
 
-      console.log(data)
-
       const layout = {
         margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
         height: 700,
@@ -194,14 +205,22 @@ export default {
       }
 
       this.$plotly.newPlot(this.$refs.heatmap, data, layout, config)
+    },
+    getData: function () {
+      this.apiGetYearly(this.start, this.end)
+        .then(result => {
+          this.data = result
+
+          this.update()
+        })
     }
   },
   mounted: function () {
-    this.start = new Date(this.year, 0, 1)
-    this.end = new Date(this.year, 11, 31)
-    this.apiGetYearly(this.start, this.end)
+    this.getYears()
       .then(result => {
-        this.data = result
+        this.years = result
+
+        this.getData()
       })
   }
 }
