@@ -3,7 +3,7 @@
     <h1 v-if="moonPhase" class="mb-3">{{ new Date().toLocaleDateString() }}</h1>
 
     <b-row>
-      <b-col cols=6 sm=4 class="mb-4">
+      <b-col cols=6 sm=4 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100 position-relative">
           <b-card-header>
             <h1 class="sunrise"><i class="wi wi-sunrise" /></h1>
@@ -16,7 +16,7 @@
           </div>
         </b-card>
       </b-col>
-      <b-col cols=6 sm=4 class="mb-4">
+      <b-col cols=6 sm=4 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100">
           <b-card-header>
             <h1 class="sunset"><i class="wi wi-sunset" /></h1>
@@ -66,7 +66,13 @@
                   <h6 class="text-light"><i class="bi-arrow-down"/> {{ minMax[index][0].min }} <i class="bi-arrow-up"/> {{ minMax[index][0].max }}</h6>
                 </div>
                 <trend
-                  :data="dataFile.slice(Math.max(dataFile.length - 288, 0)).map(df => df[variable.traces[0].y])"
+                  :data="dataFile.slice(Math.max(dataFile.length - 288, 0)).map(df => {
+                    if (df && variable.traces[0] && variable.traces[0].y && df[variable.traces[0].y]) {
+                      return df[variable.traces[0].y]
+                    } else {
+                      return 0
+                    }
+                  })"
                   :gradient="['white', variable.traces[0].color]"
                   gradientDirection="bottom"
                   :stroke-width="3"
