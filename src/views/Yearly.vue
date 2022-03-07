@@ -97,7 +97,16 @@ export default {
         autosize: true,
         paper_bgcolor: '#4e5d6c',
         plot_bgcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
-        legend: { orientation: 'h', font: { color: 'white' } },
+        legend: {
+          xanchor: 'left',
+          yanchor: 'bottom',
+          y: 1,
+          x: 0,
+          orientation: 'h',
+          font: {
+            color: 'white'
+          }
+        },
         xaxis: {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },

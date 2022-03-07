@@ -169,7 +169,16 @@ export default {
           tickfont: { color: 'white' },
           title: { text: this.yTitle, font: { color: 'white' } }
         },
-        legend: { orientation: 'h', font: { color: 'white' } },
+        legend: {
+          xanchor: 'left',
+          yanchor: 'bottom',
+          y: 1,
+          x: 0,
+          orientation: 'h',
+          font: {
+            color: 'white'
+          }
+        },
         type: 'line',
         shapes: shapes
       }

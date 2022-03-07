@@ -29,7 +29,7 @@
           </div>
         </b-card>
       </b-col>
-      <b-col cols=6 sm=4 class="mb-4">
+      <b-col cols=6 sm=4 class="mb-4" v-if="moonPhase">
         <b-card no-body class="text-center h-100">
           <b-card-header>
             <h1 class="moon"><i :class="moonPhase.icon" /></h1>
