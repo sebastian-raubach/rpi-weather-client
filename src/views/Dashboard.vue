@@ -66,19 +66,14 @@
                   <h6 class="text-light"><i class="bi-arrow-down"/> {{ minMax[index][0].min }} <i class="bi-arrow-up"/> {{ minMax[index][0].max }}</h6>
                 </div>
                 <trend
-                  :data="dataFile.slice(Math.max(dataFile.length - 288, 0)).map(df => {
-                    if (df && variable.traces[0] && variable.traces[0].y && df[variable.traces[0].y]) {
-                      return df[variable.traces[0].y]
-                    } else {
-                      return 0
-                    }
-                  })"
+                  :data="trendData[index]"
                   :gradient="['white', variable.traces[0].color]"
                   gradientDirection="bottom"
                   :stroke-width="3"
                   stroke-linecap="round"
                   auto-draw
-                  smooth />
+                  smooth
+                  v-if="trendData" />
                 <a href="#" class="stretched-link" @click.prevent="onVariableClicked(index)" />
               </div>
             </b-card-body>
@@ -248,6 +243,31 @@ export default {
       const date = new Date(this.dataFile[this.dataFile.length - 1].created)
 
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
+    },
+    trendData: function () {
+      if (!this.dataFile) {
+        return null
+      } else {
+        return this.variables.map(variable => {
+          return this.dataFile.slice(Math.max(this.dataFile.length - 288, 0)).reduce((arr, df) => {
+            if (df && variable.traces[0] && variable.traces[0].y && df[variable.traces[0].y]) {
+              if (variable.traces[0].aggregation === 'cumulative') {
+                arr.push((arr.length > 0 ? arr[arr.length - 1] : 0) + df[variable.traces[0].y])
+              } else {
+                arr.push(df[variable.traces[0].y])
+              }
+            } else {
+              if (variable.traces[0].aggregation === 'cumulative') {
+                arr.push(arr.length > 0 ? arr[arr.length - 1] : 0)
+              } else {
+                arr.push(0)
+              }
+            }
+
+            return arr
+          }, [])
+        })
+      }
     },
     minMax: function () {
       if (!this.dataFile) {
