@@ -6,7 +6,6 @@ module.exports = {
         'useBuiltIns': 'usage',
         'corejs': 3
       }
-    ],
-    ['es2015', { 'modules': false }]
+    ]
   ]
 }
