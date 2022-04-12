@@ -12,6 +12,16 @@ module.exports = {
     workboxOptions: {
       skipWaiting: true
     }
+  },
+  configureWebpack: {
+    resolve: {
+      // ... rest of the resolve config
+      fallback: {
+        'path': require.resolve('path-browserify')
+      }
+    },
+    devtool: 'source-map',
+    target: 'web'
   }
   // configureWebpack: {
   //   plugins: [
