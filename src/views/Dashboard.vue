@@ -6,7 +6,7 @@
       <b-col cols=6 sm=4 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100 position-relative">
           <b-card-header>
-            <h1 class="sunrise"><i class="wi wi-sunrise" /></h1>
+            <h1 class="sunrise"><BIconSunrise /></h1>
           </b-card-header>
           <b-card-body class="h-100">
             <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }}</h3>
@@ -19,7 +19,7 @@
       <b-col cols=6 sm=4 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100">
           <b-card-header>
-            <h1 class="sunset"><i class="wi wi-sunset" /></h1>
+            <h1 class="sunset"><BIconSunset /></h1>
           </b-card-header>
           <b-card-body class="h-100">
             <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</h3>
@@ -57,13 +57,13 @@
             <b-card-body class="position-relative d-flex flex-column align-items-center justify-content-center">
               <div>
                 <div class="icon">
-                  <h1 :style="{ color: variable.traces[0].color }"><i :class="variable.traces[0].icon" /></h1>
+                  <h1 :style="{ color: variable.traces[0].color }"><component :is="variable.traces[0].icon" /></h1>
                 </div>
                 <div class="value" v-if="aggregatedValues[index] && aggregatedValues[index][0] !== undefined">
                   <h2>{{ aggregatedValues[index][0].toFixed(2) }}</h2>
                 </div>
                 <div class="minmax" v-if="minMax[index] && minMax[index][0] !== undefined">
-                  <h6 class="text-light"><i class="bi-arrow-down"/> {{ minMax[index][0].min }} <i class="bi-arrow-up"/> {{ minMax[index][0].max }}</h6>
+                  <h6 class="text-light"><BIconArrowDown /> {{ minMax[index][0].min }} <BIconArrowUp /> {{ minMax[index][0].max }}</h6>
                 </div>
                 <trend
                   :data="trendData[index]"
@@ -94,7 +94,7 @@
               <b-col cols=6 lg=12 v-for="(trace, tIndex) in variable.traces" :key="`card-${index}-${tIndex}`" class="mb-4">
                 <b-card no-body class="text-center h-100">
                   <b-card-header>
-                    <h1 :style="{ color: trace.color }"><i :class="trace.icon" /></h1>
+                    <h1 :style="{ color: trace.color }"><component :is="trace.icon" /></h1>
                   </b-card-header>
                   <b-card-body class="h-100">
                     <h3 v-if="aggregatedValues[index][tIndex] !== undefined">{{ aggregatedValues[index][tIndex].toFixed(2) }}</h3>
@@ -120,7 +120,7 @@
         <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
           <b-card no-body class="text-center h-100 mb-4">
             <b-card-header>
-              <h1 :style="{ color: '#006266' }"><i class="bi-compass" /></h1>
+              <h1 :style="{ color: '#006266' }"><BIconCompass /></h1>
             </b-card-header>
             <b-card-body class="h-100">
               <h3>{{ currentWindDirection }}</h3>
@@ -136,6 +136,8 @@
 import LineChart from '@/components/chart/LineChart'
 import WindRose from '@/components/chart/WindRose'
 
+import { BIconCloudRain, BIconCpu, BIconArrowDown, BIconArrowUp, BIconCompass, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
+
 import Chart from 'chart.js'
 
 import Trend from 'vuetrend'
@@ -147,7 +149,12 @@ export default {
   components: {
     LineChart,
     WindRose,
-    Trend
+    Trend,
+    BIconSunrise,
+    BIconSunset,
+    BIconArrowDown,
+    BIconArrowUp,
+    BIconCompass
   },
   data: function () {
     const windCategories = [
@@ -174,33 +181,33 @@ export default {
       currentWindDirection: null,
       windCategories: windCategories,
       variables: [{
-        traces: [{ x: 'created', y: 'ambientTemp', icon: 'wi wi-thermometer', color: '#A3CB38', aggregation: 'smooth' }, { x: 'created', y: 'groundTemp', icon: 'wi wi-thermometer-exterior', color: '#009432', aggregation: 'smooth' }],
+        traces: [{ x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'smooth' }, { x: 'created', y: 'groundTemp', icon: BIconThermometer, color: '#009432', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-temperature.jpg'),
         yTitle: 'Temperature [°C]',
         visible: false
       }, {
-        traces: [{ x: 'created', y: 'rainfall', icon: 'wi wi-rain', color: '#1289A7', aggregation: 'cumulative' }],
+        traces: [{ x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' }],
         bgImage: require('@/assets/banner-rain.jpg'),
         yTitle: 'Rainfall [mm]',
         visible: false
       }, {
-        traces: [{ x: 'created', y: 'humidity', icon: 'wi wi-humidity', color: '#0652DD', aggregation: 'smooth' }],
+        traces: [{ x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-humidity.jpg'),
         yTitle: 'Humidity [%]',
         visible: false,
         yRange: [0, 100]
       }, {
-        traces: [{ x: 'created', y: 'pressure', icon: 'wi wi-barometer', color: '#12CBC4', aggregation: 'smooth' }],
+        traces: [{ x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-pressure.jpg'),
         yTitle: 'Pressure [hpa]',
         visible: false
       }, {
-        traces: [{ x: 'created', y: 'piTemp', icon: 'bi-cpu', color: '#EA2027', aggregation: 'smooth' }],
+        traces: [{ x: 'created', y: 'piTemp', icon: BIconCpu, color: '#EA2027', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-pi.jpg'),
         yTitle: 'Pi Temperature [°C]',
         visible: false
       }, {
-        traces: [{ x: 'created', y: 'windSpeed', icon: 'wi wi-strong-wind', color: '#B53471', aggregation: 'smooth' }, { x: 'created', y: 'windGust', icon: 'wi wi-sandstorm', color: '#833471', mode: 'markers', aggregation: 'smooth' }],
+        traces: [{ x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'smooth' }, { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-wind.jpg'),
         yTitle: 'Wind [kph]',
         visible: false,
@@ -544,13 +551,13 @@ export default {
   -ms-transform: scaleX(-1);
 }
 
-.moon i {
+.moon {
   color: #FFC312;
 }
-.sunrise i {
+.sunrise {
   color: #F79F1F;
 }
-.sunset i {
+.sunset {
   color: #9980FA;
 }
 
