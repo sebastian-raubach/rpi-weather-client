@@ -3,7 +3,7 @@
     <h1 v-if="moonPhase" class="mb-3">{{ new Date().toLocaleDateString() }}</h1>
 
     <b-row>
-      <b-col cols=6 sm=4 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
+      <b-col cols=6 sm=4 xl=3 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100 position-relative">
           <b-card-header>
             <h1 class="sunrise"><BIconSunrise /></h1>
@@ -16,7 +16,7 @@
           </div>
         </b-card>
       </b-col>
-      <b-col cols=6 sm=4 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
+      <b-col cols=6 sm=4 xl=3 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100">
           <b-card-header>
             <h1 class="sunset"><BIconSunset /></h1>
@@ -29,7 +29,7 @@
           </div>
         </b-card>
       </b-col>
-      <b-col cols=6 sm=4 class="mb-4" v-if="moonPhase">
+      <b-col cols=6 sm=4 xl=3 class="mb-4" v-if="moonPhase">
         <b-card no-body class="text-center h-100">
           <b-card-header>
             <h1 class="moon"><i :class="moonPhase.icon" /></h1>
@@ -39,7 +39,7 @@
           </b-card-body>
         </b-card>
       </b-col>
-      <b-col cols=6 sm=4 class="mb-4">
+      <b-col cols=6 sm=4 xl=3 class="mb-4">
         <b-form @submit.prevent="getData">
           <b-form-datepicker v-model="startDate" />
           <b-form-datepicker v-model="endDate" />
