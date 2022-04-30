@@ -59,33 +59,71 @@ export default {
     }
   },
   methods: {
-    unpack: function (rows, key) {
-      return rows.map(row => {
-        const dataPoint = row[key]
-        if (dataPoint === undefined || dataPoint === null || dataPoint === '') {
-          return null
+    unpack: function (rows, x, y) {
+      const xs = []
+      const ys = []
+
+      rows.forEach(row => {
+        let xValue = row[x]
+        let yValue = row[y]
+
+        if (yValue === undefined || yValue === null || yValue === '' || xValue === undefined || xValue === null || xValue === '') {
+          return
         } else {
           let isDate = false
 
-          if (key === 'Date') {
+          if (x === 'Date') {
             isDate = true
-          } else if (typeof dataPoint === 'string' && !isNaN(Date.parse(dataPoint))) {
+          } else if (typeof xValue === 'string' && !isNaN(Date.parse(xValue))) {
             isDate = true
           }
 
-          if (isDate) {
-            return dataPoint
-          } else {
-            const value = parseFloat(dataPoint)
+          if (!isDate) {
+            const value = parseFloat(xValue)
 
-            if (isNaN(value)) {
-              return dataPoint
-            } else {
-              return value
+            if (!isNaN(value)) {
+              xValue = value
             }
           }
         }
+
+        const value = parseFloat(yValue)
+
+        if (!isNaN(value)) {
+          yValue = value
+        }
+
+        xs.push(xValue)
+        ys.push(yValue)
       })
+
+      return [xs, ys]
+      // return rows.map(row => {
+      //   const dataPoint = row[key]
+      //   if (dataPoint === undefined || dataPoint === null || dataPoint === '') {
+      //     return null
+      //   } else {
+      //     let isDate = false
+
+      //     if (key === 'Date') {
+      //       isDate = true
+      //     } else if (typeof dataPoint === 'string' && !isNaN(Date.parse(dataPoint))) {
+      //       isDate = true
+      //     }
+
+      //     if (isDate) {
+      //       return dataPoint
+      //     } else {
+      //       const value = parseFloat(dataPoint)
+
+      //       if (isNaN(value)) {
+      //         return dataPoint
+      //       } else {
+      //         return value
+      //       }
+      //     }
+      //   }
+      // })
     },
     update: function () {
       this.$plotly.purge(this.$refs.chart)
@@ -103,7 +141,9 @@ export default {
       let maxY = -Number.MAX_SAFE_INTEGER
 
       const data = this.traces.map(t => {
-        const x = this.unpack(t.isForecast ? this.forecast : this.data, t.x)
+        let [x, y] = this.unpack(t.isForecast ? this.forecast : this.data, t.x, t.y)
+
+        // const x = this.unpack(t.isForecast ? this.forecast : this.data, t.x)
         const xDates = x.map(t => new Date(t))
         const minX = new Date(Math.min.apply(null, xDates))
         const maxX = new Date(Math.max.apply(null, xDates))
@@ -119,7 +159,7 @@ export default {
           maxDate = maxX
         }
 
-        let y = this.unpack(t.isForecast ? this.forecast : this.data, t.y)
+        // let y = this.unpack(t.isForecast ? this.forecast : this.data, t.y)
 
         if (t.aggregation === 'smooth') {
           y = this.smooth(y, 2)
