@@ -9,6 +9,10 @@ export default {
       type: Array,
       default: () => []
     },
+    forecast: {
+      type: Array,
+      default: () => []
+    },
     traces: {
       type: Array,
       default: () => []
@@ -36,6 +40,9 @@ export default {
   },
   watch: {
     data: function () {
+      this.update()
+    },
+    forecast: function () {
       this.update()
     },
     traces: function () {
@@ -96,7 +103,7 @@ export default {
       let maxY = -Number.MAX_SAFE_INTEGER
 
       const data = this.traces.map(t => {
-        const x = this.unpack(this.data, t.x)
+        const x = this.unpack(t.isForecast ? this.forecast : this.data, t.x)
         const xDates = x.map(t => new Date(t))
         const minX = new Date(Math.min.apply(null, xDates))
         const maxX = new Date(Math.max.apply(null, xDates))
@@ -112,7 +119,7 @@ export default {
           maxDate = maxX
         }
 
-        let y = this.unpack(this.data, t.y)
+        let y = this.unpack(t.isForecast ? this.forecast : this.data, t.y)
 
         if (t.aggregation === 'smooth') {
           y = this.smooth(y, 2)
@@ -131,6 +138,9 @@ export default {
           mode: t.mode || 'lines',
           marker: {
             color: t.color
+          },
+          line: {
+            dash: t.isForecast ? 'dashdot' : 'solid'
           },
           legenditem: {
             textfont: {

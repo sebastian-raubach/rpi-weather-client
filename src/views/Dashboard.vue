@@ -48,7 +48,7 @@
       </b-col>
     </b-row>
 
-    <div v-if="dataFile && dataFile.length > 0">
+    <div v-if="(dataFile && dataFile.length > 0) || (forecast && forecast.length > 0)">
       <h2 class="my-3">Last measurement: {{ lastMeasurementDateTime }}</h2>
       <b-row class="my-4">
         <b-col cols=12 sm=6 md=4 v-for="(variable, index) in variables" :key="`variable-${index}`" class="mb-4">
@@ -59,10 +59,10 @@
                 <div class="icon">
                   <h1 :style="{ color: variable.traces[0].color }"><component :is="variable.traces[0].icon" /></h1>
                 </div>
-                <div class="value" v-if="aggregatedValues[index] && aggregatedValues[index][0] !== undefined">
+                <div class="value" v-if="aggregatedValues && aggregatedValues.length >= index && aggregatedValues[index] && aggregatedValues[index][0] !== undefined">
                   <h2>{{ aggregatedValues[index][0].toFixed(2) }}</h2>
                 </div>
-                <div class="minmax" v-if="minMax[index] && minMax[index][0] !== undefined">
+                <div class="minmax" v-if="minMax && minMax.length >= index && minMax[index] && minMax[index][0] !== undefined">
                   <h6 class="text-light"><BIconArrowDown /> {{ minMax[index][0].min }} <BIconArrowUp /> {{ minMax[index][0].max }}</h6>
                 </div>
                 <trend
@@ -86,21 +86,23 @@
         <b-row :key="`variable-${index}`" class="my-4" v-if="variable.visible">
           <b-col cols=12 lg=10>
             <b-card>
-              <LineChart :data="dataFile" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
+              <LineChart :data="dataFile" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
             </b-card>
           </b-col>
           <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
             <b-row>
-              <b-col cols=6 lg=12 v-for="(trace, tIndex) in variable.traces" :key="`card-${index}-${tIndex}`" class="mb-4">
-                <b-card no-body class="text-center h-100">
-                  <b-card-header>
-                    <h1 :style="{ color: trace.color }"><component :is="trace.icon" /></h1>
-                  </b-card-header>
-                  <b-card-body class="h-100">
-                    <h3 v-if="aggregatedValues[index][tIndex] !== undefined">{{ aggregatedValues[index][tIndex].toFixed(2) }}</h3>
-                  </b-card-body>
-                </b-card>
-              </b-col>
+              <template v-for="(trace, tIndex) in variable.traces">
+                <b-col cols=6 lg=12  :key="`card-${index}-${tIndex}`" class="mb-4" v-if="!trace.isForecast">
+                  <b-card no-body class="text-center h-100">
+                    <b-card-header>
+                      <h1 :style="{ color: trace.color }"><component :is="trace.icon" /></h1>
+                    </b-card-header>
+                    <b-card-body class="h-100">
+                      <h3 v-if="aggregatedValues && aggregatedValues.length >= index && aggregatedValues[index][tIndex] !== undefined">{{ aggregatedValues[index][tIndex].toFixed(2) }}</h3>
+                    </b-card-body>
+                  </b-card>
+                </b-col>
+              </template>
             </b-row>
           </b-col>
         </b-row>
@@ -178,26 +180,40 @@ export default {
       endDate: null,
       startDate: null,
       dataFile: null,
+      forecast: null,
       currentWindDirection: null,
       windCategories: windCategories,
       variables: [{
-        traces: [{ x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'smooth' }, { x: 'created', y: 'groundTemp', icon: BIconThermometer, color: '#009432', aggregation: 'smooth' }],
+        traces: [
+          { x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none' },
+          { x: 'created', y: 'groundTemp', icon: BIconThermometer, color: '#009432', aggregation: 'none' },
+          { x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none', isForecast: true }
+        ],
         bgImage: require('@/assets/banner-temperature.jpg'),
         yTitle: 'Temperature [°C]',
         visible: false
       }, {
-        traces: [{ x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' }],
+        traces: [
+          { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' },
+          { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'none', isForecast: true }
+        ],
         bgImage: require('@/assets/banner-rain.jpg'),
         yTitle: 'Rainfall [mm]',
         visible: false
       }, {
-        traces: [{ x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'smooth' }],
+        traces: [
+          { x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'smooth' },
+          { x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'none', isForecast: true }
+        ],
         bgImage: require('@/assets/banner-humidity.jpg'),
         yTitle: 'Humidity [%]',
         visible: false,
         yRange: [0, 100]
       }, {
-        traces: [{ x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'smooth' }],
+        traces: [
+          { x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'smooth' },
+          { x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'none', isForecast: true }
+        ],
         bgImage: require('@/assets/banner-pressure.jpg'),
         yTitle: 'Pressure [hpa]',
         visible: false
@@ -207,7 +223,12 @@ export default {
         yTitle: 'Pi Temperature [°C]',
         visible: false
       }, {
-        traces: [{ x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'smooth' }, { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'smooth' }],
+        traces: [
+          { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'smooth' },
+          { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'none', isForecast: true },
+          { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'smooth' },
+          { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'none', isForecast: true }
+        ],
         bgImage: require('@/assets/banner-wind.jpg'),
         yTitle: 'Wind [kph]',
         visible: false,
@@ -252,7 +273,7 @@ export default {
       return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
     },
     trendData: function () {
-      if (!this.dataFile) {
+      if (!this.dataFile || this.dataFile.length < 1) {
         return null
       } else {
         return this.variables.map(variable => {
@@ -277,7 +298,7 @@ export default {
       }
     },
     minMax: function () {
-      if (!this.dataFile) {
+      if (!this.dataFile || this.dataFile.length < 1) {
         return null
       }
 
@@ -292,7 +313,7 @@ export default {
       })
     },
     aggregatedValues: function () {
-      if (!this.dataFile) {
+      if (!this.dataFile || this.dataFile.length < 1) {
         return null
       }
 
@@ -491,6 +512,11 @@ export default {
       this.apiGetData(this.start, this.end)
         .then(result => {
           this.dataFile = result
+        })
+      this.apiGetForecast(this.start, this.end)
+        .then(result => {
+          this.forecast = result
+          console.log(this.forecast)
         })
     },
     getMoonPhase: function () {

@@ -63,6 +63,19 @@ export default {
           .catch(error => reject(error))
       })
     },
+    apiGetForecast: function (start, end) {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: 'data/forecast', params: { start: start, end: end }, headers: { Accept: 'application/json' } })
+          .then(result => {
+            if (result && result.data) {
+              resolve(result.data)
+            } else {
+              resolve(null)
+            }
+          })
+          .catch(error => reject(error))
+      })
+    },
     apiGetYearly: function (start, end) {
       return new Promise((resolve, reject) => {
         this.axios({ url: 'stats/daily', params: { start: start, end: end }, headers: { Accept: 'application/json' } })
