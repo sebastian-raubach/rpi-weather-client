@@ -557,7 +557,8 @@ export default {
   },
   mounted: function () {
     this.endDate = new Date()
-    this.startDate = new Date(this.endDate.getTime() - (24 * 60 * 60 * 1000))
+    // this.startDate = new Date(this.endDate.getTime() - (24 * 60 * 60 * 1000))
+    this.startDate = new Date()
     this.getData()
     this.getMoonPhase()
 
