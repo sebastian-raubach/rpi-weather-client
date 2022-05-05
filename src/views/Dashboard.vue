@@ -195,7 +195,7 @@ export default {
       }, {
         traces: [
           { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' },
-          { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'none', isForecast: true }
+          { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative', isForecast: true }
         ],
         bgImage: require('@/assets/banner-rain.jpg'),
         yTitle: 'Rainfall [mm]',

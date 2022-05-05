@@ -207,6 +207,7 @@ export default {
         margin: { l: 50, r: 10, t: 10, b: 50, autoexpand: true },
         dragmode: false,
         autosize: true,
+        hovermode: 'x',
         paper_bgcolor: '#4e5d6c',
         plot_bgcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
         xaxis: {

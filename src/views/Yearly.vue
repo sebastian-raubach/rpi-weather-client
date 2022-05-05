@@ -12,6 +12,7 @@
       </b-col>
     </b-row>
     <div class="my-3" ref="heatmap" />
+    <div class="my-3" ref="line" />
     <div class="my-3" ref="boxplot" />
   </div>
 </template>
@@ -66,7 +67,56 @@ export default {
   methods: {
     update: function () {
       this.updateHeatmap()
+      this.updateLine()
       this.updateBoxplot()
+    },
+    updateLine: function () {
+      this.$plotly.purge(this.$refs.line)
+
+      const data = [{
+        x: this.data.map(d => new Date(d.date)),
+        y: this.data.map(d => (d && d[this.aggregation]) ? d[this.aggregation][this.climate] : null),
+        type: 'scatter',
+        mode: 'markers',
+        marker: {
+          cmin: 0,
+          cmax: 11,
+          color: this.data.map(d => new Date(d.date).getMonth()),
+          colorscale: this.colors.map((c, i) => [i / (this.colors.length - 1), c])
+        }
+      }]
+
+      const start = new Date(this.data[0].date)
+      const end = new Date(this.data[this.data.length - 1].date)
+
+      const layout = {
+        margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
+        dragmode: false,
+        autosize: true,
+        paper_bgcolor: '#4e5d6c',
+        plot_bgcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
+        xaxis: {
+          gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
+          tickfont: { color: 'white' },
+          title: { text: 'Date', font: { color: 'white' } },
+          range: [new Date(start.getFullYear(), start.getMonth(), 1), new Date(end.getFullYear(), end.getMonth() + 1, 0)]
+        },
+        yaxis: {
+          gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
+          tickfont: { color: 'white' },
+          title: { text: 'Value', font: { color: 'white' } }
+        },
+        type: 'line',
+        hovermode: 'x'
+      }
+
+      const config = {
+        displayModeBar: false,
+        responsive: true,
+        displaylogo: false
+      }
+
+      this.$plotly.newPlot(this.$refs.line, data, layout, config)
     },
     updateBoxplot: function () {
       this.$plotly.purge(this.$refs.boxplot)
