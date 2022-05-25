@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-4" v-if="data">
+  <div id="weekly" class="mt-4" v-if="data">
     <b-row>
       <b-col cols=12 md=4 class="mb-4">
         <b-card class="bg-total-rain">
@@ -136,24 +136,24 @@ export default {
 </script>
 
 <style>
-.card {
+#weekly .card {
   height: 175px;
 }
-.card h1,
-.card h4 {
+#weekly .card h1,
+#weekly .card h4 {
   margin-bottom: 0;
 }
-.card h6:first-child {
+#weekly .card h6:first-child {
   margin: 0.5em 0;
 }
-.card h6:last-child {
+#weekly .card h6:last-child {
   margin-bottom: 1em;
 }
-.card .card-title,
-.card .card-subtitle {
+#weekly .card .card-title,
+#weekly .card .card-subtitle {
   color: white !important;
 }
-.card h1 {
+#weekly .card h1 {
   color: #999;
   mix-blend-mode: color-dodge;
   font-size: 3rem;
