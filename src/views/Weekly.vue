@@ -21,7 +21,10 @@
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
               <b-card-title>Rainiest day</b-card-title>
-              <b-card-sub-title>{{ new Date(data.mostRain.date).toLocaleDateString() }}</b-card-sub-title>
+              <div>
+                <b-card-sub-title>{{ new Date(data.mostRain.date).toLocaleDateString('en-GB', { weekday: 'long' }) }}</b-card-sub-title>
+                <b-card-sub-title>{{ new Date(data.mostRain.date).toLocaleDateString() }}</b-card-sub-title>
+              </div>
               <b-card-text>
                 <h4>{{ data.mostRain.value.toFixed(2) }}</h4>
               </b-card-text>
@@ -37,7 +40,10 @@
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
               <b-card-title>Windiest day</b-card-title>
-              <b-card-sub-title>{{ new Date(data.mostWind.date).toLocaleDateString() }}</b-card-sub-title>
+              <div>
+                <b-card-sub-title>{{ new Date(data.mostWind.date).toLocaleDateString('en-GB', { weekday: 'long' }) }}</b-card-sub-title>
+                <b-card-sub-title>{{ new Date(data.mostWind.date).toLocaleDateString() }}</b-card-sub-title>
+              </div>
               <b-card-text>
                 <h4>{{ data.mostWind.value.toFixed(2) }}</h4>
               </b-card-text>
@@ -55,7 +61,10 @@
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
               <b-card-title>Minimum temperature</b-card-title>
-              <b-card-sub-title>{{ new Date(data.lowestTemp.date).toLocaleDateString() }}</b-card-sub-title>
+              <div>
+                <b-card-sub-title>{{ new Date(data.lowestTemp.date).toLocaleDateString('en-GB', { weekday: 'long' }) }}</b-card-sub-title>
+                <b-card-sub-title>{{ new Date(data.lowestTemp.date).toLocaleDateString() }}</b-card-sub-title>
+              </div>
               <b-card-text><h4>{{ data.lowestTemp.value.toFixed(2) }}</h4></b-card-text>
             </b-col>
             <b-col cols=2 class="d-flex justify-content-center align-items-center">
@@ -84,7 +93,10 @@
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
               <b-card-title>Maximum temperature</b-card-title>
-              <b-card-sub-title>{{ new Date(data.highestTemp.date).toLocaleDateString() }}</b-card-sub-title>
+              <div>
+                <b-card-sub-title>{{ new Date(data.highestTemp.date).toLocaleDateString('en-GB', { weekday: 'long' }) }}</b-card-sub-title>
+                <b-card-sub-title>{{ new Date(data.highestTemp.date).toLocaleDateString() }}</b-card-sub-title>
+              </div>
               <b-card-text><h4>{{ data.highestTemp.value.toFixed(2) }}</h4></b-card-text>
             </b-col>
             <b-col cols=2 class="d-flex justify-content-center align-items-center">
@@ -111,7 +123,7 @@ export default {
   },
   data: function () {
     return {
-      data: null
+      data: 'en-GB'
     }
   },
   mounted: function () {
@@ -125,14 +137,26 @@ export default {
 
 <style>
 .card {
-  height: 150px;
+  height: 175px;
 }
 .card h1,
 .card h4 {
   margin-bottom: 0;
 }
-.card h6 {
+.card h6:first-child {
+  margin: 0.5em 0;
+}
+.card h6:last-child {
   margin-bottom: 1em;
+}
+.card .card-title,
+.card .card-subtitle {
+  color: white !important;
+}
+.card h1 {
+  color: #999;
+  mix-blend-mode: color-dodge;
+  font-size: 3rem;
 }
 </style>
 <style scoped>
