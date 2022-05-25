@@ -89,6 +89,19 @@ export default {
           .catch(error => reject(error))
       })
     },
+    apiGetWeekly: function () {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: 'stats/weekly', headers: { Accept: 'application/json' } })
+          .then(result => {
+            if (result && result.data) {
+              resolve(result.data)
+            } else {
+              resolve(null)
+            }
+          })
+          .catch(error => reject(error))
+      })
+    },
     getYears: function () {
       return new Promise((resolve, reject) => {
         this.axios({ url: 'stats/years', headers: { Accept: 'application/json' } })

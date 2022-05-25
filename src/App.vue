@@ -11,6 +11,7 @@
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="ml-auto">
+          <b-nav-item :to="{ name: 'Weekly' }">Week overview</b-nav-item>
           <b-nav-item :to="{ name: 'Yearly' }">Year overview</b-nav-item>
         </b-navbar-nav>
       </b-collapse>
