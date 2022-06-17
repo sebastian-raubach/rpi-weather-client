@@ -224,9 +224,9 @@ export default {
         visible: false
       }, {
         traces: [
-          { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'smooth' },
+          { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'none' },
           { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'none', isForecast: true },
-          { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'smooth' },
+          { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'none' },
           { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'none', isForecast: true }
         ],
         bgImage: require('@/assets/banner-wind.jpg'),

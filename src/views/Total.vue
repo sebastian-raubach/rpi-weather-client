@@ -1,5 +1,5 @@
 <template>
-  <div id="weekly" class="mt-4" v-if="data">
+  <div id="total" class="mt-4" v-if="data">
     <b-row>
       <b-col cols=12 md=4 class="mb-4">
         <b-card class="bg-total-rain">
@@ -127,7 +127,7 @@ export default {
     }
   },
   mounted: function () {
-    this.apiGetWeekly()
+    this.apiGetTotal()
       .then(result => {
         this.data = result
       })
@@ -136,24 +136,24 @@ export default {
 </script>
 
 <style>
-#weekly .card {
+#total .card {
   height: 175px;
 }
-#weekly .card h1,
-#weekly .card h4 {
+#total .card h1,
+#total .card h4 {
   margin-bottom: 0;
 }
-#weekly .card h6:first-child {
+#total .card h6:first-child {
   margin: 0.5em 0;
 }
-#weekly .card h6:last-child {
+#total .card h6:last-child {
   margin-bottom: 1em;
 }
-#weekly .card .card-title,
-#weekly .card .card-subtitle {
+#total .card .card-title,
+#total .card .card-subtitle {
   color: white !important;
 }
-#weekly .card h1 {
+#total .card h1 {
   color: #999;
   mix-blend-mode: color-dodge;
   font-size: 3rem;

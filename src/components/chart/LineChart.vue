@@ -162,7 +162,7 @@ export default {
         // let y = this.unpack(t.isForecast ? this.forecast : this.data, t.y)
 
         if (t.aggregation === 'smooth') {
-          y = this.smooth(y, 2)
+          y = this.smooth(y, 1)
         } else if (t.aggregation === 'cumulative') {
           y = this.cumulative(y)
         }
