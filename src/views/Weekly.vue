@@ -1,7 +1,7 @@
 <template>
   <div id="weekly" class="mt-4" v-if="data">
     <b-row>
-      <b-col cols=12 md=4 class="mb-4">
+      <b-col cols=12 md=4 class="mb-4" v-if="data.totalRain !== undefined && data.totalRain !== null">
         <b-card class="bg-total-rain">
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
@@ -16,7 +16,7 @@
           </b-row>
         </b-card>
       </b-col>
-      <b-col cols=12 md=4 class="mb-4" v-if="data.mostRain">
+      <b-col cols=12 md=4 class="mb-4" v-if="data.mostRain && data.mostRain.value !== undefined && data.mostRain.value !== null">
         <b-card class="bg-rainiest-day">
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
@@ -35,7 +35,7 @@
           </b-row>
         </b-card>
       </b-col>
-      <b-col cols=12 md=4 class="mb-4" v-if="data.mostWind">
+      <b-col cols=12 md=4 class="mb-4" v-if="data.mostWind && data.mostWind.value !== undefined && data.mostWind.value !== null">
         <b-card class="bg-windiest-day">
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
@@ -56,7 +56,7 @@
       </b-col>
     </b-row>
     <b-row>
-      <b-col cols=12 md=4 class="mb-4" v-if="data.lowestTemp">
+      <b-col cols=12 md=4 class="mb-4" v-if="data.lowestTemp && data.lowestTemp.value !== undefined && data.lowestTemp.value !== null">
         <b-card class="bg-temp-low">
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
@@ -73,7 +73,7 @@
           </b-row>
         </b-card>
       </b-col>
-      <b-col cols=12 md=4 class="mb-4">
+      <b-col cols=12 md=4 class="mb-4" v-if="data.avgTemp !== undefined && data.avgTemp !== null">
         <b-card class="bg-temp-avg">
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
@@ -88,7 +88,7 @@
           </b-row>
         </b-card>
       </b-col>
-      <b-col cols=12 md=4 class="mb-4" v-if="data.highestTemp">
+      <b-col cols=12 md=4 class="mb-4" v-if="data.highestTemp && data.highestTemp.value !== undefined && data.highestTemp.value !== null">
         <b-card class="bg-temp-high">
           <b-row class="h-100">
             <b-col cols=10 class="d-flex flex-column justify-content-between">
