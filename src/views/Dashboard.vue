@@ -1,7 +1,5 @@
 <template>
   <div class="mt-4">
-    <h1 v-if="moonPhase" class="mb-3">{{ new Date().toLocaleDateString() }}</h1>
-
     <b-row>
       <b-col cols=6 sm=4 xl=3 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100 position-relative">
@@ -49,8 +47,7 @@
     </b-row>
 
     <div v-if="(dataFile && dataFile.length > 0) || (forecast && forecast.length > 0)">
-      <h2 class="my-3">Last measurement: {{ lastMeasurementDateTime }}</h2>
-      <b-row class="my-4">
+      <b-row>
         <b-col cols=12 sm=6 md=4 v-for="(variable, index) in variables" :key="`variable-${index}`" class="mb-4">
           <b-card :class="`variable-card ${variable.visible ? 'active' : null}`" no-body>
             <div class="bg" :style="{ backgroundImage: `url(${variable.bgImage})` }" />
@@ -83,7 +80,7 @@
       </b-row>
 
       <template v-for="(variable, index) in variables">
-        <b-row :key="`variable-${index}`" class="my-4" v-if="variable.visible">
+        <b-row :key="`variable-${index}`" class="mb-4" v-if="variable.visible">
           <b-col cols=12 lg=10>
             <b-card>
               <LineChart :data="dataFile" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
@@ -108,7 +105,7 @@
         </b-row>
       </template>
 
-      <b-row class="my-4" v-if="variables[5].visible">
+      <b-row class="mb-4" v-if="variables[5].visible">
         <b-col cols=12 lg=10>
           <b-row>
             <b-col cols=12 lg=6>
@@ -263,15 +260,6 @@ export default {
     }
   },
   computed: {
-    lastMeasurementDateTime: function () {
-      if (!this.dataFile || this.dataFile.length < 1) {
-        return null
-      }
-
-      const date = new Date(this.dataFile[this.dataFile.length - 1].created)
-
-      return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
-    },
     trendData: function () {
       if (!this.dataFile || this.dataFile.length < 1) {
         return null
@@ -516,7 +504,6 @@ export default {
       this.apiGetForecast(this.start, this.end)
         .then(result => {
           this.forecast = result
-          console.log(this.forecast)
         })
     },
     getMoonPhase: function () {

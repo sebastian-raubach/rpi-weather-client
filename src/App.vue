@@ -17,7 +17,10 @@
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
-    <b-container fluid>
+    <div class="position-fixed w-100 d-flex justify-content-center update-banner bg-dark" v-if="lastUpdateDate">
+      <span class="px-2 pb-2 text-muted">Last update: {{ `${lastUpdateDate.toLocaleDateString()} ${lastUpdateDate.toLocaleTimeString()}` }}</span>
+    </div>
+    <b-container fluid class="pt-3 mt-3">
       <router-view/>
     </b-container>
   </div>
@@ -30,10 +33,35 @@ export default {
   components: {
     BIconArrowRepeat
   },
+  data: function () {
+    return {
+      lastUpdate: null
+    }
+  },
+  computed: {
+    lastUpdateDate: function () {
+      if (this.lastUpdate) {
+        return new Date(this.lastUpdate)
+      } else {
+        return null
+      }
+    }
+  },
   methods: {
     refresh: function () {
       this.$emitter.emit('refresh')
+
+      this.getLatest()
+    },
+    getLatest: function () {
+      this.apiGetLatestDate()
+        .then(result => {
+          this.lastUpdate = result[0]
+        })
     }
+  },
+  mounted: function () {
+    this.getLatest()
   }
 }
 </script>
@@ -48,5 +76,9 @@ export default {
 
 .b-form-datepicker .b-calendar-nav .btn {
   color: white;
+}
+
+.update-banner {
+  z-index: 100;
 }
 </style>

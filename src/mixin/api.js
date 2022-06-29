@@ -102,6 +102,19 @@ export default {
           .catch(error => reject(error))
       })
     },
+    apiGetLatestDate: function () {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: 'latest', headers: { Accept: 'application/json' } })
+          .then(result => {
+            if (result && result.data) {
+              resolve(result.data)
+            } else {
+              resolve(null)
+            }
+          })
+          .catch(error => reject(error))
+      })
+    },
     apiGetTotal: function () {
       return new Promise((resolve, reject) => {
         this.axios({ url: 'stats/total', headers: { Accept: 'application/json' } })
