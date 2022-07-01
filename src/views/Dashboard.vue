@@ -505,6 +505,8 @@ export default {
         .then(result => {
           this.forecast = result
         })
+
+      this.$emitter.emit('refresh-latest')
     },
     getMoonPhase: function () {
       const today = new Date()
@@ -538,8 +540,6 @@ export default {
       }
 
       this.moonPhase = this.moonPhases[b]
-      // const moon = SunCalc.getMoonIllumination(new Date())
-      // this.moonPhase = this.moonPhases.getValue(moon.phase)
     }
   },
   mounted: function () {
@@ -558,13 +558,6 @@ export default {
 </script>
 
 <style scoped>
-.icon-flipped {
-  transform: scaleX(-1);
-  -moz-transform: scaleX(-1);
-  -webkit-transform: scaleX(-1);
-  -ms-transform: scaleX(-1);
-}
-
 .moon {
   color: #FFC312;
 }

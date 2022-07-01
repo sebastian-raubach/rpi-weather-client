@@ -61,7 +61,11 @@ export default {
     }
   },
   mounted: function () {
+    this.$emitter.on('refresh-latest', this.getLatest)
     this.getLatest()
+  },
+  beforeDestroy: function () {
+    this.$emitter.off('refresh-latest', this.getLatest)
   }
 }
 </script>
