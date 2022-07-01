@@ -50,8 +50,6 @@ export default {
   methods: {
     refresh: function () {
       this.$emitter.emit('refresh')
-
-      this.getLatest()
     },
     getLatest: function () {
       this.apiGetLatestDate()
@@ -62,7 +60,6 @@ export default {
   },
   mounted: function () {
     this.$emitter.on('refresh-latest', this.getLatest)
-    this.getLatest()
   },
   beforeDestroy: function () {
     this.$emitter.off('refresh-latest', this.getLatest)
