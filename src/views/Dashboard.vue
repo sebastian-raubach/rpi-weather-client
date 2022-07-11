@@ -181,6 +181,7 @@ export default {
       currentWindDirection: null,
       windCategories: windCategories,
       variables: [{
+        id: 'temp',
         traces: [
           { x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none' },
           { x: 'created', y: 'groundTemp', icon: BIconThermometer, color: '#009432', aggregation: 'none' },
@@ -190,6 +191,7 @@ export default {
         yTitle: 'Temperature [°C]',
         visible: false
       }, {
+        id: 'rainfall',
         traces: [
           { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' },
           { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative', isForecast: true }
@@ -198,6 +200,7 @@ export default {
         yTitle: 'Rainfall [mm]',
         visible: false
       }, {
+        id: 'humidity',
         traces: [
           { x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'smooth' },
           { x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'none', isForecast: true }
@@ -207,6 +210,7 @@ export default {
         visible: false,
         yRange: [0, 100]
       }, {
+        id: 'pressure',
         traces: [
           { x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'smooth' },
           { x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'none', isForecast: true }
@@ -215,11 +219,13 @@ export default {
         yTitle: 'Pressure [hpa]',
         visible: false
       }, {
+        id: 'pi',
         traces: [{ x: 'created', y: 'piTemp', icon: BIconCpu, color: '#EA2027', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-pi.jpg'),
         yTitle: 'Pi Temperature [°C]',
         visible: false
       }, {
+        id: 'wind',
         traces: [
           { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'none' },
           { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'none', isForecast: true },
@@ -378,6 +384,23 @@ export default {
   methods: {
     onVariableClicked: function (index) {
       this.variables[index].visible = !this.variables[index].visible
+
+      const query = Object.assign({}, this.$route.query)
+
+      const variables = new Set()
+      if (query.vars) {
+        query.vars.forEach(v => variables.add(v))
+      }
+
+      if (this.variables[index].visible) {
+        variables.add(this.variables[index].id)
+      } else {
+        variables.delete(this.variables[index].id)
+      }
+
+      query.vars = [...variables]
+
+      this.$router.replace({ query })
     },
     setWindDirection: function (direction) {
       this.currentWindDirection = direction
@@ -543,6 +566,14 @@ export default {
     }
   },
   mounted: function () {
+    const query = Object.assign({}, this.$route.query)
+
+    if (query.vars) {
+      query.vars.forEach(v => {
+        this.variables.find(ov => ov.id === v).visible = true
+      })
+    }
+
     this.endDate = new Date()
     // this.startDate = new Date(this.endDate.getTime() - (24 * 60 * 60 * 1000))
     this.startDate = new Date()

@@ -3,6 +3,18 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
+const originalReplace = VueRouter.prototype.replace
+VueRouter.prototype.replace = function replace (location, onResolve, onReject) {
+  if (onResolve || onReject) {
+    return originalReplace.call(this, location, onResolve, onReject)
+  }
+  return originalReplace.call(this, location).catch(err => {
+    if (err && err.name !== 'NavigationDuplicated') {
+      throw err
+    }
+  })
+}
+
 const routes = [
   {
     path: '/',
