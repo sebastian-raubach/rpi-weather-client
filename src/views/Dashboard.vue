@@ -569,9 +569,17 @@ export default {
     const query = Object.assign({}, this.$route.query)
 
     if (query.vars) {
-      query.vars.forEach(v => {
-        this.variables.find(ov => ov.id === v).visible = true
-      })
+      try {
+        if (Array.isArray(query.vars)) {
+          query.vars.forEach(v => {
+            this.variables.find(ov => ov.id === v).visible = true
+          })
+        } else {
+          this.variables.find(ov => ov.id === query.vars).visible = true
+        }
+      } catch (err) {
+        // Do nothing here
+      }
     }
 
     this.endDate = new Date()
