@@ -14,7 +14,8 @@ import {
   FormSelectPlugin,
   FormDatepickerPlugin,
   LayoutPlugin,
-  NavbarPlugin
+  NavbarPlugin,
+  ButtonGroupPlugin
 } from 'bootstrap-vue'
 
 const emitter = mitt()
@@ -22,6 +23,7 @@ const emitter = mitt()
 Vue.config.productionTip = false
 
 Vue.use(ButtonPlugin)
+Vue.use(ButtonGroupPlugin)
 Vue.use(CardPlugin)
 Vue.use(FormPlugin)
 Vue.use(FormSelectPlugin)
