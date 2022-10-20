@@ -128,6 +128,8 @@
         </b-col>
       </b-row>
     </div>
+
+    <b-button class="btn-circle" id="refresh" variant="primary"><BIconArrowRepeat :animation="isRefreshing ? 'spin' : null" /></b-button>
   </div>
 </template>
 
@@ -135,11 +137,13 @@
 import LineChart from '@/components/chart/LineChart'
 import WindRose from '@/components/chart/WindRose'
 
-import { BIconCloudRain, BIconCpu, BIconArrowDown, BIconArrowUp, BIconCompass, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
+import { BIconCloudRain, BIconCpu, BIconArrowDown, BIconArrowUp, BIconCompass, BIconArrowRepeat, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
 
-import Chart from 'chart.js'
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js'
 
 import Trend from 'vuetrend'
+
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Filler, Tooltip)
 
 const SunCalc = require('suncalc')
 
@@ -153,7 +157,8 @@ export default {
     BIconSunset,
     BIconArrowDown,
     BIconArrowUp,
-    BIconCompass
+    BIconCompass,
+    BIconArrowRepeat
   },
   data: function () {
     const windCategories = [
@@ -179,6 +184,7 @@ export default {
       dataFile: null,
       forecast: null,
       currentWindDirection: null,
+      isRefreshing: false,
       windCategories: windCategories,
       variables: [{
         id: 'temp',
@@ -465,17 +471,17 @@ export default {
             display: false
           },
           scales: {
-            yAxes: [{
+            y: {
               display: false,
               ticks: {
                 suggestedMin: 0,
                 beginAtZero: true,
                 suggestedMax: this.maxValue
               }
-            }],
-            xAxes: [{
+            },
+            x: {
               display: false
-            }]
+            }
           }
         }
       })
@@ -504,32 +510,36 @@ export default {
             display: false
           },
           scales: {
-            yAxes: [{
+            y: {
               display: false,
               ticks: {
                 suggestedMin: 0,
                 beginAtZero: true,
                 suggestedMax: this.maxValue
               }
-            }],
-            xAxes: [{
+            },
+            x: {
               display: false
-            }]
+            }
           }
         }
       })
     },
     getData: function () {
-      this.apiGetData(this.start, this.end)
-        .then(result => {
-          this.dataFile = result
-        })
-      this.apiGetForecast(this.start, this.end)
-        .then(result => {
-          this.forecast = result
-        })
+      this.isRefreshing = true
 
-      this.$emitter.emit('refresh-latest')
+      this.$nextTick(() => {
+        const data = this.apiGetData(this.start, this.end)
+        const forecast = this.apiGetForecast(this.start, this.end)
+
+        Promise.all([data, forecast])
+          .then(data => {
+            this.dataFile = data[0]
+            this.forecast = data[1]
+            this.isRefreshing = false
+            this.$emitter.emit('refresh-latest')
+          })
+      })
     },
     getMoonPhase: function () {
       const today = new Date()
@@ -652,6 +662,24 @@ export default {
   opacity: 0;
 }
 .variable-card:hover .heading {
+  opacity: 1;
+}
+.btn-circle {
+  width: 50px;
+  height: 50px;
+  padding: 7px 10px;
+  border-radius: 25px;
+  text-align: center;
+}
+#refresh {
+  position: fixed;
+  transition: opacity linear 0.1s;
+  opacity: 0.66;
+  right: 1em;
+  bottom: 1em;
+}
+#refresh:active,
+#refresh:hover {
   opacity: 1;
 }
 </style>

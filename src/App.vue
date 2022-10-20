@@ -5,7 +5,7 @@
         <img src="img/logo.svg" height="40px" alt="Weather">
       </b-navbar-brand>
 
-      <b-button @click="refresh"><BIconArrowRepeat /></b-button>
+      <b-button @click="refresh" v-if="isFrontPage"><BIconArrowRepeat /></b-button>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -45,6 +45,9 @@ export default {
       } else {
         return null
       }
+    },
+    isFrontPage: function () {
+      return this.$route.name === 'Dashboard'
     }
   },
   methods: {
