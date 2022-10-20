@@ -129,7 +129,7 @@
       </b-row>
     </div>
 
-    <b-button class="btn-circle" id="refresh" variant="primary"><BIconArrowRepeat :animation="isRefreshing ? 'spin' : null" /></b-button>
+    <b-button class="btn-circle" id="refresh" variant="primary" @click.stop.prevent="getData"><BIconArrowRepeat :animation="isRefreshing ? 'spin' : null" /></b-button>
   </div>
 </template>
 
