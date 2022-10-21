@@ -677,6 +677,7 @@ export default {
   opacity: 0.66;
   right: 1em;
   bottom: 1em;
+  z-index: 2;
 }
 #refresh:active,
 #refresh:hover {
