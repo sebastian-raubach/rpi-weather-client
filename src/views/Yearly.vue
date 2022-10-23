@@ -53,10 +53,14 @@ export default {
         windSpeed: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#B53471']],
         windGust: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#833471']],
         windAverage: [[0, '#ED4C67'], [1, '#6F1E51']]
-      }
+      },
+      windowWidth: 1920
     }
   },
   computed: {
+    isHorizontal: function () {
+      return this.windowWidth < 720
+    },
     yearIndices: function () {
       const result = []
 
@@ -70,6 +74,9 @@ export default {
     }
   },
   watch: {
+    isHorizontal: function () {
+      this.update()
+    },
     data: function () {
       this.update()
     },
@@ -107,11 +114,11 @@ export default {
         }
       })
 
-      this.updateHeatmap()
-      this.updateLine()
-      this.updateBoxplot()
+      this.updateHeatmap(window.innerWidth < 720)
+      this.updateLine(window.innerWidth < 720)
+      this.updateBoxplot(window.innerWidth < 720)
     },
-    updateLine: function () {
+    updateLine: function (horizontal) {
       let minY = Number.MAX_SAFE_INTEGER
       let maxY = -Number.MAX_SAFE_INTEGER
 
@@ -134,40 +141,59 @@ export default {
         const year = this.years[i]
 
         if (y) {
+          const start = new Date(this.data[year][0].date)
+          const startOfYear = new Date(start.getFullYear(), 0, 1)
+          const end = new Date(this.data[year][this.data[year].length - 1].date)
+          const endOfYear = new Date(end.getFullYear(), 11, 31)
+
+          let xData = this.data[year].map(d => new Date(d.date))
+          let yData = this.data[year].map(d => (d && d[this.aggregation]) ? d[this.aggregation][this.climate] : null)
+          const color = xData.map(d => d.getMonth())
+
+          if (horizontal) {
+            [xData, yData] = [yData, xData]
+          }
+
           const data = [{
-            x: this.data[year].map(d => new Date(d.date)),
-            y: this.data[year].map(d => (d && d[this.aggregation]) ? d[this.aggregation][this.climate] : null),
+            x: xData,
+            y: yData,
             type: 'scatter',
             mode: 'markers',
             marker: {
               cmin: 0,
               cmax: 11,
-              color: this.data[year].map(d => new Date(d.date).getMonth()),
+              color: color,
               colorscale: this.colors.map((c, i) => [i / (this.colors.length - 1), c])
             }
           }]
 
-          const start = new Date(this.data[year][0].date)
-          const end = new Date(this.data[year][this.data[year].length - 1].date)
+          let xAxis = {
+            gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
+            tickfont: { color: 'white' },
+            title: { text: 'Date', font: { color: 'white' } },
+            range: horizontal ? [endOfYear, startOfYear] : [startOfYear, endOfYear]
+          }
+
+          let yAxis = {
+            gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
+            tickfont: { color: 'white' },
+            title: { text: 'Value', font: { color: 'white' } },
+            range: [minY - 3, maxY + 3]
+          }
+
+          if (horizontal) {
+            [xAxis, yAxis] = [yAxis, xAxis]
+          }
 
           const layout = {
             margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
+            height: horizontal ? 840 : 600,
             dragmode: false,
             autosize: true,
             paper_bgcolor: '#4e5d6c',
             plot_bgcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
-            xaxis: {
-              gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
-              tickfont: { color: 'white' },
-              title: { text: 'Date', font: { color: 'white' } },
-              range: [new Date(start.getFullYear(), start.getMonth(), 1), new Date(end.getFullYear(), end.getMonth() + 1, 0)]
-            },
-            yaxis: {
-              gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
-              tickfont: { color: 'white' },
-              title: { text: 'Value', font: { color: 'white' } },
-              range: [minY - 3, maxY + 3]
-            },
+            xaxis: xAxis,
+            yaxis: yAxis,
             type: 'line',
             hovermode: 'x'
           }
@@ -182,7 +208,7 @@ export default {
         }
       })
     },
-    updateBoxplot: function () {
+    updateBoxplot: function (horizontal) {
       let minY = Number.MAX_SAFE_INTEGER
       let maxY = -Number.MAX_SAFE_INTEGER
 
@@ -206,15 +232,26 @@ export default {
 
         if (y) {
           const data = this.months.map((m, i) => {
-            const y = this.data[year].filter(d => {
-              const date = new Date(d.date)
-              return date.getMonth() === i
-            }).map(d => (d && d[this.aggregation]) ? d[this.aggregation][this.climate] : null)
+            if (horizontal) {
+              i = 11 - i
+            }
+
+            const y = this.data[year].filter(d => new Date(d.date).getMonth() === i)
+              .map(d => (d && d[this.aggregation]) ? d[this.aggregation][this.climate] : null)
+
+            let isEmpty = false
+            if (y.length < 1) {
+              y.push(0)
+              isEmpty = true
+            }
 
             return {
-              y: y,
+              y: horizontal ? null : y,
+              x: horizontal ? y : null,
+              opacity: isEmpty ? 0 : 1,
+              hoverinfo: isEmpty ? 'none' : 'all',
               type: 'box',
-              name: m,
+              name: this.months[i],
               visible: true,
               boxpoints: 'all',
               jitter: 0.3,
@@ -225,8 +262,25 @@ export default {
             }
           })
 
+          let xAxis = {
+            gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
+            tickfont: { color: 'white' },
+            title: { text: 'Month', font: { color: 'white' } }
+          }
+          let yAxis = {
+            gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
+            tickfont: { color: 'white' },
+            title: { text: 'Value', font: { color: 'white' } },
+            range: [minY - 3, maxY + 3]
+          }
+
+          if (horizontal) {
+            [xAxis, yAxis] = [yAxis, xAxis]
+          }
+
           const layout = {
             margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
+            height: horizontal ? 840 : 600,
             dragmode: false,
             autosize: true,
             paper_bgcolor: '#4e5d6c',
@@ -241,17 +295,8 @@ export default {
                 color: 'white'
               }
             },
-            xaxis: {
-              gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
-              tickfont: { color: 'white' },
-              title: { text: 'Month', font: { color: 'white' } }
-            },
-            yaxis: {
-              gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
-              tickfont: { color: 'white' },
-              title: { text: 'Value', font: { color: 'white' } },
-              range: [minY - 3, maxY + 3]
-            }
+            xaxis: xAxis,
+            yaxis: yAxis
           }
 
           const config = {
@@ -392,9 +437,17 @@ export default {
             this.update()
           })
       }
+    },
+    onResize: function () {
+      this.windowWidth = window.innerWidth
     }
   },
+  beforeDestroy: function () {
+    window.removeEventListener('resize', this.onResize)
+  },
   mounted: function () {
+    window.addEventListener('resize', this.onResize)
+
     this.getYears()
       .then(result => {
         this.years = result
