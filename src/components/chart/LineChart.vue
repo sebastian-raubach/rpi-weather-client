@@ -165,7 +165,7 @@ export default {
           y = this.smooth(y, 1)
         } else if (t.aggregation === 'cumulative') {
           const otherY = this.traces.filter((tt, tti) => tti !== ti && tt.y === t.y)
-          y = this.cumulative(y, otherY && otherT.length > 0 ? otherY[otherY.length - 1])
+          y = this.cumulative(y, (otherY && otherT.length > 0) ? otherY[otherY.length - 1] : 0)
         }
 
         minY = Math.min(minY, Math.min.apply(null, y))
