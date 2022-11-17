@@ -140,7 +140,7 @@ export default {
       let minY = Number.MAX_SAFE_INTEGER
       let maxY = -Number.MAX_SAFE_INTEGER
 
-      const data = this.traces.map(t => {
+      const data = this.traces.map((t, ti) => {
         let [x, y] = this.unpack(t.isForecast ? this.forecast : this.data, t.x, t.y)
 
         // const x = this.unpack(t.isForecast ? this.forecast : this.data, t.x)
@@ -164,7 +164,8 @@ export default {
         if (t.aggregation === 'smooth') {
           y = this.smooth(y, 1)
         } else if (t.aggregation === 'cumulative') {
-          y = this.cumulative(y)
+          const otherY = this.traces.filter((tt, tti) => tti !== ti && tt.y === t.y)
+          y = this.cumulative(y, otherY && otherT.length > 0 ? otherY[otherY.length - 1])
         }
 
         minY = Math.min(minY, Math.min.apply(null, y))
@@ -295,10 +296,10 @@ export default {
 
       return result
     },
-    cumulative: function (data) {
+    cumulative: function (data, adjustBy = 0) {
       const result = []
 
-      let total = 0
+      let total = adjustBy
       data.forEach(d => {
         if (d !== undefined && d !== null) {
           total += d
