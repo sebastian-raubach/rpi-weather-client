@@ -164,8 +164,18 @@ export default {
         if (t.aggregation === 'smooth') {
           y = this.smooth(y, 1)
         } else if (t.aggregation === 'cumulative') {
-          const otherY = this.traces.filter((tt, tti) => tti !== ti && tt.y === t.y)
-          y = this.cumulative(y, (otherY && otherY.length > 0) ? otherY[otherY.length - 1] : 0)
+          if (t.isForecast === true) {
+            const otherY = this.traces.filter((tt, tti) => tti !== ti && tt.y === t.y)
+            if (otherY && otherY.length > 0) {
+              // eslint-disable-next-line
+              const [ox, oy] = this.unpack(this.data, otherY[0].x, otherY[0].y)
+              y = this.cumulative(y, oy[oy.length - 1])
+            } else {
+              y = this.cumulative(y)
+            }
+          } else {
+            y = this.cumulative(y)
+          }
         }
 
         minY = Math.min(minY, Math.min.apply(null, y))
