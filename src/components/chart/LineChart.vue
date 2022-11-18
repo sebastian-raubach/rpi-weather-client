@@ -168,8 +168,13 @@ export default {
             const otherY = this.traces.filter((tt, tti) => tti !== ti && tt.y === t.y)
             if (otherY && otherY.length > 0) {
               // eslint-disable-next-line
-              const [ox, oy] = this.unpack(this.data, otherY[0].x, otherY[0].y)
-              y = this.cumulative(y, oy[oy.length - 1])
+              let [ox, oy] = this.unpack(this.data, otherY[0].x, otherY[0].y)
+              if (oy.length > 0) {
+                oy = this.cumulative(oy)
+                y = this.cumulative(y, oy[oy.length - 1])
+              } else {
+                y = this.cumulative(y)
+              }
             } else {
               y = this.cumulative(y)
             }
