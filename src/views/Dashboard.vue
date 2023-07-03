@@ -137,7 +137,7 @@
 import LineChart from '@/components/chart/LineChart'
 import WindRose from '@/components/chart/WindRose'
 
-import { BIconCloudRain, BIconCpu, BIconArrowDown, BIconArrowUp, BIconCompass, BIconArrowRepeat, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
+import { BIconCloudRain, BIconCpu, BIconArrowDown, BIconArrowUp, BIconCompass, BIconSun, BIconArrowRepeat, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
 
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js'
 
@@ -223,6 +223,12 @@ export default {
         ],
         bgImage: require('@/assets/banner-pressure.jpg'),
         yTitle: 'Pressure [hpa]',
+        visible: false
+      }, {
+        id: 'lux',
+        traces: [{ x: 'created', y: 'lux', icon: BIconSun, color: '#F79F1F', aggregation: 'smooth' }],
+        bgImage: require('@/assets/banner-lux.jpg'),
+        yTitle: 'Lux',
         visible: false
       }, {
         id: 'pi',
