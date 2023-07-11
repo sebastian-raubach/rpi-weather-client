@@ -48,7 +48,7 @@
 
     <div v-if="(dataFile && dataFile.length > 0) || (forecast && forecast.length > 0)">
       <b-row>
-        <b-col cols=12 sm=6 md=4 v-for="(variable, index) in variables" :key="`variable-${index}`" class="mb-4">
+        <b-col cols=12 sm=6 md=4 xl=3 v-for="(variable, index) in variables" :key="`variable-${index}`" class="mb-4">
           <b-card :class="`variable-card ${variable.visible ? 'active' : null}`" no-body>
             <div class="bg" :style="{ backgroundImage: `url(${variable.bgImage})` }" />
             <b-card-body class="position-relative d-flex flex-column align-items-center justify-content-center">
@@ -105,7 +105,7 @@
         </b-row>
       </template>
 
-      <b-row class="mb-4" v-if="variables[5].visible">
+      <b-row class="mb-4" v-if="variables[6].visible">
         <b-col cols=12 lg=10>
           <b-row>
             <b-col cols=12 lg=6>
