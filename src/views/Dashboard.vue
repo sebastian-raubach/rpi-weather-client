@@ -401,7 +401,11 @@ export default {
 
       const variables = new Set()
       if (query.vars) {
-        query.vars.forEach(v => variables.add(v))
+        if (Array.isArray(query.vars)) {
+          query.vars.forEach(v => variables.add(v))
+        } else {
+          variables.add(query.vars)
+        }
       }
 
       if (this.variables[index].visible) {
