@@ -470,9 +470,11 @@ export default {
           }]
         },
         options: {
-          tooltips: {
-            callbacks: {
-              label: tooltipItem => mapped[tooltipItem.index].sunriseText
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: context => mapped[context.dataIndex].sunriseText
+              }
             }
           },
           responsive: true,
@@ -509,9 +511,11 @@ export default {
           }]
         },
         options: {
-          tooltips: {
-            callbacks: {
-              label: tooltipItem => mapped[tooltipItem.index].sunsetText
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: context => mapped[context.dataIndex].sunsetText
+              }
             }
           },
           responsive: true,
