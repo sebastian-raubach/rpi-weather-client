@@ -255,7 +255,7 @@ export default {
       }
 
       if (this.xRange) {
-        layout.xaxis.range = this.xRange
+        layout.xaxis.range = this.xRange.map(d => new Date(d))
       } else {
         layout.xaxis.range = [minDate, maxDate]
       }
@@ -264,8 +264,8 @@ export default {
       }
 
       this.sunriseSunset.forEach(ss => {
-        const containsSunrise = ss.sunrise.getTime() >= minDate.getTime() && ss.sunrise.getTime() <= maxDate.getTime()
-        const containsSunset = ss.sunset.getTime() >= minDate.getTime() && ss.sunset.getTime() <= maxDate.getTime()
+        const containsSunrise = ss.sunrise.getTime() >= layout.xaxis.range[0].getTime() && ss.sunrise.getTime() <= layout.xaxis.range[1].getTime()
+        const containsSunset = ss.sunset.getTime() >= layout.xaxis.range[0].getTime() && ss.sunset.getTime() <= layout.xaxis.range[1].getTime()
 
         if (containsSunrise) {
           layout.shapes.push({
