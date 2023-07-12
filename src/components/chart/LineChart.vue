@@ -33,6 +33,10 @@ export default {
       type: Array,
       default: null
     },
+    xRange: {
+      type: Array,
+      default: null
+    },
     shapes: {
       type: Array,
       default: null
@@ -250,11 +254,14 @@ export default {
         shapes: shapes
       }
 
+      if (this.xRange) {
+        layout.xaxis.range = this.xRange
+      } else {
+        layout.xaxis.range = [minDate, maxDate]
+      }
       if (this.yRange) {
         layout.yaxis.range = this.yRange
       }
-
-      layout.xaxis.range = [minDate, maxDate]
 
       this.sunriseSunset.forEach(ss => {
         const containsSunrise = ss.sunrise.getTime() >= minDate.getTime() && ss.sunrise.getTime() <= maxDate.getTime()

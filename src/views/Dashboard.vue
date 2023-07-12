@@ -83,7 +83,7 @@
         <b-row :key="`variable-${index}`" class="mb-4" v-if="variable.visible">
           <b-col cols=12 lg=10>
             <b-card>
-              <LineChart :data="dataFile" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
+              <LineChart :data="dataFile" :xRange="dataDateRange" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
             </b-card>
           </b-col>
           <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
@@ -181,6 +181,7 @@ export default {
       chartData: null,
       endDate: null,
       startDate: null,
+      dataDateRange: null,
       dataFile: null,
       forecast: null,
       currentWindDirection: null,
@@ -550,6 +551,30 @@ export default {
           .then(data => {
             this.dataFile = data[0]
             this.forecast = data[1]
+
+            if (this.dataFile) {
+              const dateRange = ['9999-12-31T23:59:59.999+0000', '-0000-01-01T00:00:00.000+0000']
+              this.dataFile.forEach(d => {
+                if (d.created) {
+                  dateRange[0] = d.created < dateRange[0] ? d.created : dateRange[0]
+                  dateRange[1] = d.created > dateRange[1] ? d.created : dateRange[1]
+                }
+              })
+
+              if (this.forecast) {
+                this.forecast.forEach(d => {
+                  if (d.created) {
+                    dateRange[0] = d.created < dateRange[0] ? d.created : dateRange[0]
+                    dateRange[1] = d.created > dateRange[1] ? d.created : dateRange[1]
+                  }
+                })
+              }
+
+              this.dataDateRange = dateRange
+            } else {
+              this.dataDateRange = null
+            }
+
             this.isRefreshing = false
             this.$emitter.emit('refresh-latest')
           })
