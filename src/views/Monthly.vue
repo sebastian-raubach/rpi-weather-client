@@ -1,5 +1,5 @@
 <template>
-  <div id="weekly" class="mt-4" v-if="data">
+  <div id="monthly" class="mt-4" v-if="data">
     <b-row>
       <b-col cols=12 sm=6 md=4 class="mb-4" v-if="data.totalRain !== undefined && data.totalRain !== null">
         <b-card class="bg-total-rain">
@@ -163,11 +163,11 @@ export default {
     }
   },
   mounted: function () {
-    this.apiGetWeekly()
+    this.apiGetMonthly()
       .then(result => {
         this.data = result
       })
-    this.apiGetWeeklyMeasurements()
+    this.apiGetMonthlyMeasurements()
       .then(result => {
         this.measurements = result
       })
@@ -176,24 +176,24 @@ export default {
 </script>
 
 <style>
-#weekly .card {
+#monthly .card {
   height: 175px;
 }
-#weekly .card h1,
-#weekly .card h4 {
+#monthly .card h1,
+#monthly .card h4 {
   margin-bottom: 0;
 }
-#weekly .card h6:first-child {
+#monthly .card h6:first-child {
   margin: 0.5em 0;
 }
-#weekly .card h6:last-child {
+#monthly .card h6:last-child {
   margin-bottom: 1em;
 }
-#weekly .card .card-title,
-#weekly .card .card-subtitle {
+#monthly .card .card-title,
+#monthly .card .card-subtitle {
   color: white !important;
 }
-#weekly .card h1 {
+#monthly .card h1 {
   color: #999;
   mix-blend-mode: color-dodge;
   font-size: 3rem;

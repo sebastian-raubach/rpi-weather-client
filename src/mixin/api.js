@@ -102,6 +102,45 @@ export default {
           .catch(error => reject(error))
       })
     },
+    apiGetWeeklyMeasurements: function () {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: 'stats/weekly/measurements', headers: { Accept: 'application/json' } })
+          .then(result => {
+            if (result && result.data) {
+              resolve(result.data)
+            } else {
+              resolve(null)
+            }
+          })
+          .catch(error => reject(error))
+      })
+    },
+    apiGetMonthly: function () {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: 'stats/monthly', headers: { Accept: 'application/json' } })
+          .then(result => {
+            if (result && result.data) {
+              resolve(result.data)
+            } else {
+              resolve(null)
+            }
+          })
+          .catch(error => reject(error))
+      })
+    },
+    apiGetMonthlyMeasurements: function () {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: 'stats/monthly/measurements', headers: { Accept: 'application/json' } })
+          .then(result => {
+            if (result && result.data) {
+              resolve(result.data)
+            } else {
+              resolve(null)
+            }
+          })
+          .catch(error => reject(error))
+      })
+    },
     apiGetLatestDate: function () {
       return new Promise((resolve, reject) => {
         this.axios({ url: 'latest', headers: { Accept: 'application/json' } })

@@ -27,6 +27,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "yearly" */ '@/views/Yearly.vue')
   },
   {
+    path: '/monthly',
+    name: 'Monthly',
+    component: () => import(/* webpackChunkName: "monthly" */ '@/views/Monthly.vue')
+  },
+  {
     path: '/weekly',
     name: 'Weekly',
     component: () => import(/* webpackChunkName: "weekly" */ '@/views/Weekly.vue')
