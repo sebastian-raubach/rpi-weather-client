@@ -119,8 +119,13 @@
         </b-card>
       </b-col>
       <b-col cols=12 class="mb-4">
-        <b-card class="h-100" title="Pi temperature">
-          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'avgPiTemp', yStd: 'stdPiTemp' }" />
+        <b-card class="h-100" title="Rainfall">
+          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'sumRainfall' }" />
+        </b-card>
+      </b-col>
+      <b-col cols=12 class="mb-4">
+        <b-card class="h-100" title="Lux">
+          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'avgLux', yStd: 'stdLux' }" />
         </b-card>
       </b-col>
       <b-col cols=12 class="mb-4">
@@ -136,6 +141,11 @@
       <b-col cols=12 class="mb-4">
         <b-card class="h-100" title="Pressure">
           <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'avgPressure', yStd: 'stdPressure' }" />
+        </b-card>
+      </b-col>
+      <b-col cols=12 class="mb-4">
+        <b-card class="h-100" title="Pi temperature">
+          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'avgPiTemp', yStd: 'stdPiTemp' }" />
         </b-card>
       </b-col>
     </b-row>

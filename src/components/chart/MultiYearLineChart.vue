@@ -65,7 +65,7 @@ export default {
         let yValue = row[y]
         let stdValue = row[std]
 
-        if (yValue === undefined || yValue === null || yValue === '' || stdValue === undefined || stdValue === null || stdValue === '' || xValue === undefined || xValue === null || xValue === '') {
+        if (yValue === undefined || yValue === null || yValue === '' || xValue === undefined || xValue === null || xValue === '') {
           return
         } else {
           let isDate = false
@@ -160,23 +160,23 @@ export default {
           }
         })
 
-        const yRange = y.map((ys, i) => ys + yStds[i]).concat(y.map((ys, i) => ys - yStds[i]).reverse())
-        data.push({
-          x: x.concat(x.concat().reverse()),
-          y: yRange,
-          type: 'line',
-          mode: 'lines',
-          showlegend: false,
-          hoverinfo: 'skip',
-          fill: 'tozerox',
-          fillcolor: this.hexToRgbA(this.colors[i]),
-          line: {
-            color: 'transparent'
-          }
-        })
+        if (this.trace.yStd) {
+          const yRange = y.map((ys, i) => ys + yStds[i]).concat(y.map((ys, i) => ys - yStds[i]).reverse())
+          data.push({
+            x: x.concat(x.concat().reverse()),
+            y: yRange,
+            type: 'line',
+            mode: 'lines',
+            showlegend: false,
+            hoverinfo: 'skip',
+            fill: 'tozerox',
+            fillcolor: this.hexToRgbA(this.colors[i]),
+            line: {
+              color: 'transparent'
+            }
+          })
+        }
       })
-
-      console.log(data)
 
       const layout = {
         margin: { l: 50, r: 10, t: 10, b: 50, autoexpand: true },
@@ -189,7 +189,8 @@ export default {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
           tickfont: { color: 'white' },
           title: { text: this.xTitle, font: { color: 'white' } },
-          tickformat: '%B %d'
+          tickformat: '%B %d',
+          range: [minDate, maxDate]
         },
         yaxis: {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
