@@ -167,6 +167,15 @@ export default {
           .catch(error => reject(error))
       })
     },
+    apiDeleteRainfall: function (start, end, uuid) {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: 'data/rainfall', method: 'delete', params: { start: start, end: end, uuid: uuid }, headers: { Accept: 'application/json' } })
+          .then(() => {
+            resolve()
+          })
+          .catch(error => reject(error))
+      })
+    },
     getYears: function () {
       return new Promise((resolve, reject) => {
         this.axios({ url: 'stats/years', headers: { Accept: 'application/json' } })

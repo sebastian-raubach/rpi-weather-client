@@ -83,7 +83,7 @@
         <b-row :key="`variable-${index}`" class="mb-4" v-if="variable.visible">
           <b-col cols=12 lg=10>
             <b-card>
-              <LineChart :data="dataFile" :xRange="dataDateRange" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" />
+              <LineChart :id="variable.id" :data="dataFile" :xRange="dataDateRange" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" @rainfall-range-selected="setRainfallRange" />
             </b-card>
           </b-col>
           <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
@@ -101,6 +101,8 @@
                 </b-col>
               </template>
             </b-row>
+
+            <b-button v-if="variable.id === 'rainfall'" :disabled="!rainfallRange" @click="$refs.adminUuidModal.show()"><BIconTrash /> Delete rainfall for selected time</b-button>
           </b-col>
         </b-row>
       </template>
@@ -130,14 +132,27 @@
     </div>
 
     <b-button class="btn-circle" id="refresh" variant="primary" @click.stop.prevent="getData"><BIconArrowRepeat :animation="isRefreshing ? 'spin' : null" /></b-button>
+
+    <b-modal
+      ref="adminUuidModal"
+      title="Admin UUID"
+      ok-title="Delete"
+      cancel-title="Cancel"
+      :ok-disabled="!adminUuid || adminUuid.length < 1"
+      @ok.prevent="deleteRain">
+      <b-form-group label="Admin uuid" description="The uuid provided to admins to make changes to the database." label-for="uuid">
+        <b-form-input id="uuid" v-model="adminUuid" />
+      </b-form-group>
+    </b-modal>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import LineChart from '@/components/chart/LineChart'
 import WindRose from '@/components/chart/WindRose'
 
-import { BIconCloudRain, BIconCpu, BIconArrowDown, BIconArrowUp, BIconCompass, BIconSun, BIconArrowRepeat, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
+import { BIconCloudRain, BIconCpu, BIconTrash, BIconArrowDown, BIconArrowUp, BIconCompass, BIconSun, BIconArrowRepeat, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
 
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js'
 
@@ -153,6 +168,7 @@ export default {
     LineChart,
     WindRose,
     Trend,
+    BIconTrash,
     BIconSunrise,
     BIconSunset,
     BIconArrowDown,
@@ -177,6 +193,8 @@ export default {
       { min: 118, max: Number.MAX_SAFE_INTEGER, value: { name: 'Hurricane', color: '#B71C1C' } }
     ]
     return {
+      rainfallRange: null,
+      adminUuid: null,
       moonPhase: null,
       chartData: null,
       endDate: null,
@@ -279,6 +297,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'storeAdminUuid'
+    ]),
     trendData: function () {
       if (!this.dataFile || this.dataFile.length < 1) {
         return null
@@ -395,6 +416,9 @@ export default {
     }
   },
   methods: {
+    setRainfallRange: function (range) {
+      this.rainfallRange = range
+    },
     onVariableClicked: function (index) {
       this.variables[index].visible = !this.variables[index].visible
 
@@ -540,8 +564,21 @@ export default {
         }
       })
     },
+    deleteRain: function () {
+      this.$store.dispatch('setAdminUuid', this.adminUuid)
+
+      const start = new Date(this.rainfallRange[0]).toISOString()
+      const end = new Date(this.rainfallRange[1]).toISOString()
+
+      this.apiDeleteRainfall(start, end, this.adminUuid)
+        .then(() => {
+          this.$refs.adminUuidModal.hide()
+          this.getData()
+        })
+    },
     getData: function () {
       this.isRefreshing = true
+      this.rainfallRange = null
 
       this.$nextTick(() => {
         const data = this.apiGetData(this.start, this.end)
@@ -615,6 +652,8 @@ export default {
     }
   },
   mounted: function () {
+    this.adminUuid = this.storeAdminUuid
+
     const query = Object.assign({}, this.$route.query)
 
     if (query.vars) {

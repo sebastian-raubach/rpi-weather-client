@@ -15,7 +15,10 @@ import {
   FormDatepickerPlugin,
   LayoutPlugin,
   NavbarPlugin,
-  ButtonGroupPlugin
+  ButtonGroupPlugin,
+  ModalPlugin,
+  FormGroupPlugin,
+  FormInputPlugin
 } from 'bootstrap-vue'
 
 const emitter = mitt()
@@ -26,10 +29,13 @@ Vue.use(ButtonPlugin)
 Vue.use(ButtonGroupPlugin)
 Vue.use(CardPlugin)
 Vue.use(FormPlugin)
+Vue.use(FormGroupPlugin)
+Vue.use(FormInputPlugin)
 Vue.use(FormSelectPlugin)
 Vue.use(FormDatepickerPlugin)
 Vue.use(LayoutPlugin)
 Vue.use(NavbarPlugin)
+Vue.use(ModalPlugin)
 
 // Set base URL based on environment
 let baseUrl = './api/'

@@ -5,6 +5,10 @@
 <script>
 export default {
   props: {
+    id: {
+      type: String,
+      default: null
+    },
     data: {
       type: Array,
       default: () => []
@@ -225,7 +229,7 @@ export default {
 
       const layout = {
         margin: { l: 50, r: 10, t: 10, b: 50, autoexpand: true },
-        dragmode: false,
+        dragmode: this.id === 'rainfall' ? 'select' : false,
         autosize: true,
         hovermode: 'x',
         paper_bgcolor: '#4e5d6c',
@@ -306,6 +310,8 @@ export default {
       }
 
       this.$plotly.newPlot(this.$refs.chart, data, layout, config)
+
+      this.$refs.chart.on('plotly_selected', eventData => this.$emit('rainfall-range-selected', eventData ? eventData.range.x : null))
     },
     smooth: function (data, range) {
       const result = []
