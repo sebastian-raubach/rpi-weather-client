@@ -37,7 +37,7 @@ export default {
       years: [],
       yearsDisplay: [],
       data: {},
-      climateOptions: ['ambientTemp', 'groundTemp', 'piTemp', 'pressure', 'humidity', 'windAverage', 'windSpeed', 'windGust', 'rainfall'],
+      climateOptions: ['ambientTemp', 'groundTemp', 'piTemp', 'pressure', 'humidity', 'windAverage', 'windSpeed', 'windGust', 'rainfall', 'lux'],
       aggregationOptions: ['min', 'max', 'avg', 'stdv'],
       climate: 'ambientTemp',
       aggregation: 'max',
@@ -52,7 +52,8 @@ export default {
         humidity: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#0652DD']],
         windSpeed: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#B53471']],
         windGust: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#833471']],
-        windAverage: [[0, '#ED4C67'], [1, '#6F1E51']]
+        windAverage: [[0, '#ED4C67'], [1, '#6F1E51']],
+        lux: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#F79F1F']],
       },
       windowWidth: 1920
     }
