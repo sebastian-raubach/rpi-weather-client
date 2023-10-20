@@ -37,6 +37,10 @@ export default {
       type: Array,
       default: null
     },
+    yToZero: {
+      type: Boolean,
+      default: false
+    },
     xRange: {
       type: Array,
       default: null
@@ -167,8 +171,6 @@ export default {
           maxDate = maxX
         }
 
-        // let y = this.unpack(t.isForecast ? this.forecast : this.data, t.y)
-
         if (t.aggregation === 'smooth') {
           y = this.smooth(y, 1)
         } else if (t.aggregation === 'cumulative') {
@@ -177,9 +179,20 @@ export default {
             if (otherY && otherY.length > 0) {
               // eslint-disable-next-line
               let [ox, oy] = this.unpack(this.data, otherY[0].x, otherY[0].y)
+
+              // Find the index in the real data that is larger than the first forecast entry.
+              // We're going to use this as an offset value for the forecast data.
+              let index = 0
+              for (let ind = 0; ind < ox.length; ind++) {
+                if (ox[ind] > x[0]) {
+                  index = ind
+                  break
+                }
+              }
+
               if (oy.length > 0) {
                 oy = this.cumulative(oy)
-                y = this.cumulative(y, oy[oy.length - 1])
+                y = this.cumulative(y, oy[index])
               } else {
                 y = this.cumulative(y)
               }
@@ -215,7 +228,7 @@ export default {
       })
 
       if (shapes) {
-        shapes = shapes.filter(s => s.y1 > minY && s.y0 < maxY)
+        shapes = shapes.filter(s => /* s.y1 > minY && */s.y0 < maxY)
           .map(s => {
             if (s.y0 < minY) {
               s.y0 = minY
@@ -265,6 +278,10 @@ export default {
       }
       if (this.yRange) {
         layout.yaxis.range = this.yRange
+      }
+      if (this.yToZero) {
+        layout.yaxis.rangemode = 'tozero'
+        layout.yaxis.autorange = true
       }
 
       this.sunriseSunset.forEach(ss => {

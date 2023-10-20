@@ -83,7 +83,7 @@
         <b-row :key="`variable-${index}`" class="mb-4" v-if="variable.visible">
           <b-col cols=12 lg=10>
             <b-card>
-              <LineChart :id="variable.id" :data="dataFile" :xRange="dataDateRange" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" @rainfall-range-selected="setRainfallRange" />
+              <LineChart :id="variable.id" :data="dataFile" :xRange="dataDateRange" :forecast="forecast" :traces="variable.traces" :yRange="variable.yRange" :yToZero="variable.yToZero" :shapes="variable.shapes" :sunriseSunset="sunriseSunsetArray" xTitle="Time" :yTitle="variable.yTitle" @rainfall-range-selected="setRainfallRange" />
             </b-card>
           </b-col>
           <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
@@ -266,6 +266,7 @@ export default {
         bgImage: require('@/assets/banner-wind.jpg'),
         yTitle: 'Wind [kph]',
         visible: false,
+        yToZero: true,
         shapes: windCategories.map(wc => {
           return {
             type: 'rect',
