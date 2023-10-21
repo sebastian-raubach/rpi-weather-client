@@ -192,7 +192,7 @@ export default {
 
               if (oy.length > 0) {
                 oy = this.cumulative(oy)
-                y = this.cumulative(y, oy[index])
+                y = this.cumulative(y, oy[index] - y[0])
               } else {
                 y = this.cumulative(y)
               }
