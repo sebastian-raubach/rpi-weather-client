@@ -127,10 +127,6 @@ export default {
         const minX = xDates.length > 0 ? new Date(Math.min.apply(null, xDates)) : null
         const maxX = xDates.length > 0 ? new Date(Math.max.apply(null, xDates)) : null
 
-        if (this.trace.y === 'avgLux') {
-          console.log(xDates)
-        }
-
         if (minDate) {
           minDate = new Date(Math.min.apply(null, [minDate, minX]))
         } else {
@@ -180,8 +176,6 @@ export default {
           })
         }
       })
-
-      console.log(this.trace.y, [minDate, maxDate])
 
       const layout = {
         margin: { l: 50, r: 10, t: 10, b: 50, autoexpand: true },
