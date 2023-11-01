@@ -124,8 +124,12 @@ export default {
         x = x.map(xs => '2023' + xs.substring(4))
 
         const xDates = x.map(t => new Date(t))
-        const minX = new Date(Math.min.apply(null, xDates))
-        const maxX = new Date(Math.max.apply(null, xDates))
+        const minX = xDates.length > 0 ? new Date(Math.min.apply(null, xDates)) : null
+        const maxX = xDates.length > 0 ? new Date(Math.max.apply(null, xDates)) : null
+
+        if (this.trace.y === 'avgLux') {
+          console.log(xDates)
+        }
 
         if (minDate) {
           minDate = new Date(Math.min.apply(null, [minDate, minX]))
@@ -177,6 +181,8 @@ export default {
         }
       })
 
+      console.log(this.trace.y, [minDate, maxDate])
+
       const layout = {
         margin: { l: 50, r: 10, t: 10, b: 50, autoexpand: true },
         dragmode: false,
@@ -189,7 +195,7 @@ export default {
           tickfont: { color: 'white' },
           title: { text: this.xTitle, font: { color: 'white' } },
           tickformat: '%B %d',
-          range: [minDate, maxDate]
+          range: this.trace.type === 'bar' ? null : [minDate, maxDate]
         },
         yaxis: {
           gridcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
