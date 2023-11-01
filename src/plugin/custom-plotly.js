@@ -5,7 +5,8 @@ Plotly.register([
   require('plotly.js/lib/scatter'),
   require('plotly.js/lib/barpolar'),
   require('plotly.js/lib/heatmap'),
-  require('plotly.js/lib/box')
+  require('plotly.js/lib/box'),
+  require('plotly.js/lib/bar')
 ])
 
 module.exports = Plotly

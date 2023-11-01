@@ -108,6 +108,19 @@
     </b-row>
 
     <b-row>
+      <b-col cols=6 md=4>
+        <b-form-group label="Year" label-for="year">
+          <b-form-select id="year" :options="years" v-model="selectedYear" />
+        </b-form-group>
+      </b-col>
+      <b-col cols=6 md=4>
+        <b-form-group label="Month" label-for="month">
+          <b-form-select id="month" :options="monthOptions" v-model="selectedMonth" />
+        </b-form-group>
+      </b-col>
+    </b-row>
+
+    <b-row>
       <b-col cols=12 class="mb-4">
         <b-card class="h-100" title="Ambient temperature">
           <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'avgAmbientTemp', yStd: 'stdAmbientTemp' }" />
@@ -120,7 +133,7 @@
       </b-col>
       <b-col cols=12 class="mb-4">
         <b-card class="h-100" title="Rainfall">
-          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'sumRainfall' }" />
+          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'sumRainfall', type: 'bar' }" />
         </b-card>
       </b-col>
       <b-col cols=12 class="mb-4">
@@ -169,17 +182,59 @@ export default {
   data: function () {
     return {
       data: null,
-      measurements: null
+      measurements: null,
+      years: [],
+      selectedYear: null,
+      months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      selectedMonth: null
+    }
+  },
+  computed: {
+    monthOptions: function () {
+      if (this.selectedYear) {
+        const format = new Intl.DateTimeFormat('en-GB', { month: 'long' }).format
+        return [...Array(12).keys()].map(m => {
+          return {
+            text: format(new Date(Date.UTC(this.selectedYear, m % 12))),
+            value: m + 1
+          }
+        })
+      } else {
+        return []
+      }
+    }
+  },
+  watch: {
+    selectedYear: function () {
+      this.update()
+    },
+    selectedMonth: function () {
+      this.update()
+    }
+  },
+  methods: {
+    update: function () {
+      if (this.selectedYear && this.selectedMonth) {
+        this.apiGetMonthly(this.selectedMonth, this.selectedYear)
+          .then(result => {
+            this.data = result
+          })
+        this.apiGetMonthlyMeasurements(this.selectedMonth)
+          .then(result => {
+            this.measurements = result
+          })
+      }
     }
   },
   mounted: function () {
-    this.apiGetMonthly()
+    this.getYears()
       .then(result => {
-        this.data = result
-      })
-    this.apiGetMonthlyMeasurements()
-      .then(result => {
-        this.measurements = result
+        this.years = result
+
+        if (result && result.length > 0) {
+          this.selectedYear = result[result.length - 1]
+          this.selectedMonth = new Date().getMonth() + 1
+        }
       })
   }
 }

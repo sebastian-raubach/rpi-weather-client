@@ -115,9 +115,9 @@ export default {
           .catch(error => reject(error))
       })
     },
-    apiGetMonthly: function () {
+    apiGetMonthly: function (month, year) {
       return new Promise((resolve, reject) => {
-        this.axios({ url: 'stats/monthly', headers: { Accept: 'application/json' } })
+        this.axios({ url: `stats/monthly?month=${month}&year=${year}`, headers: { Accept: 'application/json' } })
           .then(result => {
             if (result && result.data) {
               resolve(result.data)
@@ -128,9 +128,9 @@ export default {
           .catch(error => reject(error))
       })
     },
-    apiGetMonthlyMeasurements: function () {
+    apiGetMonthlyMeasurements: function (month) {
       return new Promise((resolve, reject) => {
-        this.axios({ url: 'stats/monthly/measurements', headers: { Accept: 'application/json' } })
+        this.axios({ url: `stats/monthly/measurements?month=${month}`, headers: { Accept: 'application/json' } })
           .then(result => {
             if (result && result.data) {
               resolve(result.data)

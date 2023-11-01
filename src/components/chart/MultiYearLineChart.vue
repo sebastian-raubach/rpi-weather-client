@@ -144,9 +144,8 @@ export default {
         data.push({
           x: x,
           y: y,
-          type: 'line',
+          type: this.trace.type || 'line',
           name: year,
-          mode: 'lines',
           marker: {
             color: this.colors[i]
           },
@@ -206,8 +205,7 @@ export default {
           font: {
             color: 'white'
           }
-        },
-        type: 'line'
+        }
       }
 
       const config = {
