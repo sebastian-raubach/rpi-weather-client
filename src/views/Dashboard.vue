@@ -152,7 +152,7 @@ import { mapGetters } from 'vuex'
 import LineChart from '@/components/chart/LineChart'
 import WindRose from '@/components/chart/WindRose'
 
-import { BIconCloudRain, BIconCpu, BIconTrash, BIconArrowDown, BIconArrowUp, BIconCompass, BIconSun, BIconArrowRepeat, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
+import { BIconCloudRain, BIconCpu, BIconTrash, BIconArrowDown, BIconArrowUp, BIconCompass, BIconSun, BIconArrowRepeat, BIconPersonLinesFill, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
 
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js'
 
@@ -170,6 +170,7 @@ export default {
     Trend,
     BIconTrash,
     BIconSunrise,
+    BIconPersonLinesFill,
     BIconSunset,
     BIconArrowDown,
     BIconArrowUp,
@@ -209,7 +210,8 @@ export default {
         id: 'temp',
         traces: [
           { x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none' },
-          { x: 'created', y: 'groundTemp', icon: BIconThermometer, color: '#009432', aggregation: 'none' },
+          { x: 'created', y: 'groundTemp', icon: BIconThermometer, color: '#006266', aggregation: 'none' },
+          { x: 'created', y: 'heatIndex', icon: BIconPersonLinesFill, color: '#009432', aggregation: 'none' },
           { x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none', isForecast: true }
         ],
         bgImage: require('@/assets/banner-temperature.jpg'),
