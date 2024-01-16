@@ -211,7 +211,7 @@ export default {
           x: x,
           y: y,
           type: 'line',
-          name: this.traces.length < 2 ? null : t.y,
+          name: this.traces.length < 2 ? null : (t.legendTitle || t.y),
           mode: t.mode || 'lines',
           marker: {
             color: t.color

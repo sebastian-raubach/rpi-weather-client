@@ -209,10 +209,10 @@ export default {
       variables: [{
         id: 'temp',
         traces: [
-          { x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none' },
-          { x: 'created', y: 'groundTemp', icon: BIconThermometer, color: '#006266', aggregation: 'none' },
-          { x: 'created', y: 'heatIndex', icon: BIconPersonLinesFill, color: '#009432', aggregation: 'none' },
-          { x: 'created', y: 'ambientTemp', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none', isForecast: true }
+          { x: 'created', y: 'ambientTemp', legendTitle: 'Ambient', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none' },
+          { x: 'created', y: 'groundTemp', legendTitle: 'Ground', icon: BIconThermometer, color: '#006266', aggregation: 'none' },
+          { x: 'created', y: 'heatIndex', legendTitle: 'Heat index', icon: BIconPersonLinesFill, color: '#009432', aggregation: 'none' },
+          { x: 'created', y: 'ambientTemp', legendTitle: 'Forecast', icon: BIconThermometerSun, color: '#A3CB38', aggregation: 'none', isForecast: true }
         ],
         bgImage: require('@/assets/banner-temperature.jpg'),
         yTitle: 'Temperature [°C]',
@@ -220,8 +220,8 @@ export default {
       }, {
         id: 'rainfall',
         traces: [
-          { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' },
-          { x: 'created', y: 'rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative', isForecast: true }
+          { x: 'created', y: 'rainfall', legendTitle: 'Rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' },
+          { x: 'created', y: 'rainfall', legendTitle: 'Forecast', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative', isForecast: true }
         ],
         bgImage: require('@/assets/banner-rain.jpg'),
         yTitle: 'Rainfall [mm]',
@@ -229,8 +229,8 @@ export default {
       }, {
         id: 'humidity',
         traces: [
-          { x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'smooth' },
-          { x: 'created', y: 'humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'none', isForecast: true }
+          { x: 'created', y: 'humidity', legendTitle: 'Humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'smooth' },
+          { x: 'created', y: 'humidity', legendTitle: 'Forecast', icon: BIconMoisture, color: '#0652DD', aggregation: 'none', isForecast: true }
         ],
         bgImage: require('@/assets/banner-humidity.jpg'),
         yTitle: 'Humidity [%]',
@@ -239,31 +239,31 @@ export default {
       }, {
         id: 'pressure',
         traces: [
-          { x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'smooth' },
-          { x: 'created', y: 'pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'none', isForecast: true }
+          { x: 'created', y: 'pressure', legendTitle: 'Pressure', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'smooth' },
+          { x: 'created', y: 'pressure', legendTitle: 'Forecast', icon: BIconSpeedometer, color: '#12CBC4', aggregation: 'none', isForecast: true }
         ],
         bgImage: require('@/assets/banner-pressure.jpg'),
         yTitle: 'Pressure [hpa]',
         visible: false
       }, {
         id: 'lux',
-        traces: [{ x: 'created', y: 'lux', icon: BIconSun, color: '#F79F1F', aggregation: 'smooth' }],
+        traces: [{ x: 'created', y: 'lux', legendTitle: 'Lux', icon: BIconSun, color: '#F79F1F', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-lux.jpg'),
         yTitle: 'Lux',
         visible: false
       }, {
         id: 'pi',
-        traces: [{ x: 'created', y: 'piTemp', icon: BIconCpu, color: '#EA2027', aggregation: 'smooth' }],
+        traces: [{ x: 'created', y: 'piTemp', legendTitle: 'Temperature', icon: BIconCpu, color: '#EA2027', aggregation: 'smooth' }],
         bgImage: require('@/assets/banner-pi.jpg'),
         yTitle: 'Pi Temperature [°C]',
         visible: false
       }, {
         id: 'wind',
         traces: [
-          { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'none' },
-          { x: 'created', y: 'windSpeed', icon: BIconWind, color: '#B53471', aggregation: 'none', isForecast: true },
-          { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'none' },
-          { x: 'created', y: 'windGust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'none', isForecast: true }
+          { x: 'created', y: 'windSpeed', legendTitle: 'Speed', icon: BIconWind, color: '#B53471', aggregation: 'none' },
+          { x: 'created', y: 'windSpeed', legendTitle: 'Speed Forecast', icon: BIconWind, color: '#B53471', aggregation: 'none', isForecast: true },
+          { x: 'created', y: 'windGust', legendTitle: 'Gust', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'none' },
+          { x: 'created', y: 'windGust', legendTitle: 'Gust Forecast', icon: BIconTornado, color: '#833471', mode: 'markers', aggregation: 'none', isForecast: true }
         ],
         bgImage: require('@/assets/banner-wind.jpg'),
         yTitle: 'Wind [kph]',
