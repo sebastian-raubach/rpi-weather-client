@@ -187,7 +187,11 @@ export default {
           }
 
           const layout = {
-            margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
+            title: {
+              text: `Year ${year}`,
+              font: { color: 'white' }
+            },
+            margin: { l: 75, r: 35, t: 65, b: 75, autoexpand: true },
             height: horizontal ? 840 : 600,
             dragmode: false,
             autosize: true,
@@ -280,17 +284,17 @@ export default {
           }
 
           const layout = {
-            margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
+            title: {
+              text: `Year ${year}`,
+              font: { color: 'white' }
+            },
+            margin: { l: 75, r: 35, t: 65, b: 75, autoexpand: true },
             height: horizontal ? 840 : 600,
             dragmode: false,
             autosize: true,
             paper_bgcolor: '#4e5d6c',
             plot_bgcolor: 'rgba(1.0, 1.0, 1.0, 0.1)',
             legend: {
-              xanchor: 'left',
-              yanchor: 'bottom',
-              y: 1,
-              x: 0,
               orientation: 'h',
               font: {
                 color: 'white'
@@ -372,7 +376,11 @@ export default {
           }]
 
           const layout = {
-            margin: { l: 75, r: 35, t: 25, b: 75, autoexpand: true },
+            title: {
+              text: `Year ${year}`,
+              font: { color: 'white' }
+            },
+            margin: { l: 75, r: 35, t: 65, b: 75, autoexpand: true },
             height: 700,
             dragmode: false,
             autosize: true,
@@ -394,7 +402,7 @@ export default {
               tickfont: { color: 'white' },
               title: { text: 'Month', font: { color: 'white' } }
             },
-            legend: { orientation: 'h', x: 1, y: 1, xanchor: 'right', font: { color: 'white' } },
+            legend: { orientation: 'h', font: { color: 'white' } },
             annotations: []
           }
 
