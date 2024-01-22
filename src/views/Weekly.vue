@@ -120,7 +120,7 @@
       </b-col>
       <b-col cols=12 class="mb-4">
         <b-card class="h-100" title="Rainfall">
-          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'sumRainfall' }" />
+          <MultiYearLineChart :data="measurements" :trace="{ x: 'date', y: 'sumRainfall', type: 'bar' }" />
         </b-card>
       </b-col>
       <b-col cols=12 class="mb-4">
