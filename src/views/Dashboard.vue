@@ -89,7 +89,7 @@
           <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
             <b-row>
               <template v-for="(trace, tIndex) in variable.traces">
-                <b-col cols=6 lg=12  :key="`card-${index}-${tIndex}`" class="mb-4" v-if="!trace.isForecast">
+                <b-col cols=6 lg=12  :key="`card-${index}-${tIndex}`" class="mb-4" v-if="!trace.isForecast && !trace.hiddenFromLegend">
                   <b-card no-body class="text-center h-100">
                     <b-card-header>
                       <h1 :style="{ color: trace.color }"><component :is="trace.icon" /></h1>
@@ -221,6 +221,39 @@ export default {
         id: 'rainfall',
         traces: [
           { x: 'created', y: 'rainfall', legendTitle: 'Rainfall', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative' },
+          {
+            x: 'created',
+            y: 'rainfall',
+            type: 'bar',
+            legendTitle: 'Rainfall/h',
+            hiddenFromLegend: true,
+            icon: BIconCloudRain,
+            color: '#1289A7',
+            aggregation: 'none',
+            transformation: (x, y) => {
+              if (x.length > 2 && y.length > 2) {
+                const minDate = new Date(x[0])
+                const maxDate = new Date(x[x.length - 1])
+                const hours = Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60))
+
+                const xr = Array.from(Array(hours).keys()).map(i => new Date(minDate.getTime() + (i * 1000 * 60 * 60)))
+                const yr = xr.map(_ => 0)
+
+                let yi = 0
+                y.forEach((yy, i) => {
+                  yr[yi] += yy
+
+                  if (new Date(x[i]) >= xr[yi + 1]) {
+                    yi++
+                  }
+                })
+
+                return [xr, yr]
+              } else {
+                return [x, y]
+              }
+            }
+          },
           { x: 'created', y: 'rainfall', legendTitle: 'Forecast', icon: BIconCloudRain, color: '#1289A7', aggregation: 'cumulative', isForecast: true }
         ],
         bgImage: require('@/assets/banner-rain.jpg'),

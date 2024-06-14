@@ -121,6 +121,10 @@ export default {
 
         let [x, y, yStds] = this.unpack(yearData, this.trace.x, this.trace.y, this.trace.yStd)
 
+        if (x.length < 1 || y.length < 1) {
+          return
+        }
+
         x = x.map(xs => '2023' + xs.substring(4))
 
         const xDates = x.map(t => new Date(t))

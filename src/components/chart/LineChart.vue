@@ -171,6 +171,10 @@ export default {
           maxDate = maxX
         }
 
+        if (t.transformation) {
+          [x, y] = t.transformation(x, y)
+        }
+
         if (t.aggregation === 'smooth') {
           y = this.smooth(y, 1)
         } else if (t.aggregation === 'cumulative') {
@@ -207,10 +211,10 @@ export default {
         minY = Math.min(minY, Math.min.apply(null, y))
         maxY = Math.max(maxY, Math.max.apply(null, y))
 
-        return {
+        const result = {
           x: x,
           y: y,
-          type: 'line',
+          type: t.type || 'line',
           name: this.traces.length < 2 ? null : (t.legendTitle || t.y),
           mode: t.mode || 'lines',
           marker: {
@@ -225,6 +229,15 @@ export default {
             }
           }
         }
+
+        if (t.transformation && t.type === 'bar') {
+          result.offset = 0
+          result.width = 1000 * 60 * 60
+          result.opacity = 0.5
+          result.hoverinfo = 'skip'
+        }
+
+        return result
       })
 
       if (shapes) {
