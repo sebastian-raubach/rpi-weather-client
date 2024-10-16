@@ -12,7 +12,6 @@
     "bootstrap": "~4.5.3",
     "bootstrap-vue": "^2.22.0",
     "bootswatch": "~5.0.0",
-    "chart.js": "^3.9.1",
     "core-js": "~3.6.5",
     "dayjs": "^1.10.4",
     "mitt": "^2.1.0",

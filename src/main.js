@@ -18,7 +18,9 @@ import {
   ButtonGroupPlugin,
   ModalPlugin,
   FormGroupPlugin,
-  FormInputPlugin
+  FormInputPlugin,
+  ProgressPlugin,
+  VBTooltipPlugin
 } from 'bootstrap-vue'
 
 const emitter = mitt()
@@ -36,6 +38,8 @@ Vue.use(FormDatepickerPlugin)
 Vue.use(LayoutPlugin)
 Vue.use(NavbarPlugin)
 Vue.use(ModalPlugin)
+Vue.use(ProgressPlugin)
+Vue.use(VBTooltipPlugin)
 
 // Set base URL based on environment
 let baseUrl = './api/'

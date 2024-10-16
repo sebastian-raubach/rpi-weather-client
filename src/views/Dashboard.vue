@@ -1,33 +1,23 @@
 <template>
   <div class="mt-4">
     <b-row>
-      <b-col cols=6 sm=4 xl=3 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
+      <b-col cols=12 sm=6 md=4 xl=3 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
         <b-card no-body class="text-center h-100 position-relative">
-          <b-card-header>
-            <h1 class="sunrise"><BIconSunrise /></h1>
+          <b-card-header class="d-flex align-items-center justify-content-center">
+            <h1 class="sunrise mr-2"><BIconSunrise /></h1><h1 class="sunset"><BIconSunset /></h1>
           </b-card-header>
           <b-card-body class="h-100">
-            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }}</h3>
+            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }} - {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</h3>
+
+            <b-progress height="2px" style="margin-bottom: 1px;" :max="1440" v-for="(sr, index) in srProgress" :key="`sr-ss-${index}`" v-b-tooltip.hover="sr.tooltip" >
+              <b-progress-bar :value="sr.values[0]" class="bg-sunset"></b-progress-bar>
+              <b-progress-bar :value="sr.values[1]" class="bg-sunrise"></b-progress-bar>
+              <b-progress-bar :value="sr.values[2]" class="bg-sunset"></b-progress-bar>
+            </b-progress>
           </b-card-body>
-          <div class="pt-3 px-3 chart-container position-absolute">
-            <canvas ref="sunriseCanvas" height="100"/>
-          </div>
         </b-card>
       </b-col>
-      <b-col cols=6 sm=4 xl=3 class="mb-4" v-if="sunriseSunsetArray && sunriseSunsetArray[sunriseSunsetArray.length - 1]">
-        <b-card no-body class="text-center h-100">
-          <b-card-header>
-            <h1 class="sunset"><BIconSunset /></h1>
-          </b-card-header>
-          <b-card-body class="h-100">
-            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</h3>
-          </b-card-body>
-          <div class="pt-3 px-3 chart-container position-absolute">
-            <canvas ref="sunsetCanvas" height="100"/>
-          </div>
-        </b-card>
-      </b-col>
-      <b-col cols=6 sm=4 xl=3 class="mb-4" v-if="moonPhase">
+      <b-col cols=12 sm=6 md=4 xl=3 class="mb-4" v-if="moonPhase">
         <b-card no-body class="text-center h-100">
           <b-card-header>
             <h1 class="moon"><i :class="moonPhase.icon" /></h1>
@@ -154,11 +144,7 @@ import WindRose from '@/components/chart/WindRose'
 
 import { BIconCloudRain, BIconCpu, BIconTrash, BIconArrowDown, BIconArrowUp, BIconCompass, BIconSun, BIconArrowRepeat, BIconPersonLinesFill, BIconMoisture, BIconSpeedometer, BIconSunrise, BIconSunset, BIconThermometer, BIconThermometerSun, BIconTornado, BIconWind } from 'bootstrap-vue'
 
-import { Chart, BarController, BarElement, CategoryScale, LinearScale, Filler, Tooltip } from 'chart.js'
-
 import Trend from 'vuetrend'
-
-Chart.register(BarController, BarElement, CategoryScale, LinearScale, Filler, Tooltip)
 
 const SunCalc = require('suncalc')
 
@@ -391,6 +377,25 @@ export default {
         })
       })
     },
+    srProgress: function () {
+      if (this.sunrisesSunsets) {
+        return this.sunrisesSunsets.map(sr => {
+          const result = []
+          let d = sr.sunrise
+          result.push(d.getHours() * 60 + d.getMinutes())
+          d = sr.sunset
+          result.push((d.getHours() * 60 + d.getMinutes()) - result[0])
+          result.push(1440 - (result[1] + result[0]))
+
+          return {
+            tooltip: `${sr.sunrise.toLocaleTimeString()} - ${sr.sunset.toLocaleTimeString()}`,
+            values: result
+          }
+        })
+      } else {
+        return []
+      }
+    },
     sunrisesSunsets: function () {
       const result = []
 
@@ -446,11 +451,6 @@ export default {
       }
     }
   },
-  watch: {
-    dataFile: function () {
-      this.updateSunriseSunset()
-    }
-  },
   methods: {
     setRainfallRange: function (range) {
       this.rainfallRange = range
@@ -481,124 +481,6 @@ export default {
     },
     setWindDirection: function (direction) {
       this.currentWindDirection = direction
-    },
-    updateSunriseSunset: function () {
-      let minSunrise = Number.MAX_VALUE
-      let minSunset = Number.MAX_VALUE
-
-      const today = new Date()
-      let mapped = this.sunrisesSunsets.map(d => {
-        const fixedDaySunrise = new Date(today.getFullYear(), today.getMonth(), today.getDate(), d.sunrise.getHours(), d.sunrise.getMinutes(), d.sunrise.getSeconds(), 0)
-        const timeSunrise = fixedDaySunrise.getTime()
-        if (timeSunrise < minSunrise) {
-          minSunrise = timeSunrise
-        }
-
-        const fixedDaySunset = new Date(today.getFullYear(), today.getMonth(), today.getDate(), d.sunset.getHours(), d.sunset.getMinutes(), d.sunset.getSeconds(), 0)
-        const timeSunset = fixedDaySunset.getTime()
-        if (timeSunset < minSunset) {
-          minSunset = timeSunset
-        }
-
-        return {
-          sunrise: timeSunrise,
-          sunriseText: fixedDaySunrise.toLocaleTimeString(),
-          sunset: timeSunset,
-          sunsetText: fixedDaySunset.toLocaleTimeString()
-        }
-      })
-
-      mapped = mapped.map(d => {
-        return {
-          sunrise: Math.round((d.sunrise - minSunrise) / 1000.0 / 60.0) + 5,
-          sunriseText: d.sunriseText,
-          sunset: Math.round((d.sunset - minSunset) / 1000.0 / 60.0) + 5,
-          sunsetText: d.sunsetText
-        }
-      })
-
-      /* eslint-disable no-new */
-      new Chart(this.$refs.sunriseCanvas.getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels: this.sunrisesSunsets.map(s => s.sunrise.toLocaleDateString()),
-          datasets: [{
-            backgroundColor: mapped.map((d, i) => i === 7 ? 'rgba(247,159,31,.5)' : 'rgba(255,255,255,.3)'),
-            borderColor: 'rgba(255,255,255,0.3)',
-            hoverBackgroundColor: 'rgba(255,255,255,0.3)',
-            hoverBorderColor: 'rgba(255,255,255,0.3)',
-            data: mapped.map(d => d.sunrise)
-          }]
-        },
-        options: {
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: context => mapped[context.dataIndex].sunriseText
-              }
-            }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: {
-            display: false
-          },
-          scales: {
-            y: {
-              display: false,
-              ticks: {
-                suggestedMin: 0,
-                beginAtZero: true,
-                suggestedMax: this.maxValue
-              }
-            },
-            x: {
-              display: false
-            }
-          }
-        }
-      })
-      /* eslint-disable no-new */
-      new Chart(this.$refs.sunsetCanvas.getContext('2d'), {
-        type: 'bar',
-        data: {
-          labels: this.sunrisesSunsets.map(s => s.sunset.toLocaleDateString()),
-          datasets: [{
-            backgroundColor: mapped.map((d, i) => i === 7 ? 'rgba(153,128,250,.5)' : 'rgba(255,255,255,.3)'),
-            borderColor: 'rgba(255,255,255,0.3)',
-            hoverBackgroundColor: 'rgba(255,255,255,0.3)',
-            hoverBorderColor: 'rgba(255,255,255,0.3)',
-            data: mapped.map(d => d.sunset)
-          }]
-        },
-        options: {
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: context => mapped[context.dataIndex].sunsetText
-              }
-            }
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-          legend: {
-            display: false
-          },
-          scales: {
-            y: {
-              display: false,
-              ticks: {
-                suggestedMin: 0,
-                beginAtZero: true,
-                suggestedMax: this.maxValue
-              }
-            },
-            x: {
-              display: false
-            }
-          }
-        }
-      })
     },
     deleteRain: function () {
       this.$store.dispatch('setAdminUuid', this.adminUuid)
@@ -730,11 +612,11 @@ export default {
 .sunset {
   color: #9980FA;
 }
-
-.chart-container {
-  bottom: 0;
-  width: 100%;
-  height: 100px;
+.bg-sunrise {
+  background-color: #F79F1F;
+}
+.bg-sunset {
+  background-color: #9980FA;
 }
 
 .variable-card {
