@@ -27,7 +27,7 @@
           </b-card-body>
         </b-card>
       </b-col>
-      <b-col cols=6 sm=4 xl=3 class="mb-4">
+      <b-col cols=12 sm=6 md=4 xl=3 class="mb-4">
         <b-form @submit.prevent="getData">
           <b-form-datepicker v-model="startDate" />
           <b-form-datepicker v-model="endDate" />
