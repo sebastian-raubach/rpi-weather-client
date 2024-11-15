@@ -19,7 +19,7 @@
       </b-collapse>
     </b-navbar>
     <div class="position-fixed w-100 d-flex justify-content-center update-banner bg-dark" v-if="lastUpdateDate">
-      <span class="px-2 pb-2 text-muted">Last update: {{ `${lastUpdateDate.toLocaleDateString()} ${lastUpdateDate.toLocaleTimeString()}` }}</span>
+      <span class="px-2 pb-2 text-muted">Last update: {{ formatTimeAgo }}</span>
     </div>
     <b-container fluid class="pt-3 mt-3">
       <router-view/>
@@ -29,6 +29,16 @@
 
 <script>
 import { BIconArrowRepeat } from 'bootstrap-vue'
+
+const DIVISIONS = [
+  { amount: 60, name: 'seconds' },
+  { amount: 60, name: 'minutes' },
+  { amount: 24, name: 'hours' },
+  { amount: 7, name: 'days' },
+  { amount: 4.34524, name: 'weeks' },
+  { amount: 12, name: 'months' },
+  { amount: Number.POSITIVE_INFINITY, name: 'years' }
+]
 
 export default {
   components: {
@@ -40,6 +50,25 @@ export default {
     }
   },
   computed: {
+    formatTimeAgo: function () {
+      if (this.lastUpdateDate) {
+        const formatter = new Intl.RelativeTimeFormat('en', {
+          numeric: 'always'
+        })
+
+        let duration = (this.lastUpdateDate - new Date()) / 1000
+
+        for (let i = 0; i <= DIVISIONS.length; i++) {
+          const division = DIVISIONS[i]
+          if (Math.abs(duration) < division.amount) {
+            return formatter.format(Math.round(duration), division.name)
+          }
+          duration /= division.amount
+        }
+      } else {
+        return ''
+      }
+    },
     lastUpdateDate: function () {
       if (this.lastUpdate) {
         return new Date(this.lastUpdate)

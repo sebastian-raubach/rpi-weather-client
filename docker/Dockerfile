@@ -1,4 +1,4 @@
-FROM node:12-alpine3.10 AS builder
+FROM node:22.11-alpine3.20 AS builder
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
@@ -23,15 +23,15 @@ RUN rm -f .env && \
     cp -a /opt/rpi-weather-client/dist/. /opt/rpi-weather-server/client/
 
 # Download Gradle and build the server code
-RUN apk add --no-cache openjdk11 && \
-    wget https://services.gradle.org/distributions/gradle-6.0.1-bin.zip -P /tmp/ && \
-    unzip /tmp/gradle-6.0.1-bin.zip -d /opt/ && \
+RUN apk add --no-cache openjdk21 && \
+    wget https://services.gradle.org/distributions/gradle-8.8-bin.zip -P /tmp/ && \
+    unzip /tmp/gradle-8.8-bin.zip -d /opt/ && \
     echo "config.folder=/data/rpi-weather" > /opt/rpi-weather-server/config.properties && \
     echo "project.name=rpi-weather" >> /opt/rpi-weather-server/gradle.properties && \
-    /opt/gradle-6.0.1/bin/gradle -p /opt/rpi-weather-server war
+    /opt/gradle-8.8/bin/gradle -p /opt/rpi-weather-server war
 
 
-FROM tomcat:10.1-jdk11
+FROM tomcat:10.1-jdk21
 
 LABEL maintainer="sebastian@raubach.co.uk"
 
