@@ -65,6 +65,8 @@ export default {
           }
           duration /= division.amount
         }
+
+        return ''
       } else {
         return ''
       }
