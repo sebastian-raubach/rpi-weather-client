@@ -46,7 +46,9 @@ export default {
   },
   data: function () {
     return {
-      lastUpdate: null
+      lastUpdate: null,
+      now: Date.now(),
+      interval: null
     }
   },
   computed: {
@@ -56,7 +58,7 @@ export default {
           numeric: 'always'
         })
 
-        let duration = (this.lastUpdateDate - new Date()) / 1000
+        let duration = (this.lastUpdateDate - this.now) / 1000
 
         for (let i = 0; i <= DIVISIONS.length; i++) {
           const division = DIVISIONS[i]
@@ -91,13 +93,22 @@ export default {
         .then(result => {
           this.lastUpdate = result[0]
         })
+    },
+    setNow: function () {
+      this.now = Date.now()
     }
   },
   mounted: function () {
     this.$emitter.on('refresh-latest', this.getLatest)
+
+    this.interval = setInterval(this.setNow, 10000)
   },
   beforeDestroy: function () {
     this.$emitter.off('refresh-latest', this.getLatest)
+
+    if (this.interval) {
+      clearInterval(this.interval)
+    }
   }
 }
 </script>
