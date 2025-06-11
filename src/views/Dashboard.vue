@@ -7,7 +7,7 @@
             <h1 class="sunrise mr-2"><BIconSunrise /></h1><h1 class="sunset"><BIconSunset /></h1>
           </b-card-header>
           <b-card-body class="h-100">
-            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' }) }} - {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' }) }}</h3>
+            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString(this.language, { hour: '2-digit', minute: '2-digit' }) }} - {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString(this.language, { hour: '2-digit', minute: '2-digit' }) }}</h3>
 
             <b-progress height="2px" style="margin-bottom: 1px;" :max="1440" v-for="(sr, index) in srProgress" :key="`sr-ss-${index}`" v-b-tooltip.hover="sr.tooltip" >
               <b-progress-bar :value="sr.values[0]" class="bg-sunset"></b-progress-bar>
@@ -180,6 +180,7 @@ export default {
       { min: 118, max: Number.MAX_SAFE_INTEGER, value: { name: 'Hurricane', color: '#B71C1C' } }
     ]
     return {
+      language: null,
       rainfallRange: null,
       adminUuid: null,
       moonPhase: null,
@@ -388,7 +389,7 @@ export default {
           result.push(1440 - (result[1] + result[0]))
 
           return {
-            tooltip: `${sr.sunrise.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' })} - ${sr.sunset.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' })}`,
+            tooltip: `${sr.sunrise.toLocaleTimeString(this.language, { hour: '2-digit', minute: '2-digit' })} - ${sr.sunset.toLocaleTimeString(this.language, { hour: '2-digit', minute: '2-digit' })}`,
             values: result
           }
         })
@@ -570,6 +571,7 @@ export default {
     }
   },
   mounted: function () {
+    this.language = navigator.language
     this.adminUuid = this.storeAdminUuid
 
     const query = Object.assign({}, this.$route.query)
