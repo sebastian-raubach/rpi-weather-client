@@ -10,6 +10,15 @@ axios.interceptors.request.use(config => {
   return config
 })
 
+const englishOrdinalRules = new Intl.PluralRules('en', { type: 'ordinal' })
+
+const suffixes = {
+  one: 'st',
+  two: 'nd',
+  few: 'rd',
+  other: 'th'
+}
+
 export default {
   methods: {
     /**
@@ -128,6 +137,19 @@ export default {
           .catch(error => reject(error))
       })
     },
+    apiGetMonthlyStats: function (month) {
+      return new Promise((resolve, reject) => {
+        this.axios({ url: `stats/monthly/${month}`, headers: { Accept: 'application/json' } })
+          .then(result => {
+            if (result && result.data) {
+              resolve(result.data)
+            } else {
+              resolve(null)
+            }
+          })
+          .catch(error => reject(error))
+      })
+    },
     apiGetMonthlyMeasurements: function (month) {
       return new Promise((resolve, reject) => {
         this.axios({ url: `stats/monthly/measurements?month=${month}`, headers: { Accept: 'application/json' } })
@@ -203,6 +225,11 @@ export default {
         dt = new Date(dt)
       }
       return `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}`
+    },
+    ordinal: function (number) {
+      const category = englishOrdinalRules.select(number)
+      const suffix = suffixes[category]
+      return (number + suffix)
     }
   }
 }

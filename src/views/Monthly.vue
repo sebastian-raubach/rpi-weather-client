@@ -107,6 +107,25 @@
       </b-col>
     </b-row>
 
+    <b-row v-if="monthStats">
+      <b-col cols=12 sm=6 md=4 class="mb-4" v-for="(value, key) in monthStats" :key="`month-stats-${key}`">
+        <b-card>
+          <b-row class="h-100">
+            <b-col cols=10 class="d-flex flex-column justify-content-between">
+              <b-card-title>{{ monthStatsKeys[key].label }}</b-card-title>
+              <div>
+                <b-card-sub-title>{{ (value.index >= (monthData.length / 2)) ? $tc('monthlyStatsHighest', monthData.length - value.index - 1, { count: ordinal(monthData.length - value.index - 1) }) : $tc('monthlyStatsLowest', value.index, { count: ordinal(value.index) }) }}</b-card-sub-title>
+              </div>
+              <b-card-text><h4>{{ value.value[key] }} {{ monthStatsKeys[key].unit }}</h4></b-card-text>
+            </b-col>
+            <b-col cols=2 class="d-flex justify-content-center align-items-center">
+              <h1><component :is="monthStatsKeys[key].icon" v-if="monthStatsKeys[key].icon" /></h1>
+            </b-col>
+          </b-row>
+        </b-card>
+      </b-col>
+    </b-row>
+
     <b-row>
       <b-col cols=6 md=4>
         <b-form-group label="Year" label-for="year">
@@ -167,29 +186,91 @@
 
 <script>
 import MultiYearLineChart from '@/components/chart/MultiYearLineChart'
-import { BIconThermometerHigh, BIconThermometerLow, BIconThermometerHalf, BIconCloudRainHeavy, BIconCloudRain, BIconWind } from 'bootstrap-vue'
+import { BIconThermometerHigh, BIconThermometer, BIconTornado, BIconSpeedometer, BIconMoisture, BIconThermometerSun, BIconThermometerLow, BIconThermometerHalf, BIconCloudRainHeavy, BIconCloudRain, BIconWind } from 'bootstrap-vue'
 
 export default {
   components: {
+    BIconThermometerSun,
+    BIconSpeedometer,
+    BIconMoisture,
+    BIconThermometer,
     BIconThermometerHigh,
     BIconThermometerLow,
     BIconThermometerHalf,
     BIconCloudRainHeavy,
     BIconCloudRain,
     BIconWind,
+    BIconTornado,
     MultiYearLineChart
   },
   data: function () {
     return {
       data: null,
+      monthData: null,
       measurements: null,
       years: [],
       selectedYear: null,
       months: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-      selectedMonth: null
+      selectedMonth: null,
+      monthStatsKeys: {
+        avgAmbientTemp: {
+          label: 'Ambient temperature',
+          icon: BIconThermometerSun,
+          unit: '°C'
+        },
+        avgGroundTemp: {
+          label: 'Ground temperature',
+          icon: BIconThermometer,
+          unit: '°C'
+        },
+        avgPressure: {
+          label: 'Pressure',
+          icon: BIconSpeedometer,
+          unit: 'hpa'
+        },
+        avgHumidity: {
+          label: 'Humidity',
+          icon: BIconMoisture,
+          unit: '%'
+        },
+        avgWindSpeed: {
+          label: 'Wind speed',
+          icon: BIconWind,
+          unit: 'kph'
+        },
+        avgWindGust: {
+          label: 'Wind gust',
+          icon: BIconTornado,
+          unit: 'kph'
+        },
+        sumRainfall: {
+          label: 'Rainfall',
+          icon: BIconCloudRain,
+          unit: 'mm'
+        }
+      }
     }
   },
   computed: {
+    monthStats: function () {
+      if (this.monthData) {
+        const result = {}
+
+        Object.keys(this.monthStatsKeys).forEach(ms => {
+          const sorted = this.monthData.concat().sort((a, b) => a[ms] - b[ms])
+          const index = sorted.findIndex(m => m.year === this.selectedYear)
+
+          result[ms] = {
+            index: index,
+            value: sorted[index]
+          }
+        })
+
+        return result
+      } else {
+        return {}
+      }
+    },
     monthOptions: function () {
       if (this.selectedYear) {
         const format = new Intl.DateTimeFormat('en-GB', { month: 'long' }).format
@@ -218,6 +299,11 @@ export default {
         this.apiGetMonthly(this.selectedMonth, this.selectedYear)
           .then(result => {
             this.data = result
+          })
+        this.apiGetMonthlyStats(this.selectedMonth)
+          .then(result => {
+            console.log(result)
+            this.monthData = result
           })
         this.apiGetMonthlyMeasurements(this.selectedMonth)
           .then(result => {

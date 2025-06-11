@@ -7,7 +7,7 @@
             <h1 class="sunrise mr-2"><BIconSunrise /></h1><h1 class="sunset"><BIconSunset /></h1>
           </b-card-header>
           <b-card-body class="h-100">
-            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString() }} - {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString() }}</h3>
+            <h3>{{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunrise.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' }) }} - {{ sunriseSunsetArray[sunriseSunsetArray.length - 1].sunset.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' }) }}</h3>
 
             <b-progress height="2px" style="margin-bottom: 1px;" :max="1440" v-for="(sr, index) in srProgress" :key="`sr-ss-${index}`" v-b-tooltip.hover="sr.tooltip" >
               <b-progress-bar :value="sr.values[0]" class="bg-sunset"></b-progress-bar>
@@ -388,7 +388,7 @@ export default {
           result.push(1440 - (result[1] + result[0]))
 
           return {
-            tooltip: `${sr.sunrise.toLocaleTimeString()} - ${sr.sunset.toLocaleTimeString()}`,
+            tooltip: `${sr.sunrise.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' })} - ${sr.sunset.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' })}`,
             values: result
           }
         })
