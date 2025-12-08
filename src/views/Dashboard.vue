@@ -95,7 +95,7 @@
             <b-button v-if="variable.id === 'rainfall'" :disabled="!rainfallRange" @click="$refs.adminUuidModal.show()"><BIconTrash /> Delete rainfall for selected time</b-button>
           </b-col>
         </b-row>
-        <b-row :key="`variable-${index}-wind`" class="mb-4" v-if="index === 6">
+        <b-row :key="`variable-${index}-wind`" class="mb-4" v-if="variables[6].visible && index === 6">
           <b-col cols=12 lg=10>
             <b-row>
               <b-col cols=12 lg=6>
