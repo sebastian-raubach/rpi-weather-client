@@ -95,30 +95,29 @@
             <b-button v-if="variable.id === 'rainfall'" :disabled="!rainfallRange" @click="$refs.adminUuidModal.show()"><BIconTrash /> Delete rainfall for selected time</b-button>
           </b-col>
         </b-row>
+        <b-row :key="`variable-${index}-wind`" class="mb-4" v-if="index === 6">
+          <b-col cols=12 lg=10>
+            <b-row>
+              <b-col cols=12 lg=6>
+                <WindRose :data="dataFile" windType="windSpeed" @current-wind-direction="setWindDirection" />
+              </b-col>
+              <b-col cols=12 lg=6>
+                <WindRose :data="dataFile" windType="windGust" @current-wind-direction="setWindDirection" />
+              </b-col>
+            </b-row>
+          </b-col>
+          <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
+            <b-card no-body class="text-center h-100 mb-4">
+              <b-card-header>
+                <h1 :style="{ color: '#006266' }"><BIconCompass /></h1>
+              </b-card-header>
+              <b-card-body class="h-100">
+                <h3>{{ currentWindDirection }}</h3>
+              </b-card-body>
+            </b-card>
+          </b-col>
+        </b-row>
       </template>
-
-      <b-row class="mb-4" v-if="variables[6].visible">
-        <b-col cols=12 lg=10>
-          <b-row>
-            <b-col cols=12 lg=6>
-              <WindRose :data="dataFile" windType="windSpeed" @current-wind-direction="setWindDirection" />
-            </b-col>
-            <b-col cols=12 lg=6>
-              <WindRose :data="dataFile" windType="windGust" @current-wind-direction="setWindDirection" />
-            </b-col>
-          </b-row>
-        </b-col>
-        <b-col cols=12 lg=2 class="h-100 order-first order-lg-last">
-          <b-card no-body class="text-center h-100 mb-4">
-            <b-card-header>
-              <h1 :style="{ color: '#006266' }"><BIconCompass /></h1>
-            </b-card-header>
-            <b-card-body class="h-100">
-              <h3>{{ currentWindDirection }}</h3>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
     </div>
 
     <b-button class="btn-circle" id="refresh" variant="primary" @click.stop.prevent="getData"><BIconArrowRepeat :animation="isRefreshing ? 'spin' : null" /></b-button>
@@ -306,6 +305,15 @@ export default {
             }
           }
         })
+      }, {
+        id: 'loft',
+        traces: [
+          { x: 'created', y: 'loftTemp', legendTitle: 'Temperature', icon: BIconThermometer, color: '#006266', aggregation: 'smooth' },
+          { x: 'created', y: 'loftHumidity', legendTitle: 'Humidity', icon: BIconMoisture, color: '#0652DD', aggregation: 'smooth' }
+        ],
+        bgImage: require('@/assets/banner-pressure.jpg'),
+        yTitle: 'Temp/humidity',
+        visible: false
       }],
       moonPhases: [
         { name: 'New Moon', icon: 'wi wi-moon-new' },
