@@ -1,7 +1,5 @@
 FROM node:22.11-alpine3.20 AS builder
 
-LABEL maintainer="sebastian@raubach.co.uk"
-
 ARG BRANCH=main
 
 # Force docker to not cache the next line
@@ -15,9 +13,9 @@ RUN apk add --no-cache git && \
 # Build the client code
 WORKDIR /opt/rpi-weather-client
 RUN rm -f .env && \
-    echo "VUE_APP_BASE_URL=./api/" > .env && \
+    echo "VITE_BASE_URL=./api/" > .env && \
     apk add --no-cache python3 build-base gcc wget && \
-    npm i --legacy-peer-deps && \
+    npm i && \
     npm run build && \
     mkdir /opt/rpi-weather-server/client/ && \
     cp -a /opt/rpi-weather-client/dist/. /opt/rpi-weather-server/client/
@@ -32,8 +30,6 @@ RUN apk add --no-cache openjdk21 && \
 
 
 FROM tomcat:10.1-jdk21
-
-LABEL maintainer="sebastian@raubach.co.uk"
 
 RUN apt-get update && \
     apt-get --yes --force-yes install unzip zip && \
