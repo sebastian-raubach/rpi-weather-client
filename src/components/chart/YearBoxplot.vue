@@ -93,7 +93,7 @@
       const result = {
         opacity: isEmpty ? 0 : 1,
         hoverinfo: isEmpty ? 'none' : 'all',
-        type: 'box',
+        type: 'box' as const,
         name: monthNames.value[index],
         visible: true,
         boxpoints: 'all',
@@ -163,6 +163,7 @@
       modeBarButtonsToRemove: ['toImage' as const],
     }
 
+    // @ts-ignore
     Plotly.newPlot(chart.value, traces, layout, config)
       .then(() => {
         isRedrawing.value = false

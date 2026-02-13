@@ -81,5 +81,5 @@
   const minValue = computed(() => Math.min(...values.value))
   const maxValue = computed(() => Math.max(...values.value))
   const sparklineData = computed(() => values.value.slice(Math.max(values.value.length - 288, 0)))
-  const gradient = computed(() => [compProps.color, mutedColor.value])
+  const gradient = computed(() => [compProps.color || '#000000', mutedColor.value || '#ffffff'])
 </script>

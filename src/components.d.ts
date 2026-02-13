@@ -11,11 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppFooter: typeof import('./components/AppFooter.vue')['default']
-    ConfirmModal: typeof import('./components/modal/InputModal.vue')['default']
-    copy: typeof import('./components/chart/YearScatter copy.vue')['default']
     Dashboard: typeof import('./components/Dashboard.vue')['default']
-    HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     InputModal: typeof import('./components/modal/InputModal.vue')['default']
     LineChart: typeof import('./components/chart/LineChart.vue')['default']
     MoonPhaseCalendar: typeof import('./components/MoonPhaseCalendar.vue')['default']
