@@ -1,5 +1,8 @@
 <template>
   <v-card :title="$t(title)">
+    <template #append>
+      <v-switch color="primary" v-model="isInteractive" />
+    </template>
     <template #prepend><v-icon :icon="icon" :color="color" /></template>
     <template #text>
       <div ref="chart" />
@@ -40,6 +43,7 @@
   const store = coreStore()
   const { t } = useI18n()
 
+  const isInteractive = ref(false)
   const chart = useTemplateRef('chart')
 
   const color = computed(() => (compProps.traces && compProps.traces.length > 0) ? compProps.traces[0]?.color : undefined)
@@ -169,6 +173,18 @@
 
   watch(() => store.storeIsDarkMode, async () => draw())
   watch(() => compProps.traces, async () => draw(), { deep: true })
+
+  watch(isInteractive, async newValue => {
+    if (chart.value) {
+      const layoutDelta = {
+        'xaxis.fixedrange': !newValue,
+        'yaxis.fixedrange': !newValue,
+      }
+
+      // @ts-ignore
+      Plotly.relayout(chart.value, layoutDelta)
+    }
+  })
 
   onMounted(() => draw())
 

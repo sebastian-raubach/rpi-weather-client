@@ -16,19 +16,21 @@
     </template>
     <template #day="{ item }">
       <v-btn
-        variant="text"
+        :variant="item.isToday ? 'tonal' : 'text'"
         icon
         class="v-date-picker-month__day-btn"
       >
+        <!-- @vue-ignore -->
+        {{ (d = dateMoonPhases[item.date.toISOString().split('T')[0]], null) }}
         {{ item.date.getDate() }}
         <div class="v-date-picker-month__events">
           <!-- @vue-ignore -->
           <v-icon
-            size="x-small"
+            size="10px"
             class="mt-1"
-            :color="gradient[dateMoonPhases[item.date.toISOString().split('T')[0]]]"
-            :icon="moonPhases[dateMoonPhases[item.date.toISOString().split('T')[0]]]"
-            v-if="dateMoonPhases[item.date.toISOString().split('T')[0]] !== undefined"
+            :color="gradient[d <= 3 ? d : 7 - d]"
+            :icon="moonPhases[d]"
+            v-if="d !== undefined"
           />
         </div>
       </v-btn>
@@ -38,7 +40,7 @@
 
 <script setup lang="ts">
   import { createColorGradient } from '@/plugins/color'
-import { mdiMoonFirstQuarter, mdiMoonFull, mdiMoonLastQuarter, mdiMoonNew, mdiMoonWaningGibbous, mdiMoonWaxingCrescent, mdiMoonWaxingGibbous, mdiRefresh, mdiSunAngle, mdiVectorSquareRemove } from '@mdi/js'
+  import { mdiMoonFirstQuarter, mdiMoonFull, mdiMoonLastQuarter, mdiMoonNew, mdiMoonWaningCrescent, mdiMoonWaningGibbous, mdiMoonWaxingCrescent, mdiMoonWaxingGibbous, mdiRefresh, mdiSunAngle, mdiVectorSquareRemove } from '@mdi/js'
 
   const dateMoonPhases = ref<{ [index: string]: number }>({})
   const moonPhases = ref<string[]>([
@@ -49,10 +51,10 @@ import { mdiMoonFirstQuarter, mdiMoonFull, mdiMoonLastQuarter, mdiMoonNew, mdiMo
     mdiMoonFull,
     mdiMoonWaningGibbous,
     mdiMoonLastQuarter,
-    mdiMoonWaningGibbous,
+    mdiMoonWaningCrescent,
   ])
 
-  const gradient = ref<string[]>(createColorGradient('#ffffff', '#FFC312', 8))
+  const gradient = ref<string[]>(createColorGradient('#ffffff', '#FFC312', 4))
 
   function calculateMonthlyMoonPhases (month: number) {
     dateMoonPhases.value = {}
