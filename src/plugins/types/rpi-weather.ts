@@ -138,6 +138,27 @@ export interface MinimalMeasurement {
     created: Date; 
 }
 
+export interface TidalInfo {
+    levels: LevelData[];
+    extremes: ExtremeData[];
+}
+
+export interface LevelData {
+    sg: number;
+    time: Date;
+}
+
+export interface ExtremeData {
+    height: number;
+    time: Date;
+    type: Type;
+}
+
+export const enum Type {
+    high = 'high',
+    low = 'low',
+}
+
 export interface SchemaVersion {
     installedRank: number;
     version: string;

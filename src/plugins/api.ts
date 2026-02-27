@@ -1,6 +1,6 @@
 import { coreStore } from '@/stores/app'
 import axios from 'axios'
-import type { AggregatedStats, DailyStats, ExtendedMeasurement, Measurements, AggregatedStatsMeasurements, AggregatedYearMonth, Location } from '@/plugins/types/rpi-weather'
+import type { AggregatedStats, DailyStats, ExtendedMeasurement, Measurements, AggregatedStatsMeasurements, AggregatedYearMonth, Location, TidalInfo } from '@/plugins/types/rpi-weather'
 
 /**
  * Sends an axios REST request to the server with the given parameter configuration
@@ -184,6 +184,20 @@ function apiGetLatestDate () {
   })
 }
 
+function apiGetTidal () {
+  return new Promise<TidalInfo | undefined>((resolve, reject) => {
+    axiosCall({ url: 'tide', headers: { Accept: 'application/json' } })
+      .then(result => {
+        if (result && result.data) {
+          resolve(result.data)
+        } else {
+          resolve(undefined)
+        }
+      })
+      .catch(error => reject(error))
+  })
+}
+
 function apiGetTotal () {
   return new Promise<AggregatedStats | undefined>((resolve, reject) => {
     axiosCall({ url: 'stats/total', headers: { Accept: 'application/json' } })
@@ -252,4 +266,5 @@ export {
   apiGetTotal,
   apiDeleteRainfall,
   apiGetYears,
+  apiGetTidal,
 }

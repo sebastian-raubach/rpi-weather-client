@@ -47,6 +47,7 @@
   "variableLoftHumidity": "Dachboden Luftfeuchtigkeit",
   "variableSunMoon": "Sonnen-/Mondphasen",
   "variableForecast": "Prognose",
+  "variableTide": "Gezeiten",
   "widgetChartHeatmapAxisTitleDay": "Tag",
   "widgetChartHeatmapAxisTitleMonth": "Monat",
   "widgetChartScatterAxisTitleMonth": "Monat",

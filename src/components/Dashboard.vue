@@ -47,6 +47,16 @@
           y-title=""
         />
       </v-col>
+      <v-col cols="12" lg="6" v-if="tidalData">
+        <LineChart
+          :icon="mdiWaves"
+          smooth
+          :traces="[{ name: 'Tide', color: '#1289A7', measurements: tidalData, fill: 'tozeroy' }]"
+          :title="$t('variableTide')"
+          x-title="axisTitleTime"
+          y-title=""
+        />
+      </v-col>
       <template v-for="variable in availableVariables" :key="`chart-${variable.key}`">
         <v-col cols="12" lg="6" v-if="variable.trace" class="d-flex flex-grow-1">
           <LineChart
@@ -73,9 +83,9 @@
 </template>
 
 <script setup lang="ts">
-  import { apiDeleteRainfall, apiGetData, apiGetForecast, apiGetLatestDate, apiGetLocation } from '@/plugins/api'
+  import { apiDeleteRainfall, apiGetData, apiGetForecast, apiGetLatestDate, apiGetLocation, apiGetTidal } from '@/plugins/api'
   import VariableCard from '@/components/VariableCard.vue'
-  import { mdiRefresh, mdiSunAngle, mdiVectorSquareRemove } from '@mdi/js'
+  import { mdiRefresh, mdiSunAngle, mdiVectorSquareRemove, mdiWaves } from '@mdi/js'
   import type { Location, ExtendedMeasurement, MinimalMeasurement, Measurements } from '@/plugins/types/rpi-weather'
   import { useI18n } from 'vue-i18n'
   import LineChart, { type Trace } from '@/components/chart/LineChart.vue'
@@ -106,6 +116,7 @@
   const rainfallRange = ref<string[] | undefined>(undefined)
   const latestMeasurement = ref<Date>()
   const now = ref<Date>(new Date())
+  const tidalData = ref<MinimalMeasurement[]>([])
 
   let interval: number
 
@@ -421,6 +432,29 @@
       apiGetForecast(from, to)
         .then(fc => {
           forecast.value = fc || []
+        })
+      apiGetTidal()
+        .then(tide => {
+          const tl = tide?.levels
+
+          if (tl) {
+            tidalData.value = tl.filter((l, i) => {
+              // @ts-ignore
+              if (i > 0 && tl[i - 1] && new Date(l.time) < new Date(tl[i - 1].time)) {
+                // Sometimes the tidal API will return values that shouldn't be there, just exclude them...
+                return false
+              } else {
+                return new Date(l.time) >= from && new Date(l.time) <= to
+              }
+            }).map(l => {
+              return {
+                created: new Date(l.time),
+                value: l.sg,
+              }
+            })
+          } else {
+            return []
+          }
         })
     }
   }

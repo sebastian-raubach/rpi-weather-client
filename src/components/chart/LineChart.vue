@@ -1,7 +1,7 @@
 <template>
   <v-card :title="$t(title)">
     <template #append>
-      <v-switch color="primary" v-model="isInteractive" />
+      <v-switch color="primary" hide-details v-model="isInteractive" />
     </template>
     <template #prepend><v-icon :icon="icon" :color="color" /></template>
     <template #text>
@@ -38,6 +38,7 @@
     traces: Trace[]
     forecast?: Trace
     icon: string
+    smooth?: boolean
   }>()
 
   const store = coreStore()
@@ -86,6 +87,7 @@
         },
         line: {
           dash: 'solid' as const,
+          shape: compProps.smooth ? 'spline' : undefined,
         },
         legenditem: {
           textfont: {

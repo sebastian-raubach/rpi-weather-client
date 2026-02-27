@@ -47,6 +47,7 @@
   "variableLoftHumidity": "Loft humidity",
   "variableSunMoon": "Sun/moon phases",
   "variableForecast": "Forecast",
+  "variableTide": "Tide",
   "widgetChartHeatmapAxisTitleDay": "Day",
   "widgetChartHeatmapAxisTitleMonth": "Month",
   "widgetChartScatterAxisTitleMonth": "Month",
