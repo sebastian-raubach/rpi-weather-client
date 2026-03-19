@@ -79,6 +79,15 @@
         </v-col>
       </template>
     </v-row>
+
+    <v-fab
+      app
+      color="primary"
+      location="bottom right"
+      size="large"
+      @click="update"
+      :icon="mdiRefresh"
+    />
   </v-container>
 </template>
 
