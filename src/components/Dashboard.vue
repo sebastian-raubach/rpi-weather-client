@@ -84,7 +84,6 @@
       app
       color="primary"
       location="bottom right"
-      size="large"
       @click="update"
       :icon="mdiRefresh"
     />
