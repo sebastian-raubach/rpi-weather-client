@@ -398,12 +398,8 @@
     }
   }
 
-  function getTimestamp (date: Date, start: boolean) {
-    if (start) {
-      return new Date(`${date.toISOString().split('T')[0]} 00:00:01`)
-    } else {
-      return new Date(`${date.toISOString().split('T')[0]} 23:59:59`)
-    }
+  function getTimestamp (date: Date) {
+    return date.toISOString().split('T')[0]
   }
 
   function setRainfallRange (range: string[] | undefined) {
@@ -424,7 +420,7 @@
     if (dates.length === 0 || !dates[0]) {
       return
     }
-    const [from, to] = [getTimestamp(dates[0], true), getTimestamp(dates[dates.length - 1] || new Date(), false)]
+    const [from, to] = [getTimestamp(dates[0]), getTimestamp(dates[dates.length - 1] || new Date())]
 
     if (from && to) {
       apiGetData(from, to)
@@ -452,7 +448,7 @@
                 // Sometimes the tidal API will return values that shouldn't be there, just exclude them...
                 return false
               } else {
-                return new Date(l.time) >= from && new Date(l.time) <= to
+                return new Date(l.time) >= new Date(from) && new Date(l.time) <= new Date(to)
               }
             }).map(l => {
               return {

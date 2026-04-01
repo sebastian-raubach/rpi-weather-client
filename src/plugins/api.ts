@@ -44,7 +44,7 @@ function axiosCall ({ url, baseUrl, params, method = 'get', headers, responseTyp
   return axios(config)
 }
 
-function apiGetData (start: Date, end: Date) {
+function apiGetData (start: string, end: string) {
   return new Promise<ExtendedMeasurement[] | undefined>((resolve, reject) => {
     axiosCall({ url: 'data', params: { start, end }, headers: { Accept: 'application/json' } })
       .then(result => {
@@ -72,7 +72,7 @@ function apiGetVariables () {
   })
 }
 
-function apiGetForecast (start: Date, end: Date) {
+function apiGetForecast (start: string, end: string) {
   return new Promise<Measurements[] | undefined>((resolve, reject) => {
     axiosCall({ url: 'data/forecast', params: { start, end }, headers: { Accept: 'application/json' } })
       .then(result => {

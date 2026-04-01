@@ -120,8 +120,8 @@
 
     const minDate = new Date(minDateTime || Date.now())
     const maxDate = new Date(maxDateTime || Date.now())
-    minDate.setUTCHours(0, 0, 0, 0)
-    maxDate.setUTCHours(23, 59, 59, 999)
+    minDate.setHours(0, 0, 0, 0)
+    maxDate.setHours(23, 59, 59, 999)
 
     const layout: any = {
       height: 400,
