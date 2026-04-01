@@ -448,7 +448,8 @@
                 // Sometimes the tidal API will return values that shouldn't be there, just exclude them...
                 return false
               } else {
-                return new Date(l.time) >= new Date(from) && new Date(l.time) <= new Date(to)
+                const str = l.time.split('T')[0] || ''
+                return str >= from && str <= to
               }
             }).map(l => {
               return {

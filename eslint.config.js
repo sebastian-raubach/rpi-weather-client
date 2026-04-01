@@ -26,6 +26,7 @@ export default vuetify({
     'unicorn/prefer-classlist-toggle': 'off',
     'unicorn/prefer-number-properties': 'off',
     'unicorn/prefer-add-event-listener': 'off',
+    'unicorn/prefer-math-min-max': 'off',
     'vue/attributes-order': 'off',
     'vue/max-attributes-per-line': 'off',
     'vue/order-in-components': 'off',

@@ -145,7 +145,7 @@ export interface TidalInfo {
 
 export interface LevelData {
     sg: number;
-    time: Date;
+    time: string;
 }
 
 export interface ExtremeData {
@@ -157,19 +157,6 @@ export interface ExtremeData {
 export const enum Type {
     high = 'high',
     low = 'low',
-}
-
-export interface SchemaVersion {
-    installedRank: number;
-    version: string;
-    description: string;
-    type: string;
-    script: string;
-    checksum: number;
-    installedBy: string;
-    installedOn: Date;
-    executionTime: number;
-    success: boolean;
 }
 
 export interface Day {
