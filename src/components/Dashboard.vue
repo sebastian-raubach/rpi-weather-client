@@ -98,6 +98,7 @@
   import { useI18n } from 'vue-i18n'
   import LineChart, { type Trace } from '@/components/chart/LineChart.vue'
   import { VARIABLES } from '@/plugins/constants'
+  import { useGeolocation } from '@vueuse/core'
 
   import SunCalc from 'suncalc'
   import { coreStore } from '@/stores/app'
@@ -114,8 +115,9 @@
 
   const { t } = useI18n()
   const store = coreStore()
+  const { coords } = useGeolocation()
 
-  const dateRange = ref<Date[]>([new Date()])
+  const dateRange = ref<string[]>([new Date().toISOString().slice(0, 10)])
 
   const weatherData = ref<ExtendedMeasurement[]>([])
   const forecast = ref<Measurements[]>([])
@@ -139,32 +141,32 @@
   ]
 
   const arcs = computed(() => {
-    if (dateRange.value && dateRange.value.length > 0 && location.value) {
-      const current = new Date(dateRange.value[0]?.getTime() || Date.now())
+    if (dateRange.value && dateRange.value.length > 0 && usedLocation.value) {
+      const current = new Date(dateRange.value[0] || new Date().toISOString().slice(0, 10))
       current.setHours(0, 0, 0, 0)
-      const end = dateRange.value[dateRange.value.length - 1] || new Date()
+      const end = new Date(dateRange.value[dateRange.value.length - 1] || new Date().toISOString().slice(0, 10))
       end.setHours(23, 59, 59, 999)
       const sun: MinimalMeasurement[] = []
       const moon: MinimalMeasurement[] = []
 
-      let sunElevation = SunCalc.getPosition(current, location.value.latitude, location.value.longitude)
+      let sunElevation = SunCalc.getPosition(current, usedLocation.value.latitude, usedLocation.value.longitude)
       sun.push({ created: new Date(current), value: sunElevation.altitude })
-      let moonElevation = SunCalc.getMoonPosition(current, location.value.latitude, location.value.longitude)
+      let moonElevation = SunCalc.getMoonPosition(current, usedLocation.value.latitude, usedLocation.value.longitude)
       moon.push({ created: new Date(current), value: moonElevation.altitude })
 
       do {
-        sunElevation = SunCalc.getPosition(current, location.value.latitude, location.value.longitude)
+        sunElevation = SunCalc.getPosition(current, usedLocation.value.latitude, usedLocation.value.longitude)
         sun.push({ created: new Date(current), value: sunElevation.altitude })
-        moonElevation = SunCalc.getMoonPosition(current, location.value.latitude, location.value.longitude)
+        moonElevation = SunCalc.getMoonPosition(current, usedLocation.value.latitude, usedLocation.value.longitude)
         moon.push({ created: new Date(current), value: moonElevation.altitude })
 
         current.setMinutes(current.getMinutes() + 30)
       } while (current.getTime() < end.getTime())
 
       current.setMinutes(current.getMinutes() - 1)
-      sunElevation = SunCalc.getPosition(current, location.value.latitude, location.value.longitude)
+      sunElevation = SunCalc.getPosition(current, usedLocation.value.latitude, usedLocation.value.longitude)
       sun.push({ created: new Date(current), value: sunElevation.altitude })
-      moonElevation = SunCalc.getMoonPosition(current, location.value.latitude, location.value.longitude)
+      moonElevation = SunCalc.getMoonPosition(current, usedLocation.value.latitude, usedLocation.value.longitude)
       moon.push({ created: new Date(current), value: moonElevation.altitude })
 
       return {
@@ -173,6 +175,17 @@
       }
     } else {
       return undefined
+    }
+  })
+
+  const usedLocation = computed(() => {
+    if (coords.value && isFinite(coords.value.latitude) && isFinite(coords.value.longitude)) {
+      return {
+        latitude: coords.value.latitude,
+        longitude: coords.value.longitude,
+      }
+    } else {
+      return location.value
     }
   })
 
@@ -420,11 +433,17 @@
     if (dates.length === 0 || !dates[0]) {
       return
     }
-    const [from, to] = [getTimestamp(dates[0]), getTimestamp(dates[dates.length - 1] || new Date())]
+    const [from, to] = [dates[0], dates[dates.length - 1]]
 
     if (from && to) {
       apiGetData(from, to)
         .then(data => {
+          if (data) {
+            data.forEach(d => {
+              d.created = d.created.slice(0, 19)
+            })
+          }
+
           loading.value = false
           weatherData.value = data || []
 
@@ -435,6 +454,12 @@
         })
       apiGetForecast(from, to)
         .then(fc => {
+          if (fc) {
+            fc.forEach(d => {
+              d.created = d.created.slice(0, 19)
+            })
+          }
+
           forecast.value = fc || []
         })
       apiGetTidal()
@@ -443,6 +468,7 @@
 
           if (tl) {
             tidalData.value = tl.filter((l, i) => {
+              l.time = l.time.slice(0, 19)
               // @ts-ignore
               if (i > 0 && tl[i - 1] && new Date(l.time) < new Date(tl[i - 1].time)) {
                 // Sometimes the tidal API will return values that shouldn't be there, just exclude them...

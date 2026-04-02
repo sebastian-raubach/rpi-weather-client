@@ -130,7 +130,7 @@ export interface Measurements {
     loftTemp: number;
     lux: number;
     uploadedWu: boolean;
-    created: Date;
+    created: string;
 }
 
 export interface MinimalMeasurement {
