@@ -21,8 +21,8 @@
         class="v-date-picker-month__day-btn"
       >
         <!-- @vue-ignore -->
-        {{ (d = dateMoonPhases[item.date.toISOString().split('T')[0]], null) }}
-        {{ item.date.getDate() }}
+        {{ (d = dateMoonPhases[item.date], null) }}
+        {{ +item.date.slice(8, 10) }}
         <div class="v-date-picker-month__events">
           <!-- @vue-ignore -->
           <v-icon
