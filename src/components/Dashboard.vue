@@ -338,7 +338,7 @@
 
   const lastUpdatedMoreThanTenMins = computed(() => {
     if (latestMeasurement.value && now.value) {
-      const duration = (latestMeasurement.value.getTime() - now.value.getTime()) / 1000
+      const duration = Math.abs(( now.value.getTime() - latestMeasurement.value.getTime()) / 1000)
 
       return duration > 600
     } else {
