@@ -153,6 +153,19 @@
         orientation: 'h' as const,
         font: { color: store.storeIsDarkMode ? 'white' : 'black' },
       },
+      shapes: [{
+        type: 'line',
+        yref: 'paper',
+        x0: new Date(),
+        y0: 0,
+        x1: new Date(),
+        y1: 1,
+        line: {
+          width: 1,
+          dash: 'dot',
+          color: store.storeIsDarkMode ? 'white' : 'black',
+        },
+      }],
     }
 
     const config = {

@@ -18,6 +18,7 @@
   "formLabelVariable": "Variable",
   "formLabelAggregation": "Aggregation",
   "formLabelSelectDateRange": "Select date range",
+  "menuLocale": "Locale",
   "menuDashboard": "Dashboard",
   "menuMonthly": "Monthly statistics",
   "menuYearly": "Yearly statistics",

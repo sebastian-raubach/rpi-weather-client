@@ -147,7 +147,7 @@
       legend: {
         orientation: 'h',
         font: {
-          color: 'white',
+          color: store.storeIsDarkMode ? 'white' : 'black',
         },
       },
     }

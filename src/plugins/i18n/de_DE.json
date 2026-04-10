@@ -18,6 +18,7 @@
   "formLabelVariable": "Variable",
   "formLabelAggregation": "Zusammenrechnung",
   "formLabelSelectDateRange": "Zeitraum auswählen",
+  "menuLocale": "Sprache",
   "menuDashboard": "Dashboard",
   "menuMonthly": "Monatsstatistiken",
   "menuYearly": "Jahresstatistiken",
