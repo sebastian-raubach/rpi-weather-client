@@ -338,9 +338,19 @@
 
   const lastUpdatedMoreThanTenMins = computed(() => {
     if (latestMeasurement.value && now.value) {
-      const duration = Math.abs(( now.value.getTime() - latestMeasurement.value.getTime()) / 1000)
+      const duration = Math.abs((now.value.getTime() - latestMeasurement.value.getTime()) / 1000)
 
       return duration > 600
+    } else {
+      return false
+    }
+  })
+
+  const lastUpdatedMoreThanFiveMins = computed(() => {
+    if (latestMeasurement.value && now.value) {
+      const duration = Math.abs((now.value.getTime() - latestMeasurement.value.getTime()) / 1000)
+
+      return duration > 300
     } else {
       return false
     }
@@ -494,10 +504,18 @@
     now.value = new Date()
   }
 
+  function visibilityListener () {
+    if (document.visibilityState === 'visible' && lastUpdatedMoreThanFiveMins.value) {
+      update()
+    }
+  }
+
   onBeforeUnmount(() => {
     if (interval) {
       clearInterval(interval)
     }
+
+    document.removeEventListener('visibilitychange', visibilityListener)
   })
 
   onMounted(() => {
@@ -509,6 +527,8 @@
       .then(l => {
         location.value = l
       })
+
+    document.addEventListener('visibilitychange', visibilityListener)
   })
 
   watch(dateRange, async () => update())
