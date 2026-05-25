@@ -19,7 +19,7 @@
 
   const compProps = defineProps<{
     data: AggregatedYearMonth[]
-    variable: 'avgAmbientTemp' | 'avgGroundTemp' | 'avgLux' | 'avgPressure' | 'avgHumidity' | 'avgWindSpeed' | 'avgWindGust' | 'sumRainfall' | 'year' | 'month'
+    variable: 'maxAmbientTemp' | 'minAmbientTemp' | 'avgAmbientTemp' | 'avgGroundTemp' | 'avgLux' | 'avgPressure' | 'avgHumidity' | 'avgWindSpeed' | 'avgWindGust' | 'sumRainfall' | 'year' | 'month'
     sort: 'asc' | 'desc'
     highlight: number
   }>()

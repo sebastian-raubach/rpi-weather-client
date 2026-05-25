@@ -93,8 +93,29 @@
           :title="$t(VARIABLES[Variables.ambientTemp]?.title || '')"
           :subtitle="$t(VARIABLES[Variables.ambientTemp]?.unit || '')"
           :prepend-icon="VARIABLES[Variables.ambientTemp]?.icon || ''"
+          :append-icon="mdiThermometerChevronUp"
+        >
+          <YearlyMonthRankingTable variable="maxAmbientTemp" :data="aggregatedYearMonths" sort="desc" :highlight="selectedYear" />
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card
+          :title="$t(VARIABLES[Variables.ambientTemp]?.title || '')"
+          :subtitle="$t(VARIABLES[Variables.ambientTemp]?.unit || '')"
+          :prepend-icon="VARIABLES[Variables.ambientTemp]?.icon || ''"
+          :append-icon="mdiThermometerMinus"
         >
           <YearlyMonthRankingTable variable="avgAmbientTemp" :data="aggregatedYearMonths" sort="desc" :highlight="selectedYear" />
+        </v-card>
+      </v-col>
+      <v-col>
+        <v-card
+          :title="$t(VARIABLES[Variables.ambientTemp]?.title || '')"
+          :subtitle="$t(VARIABLES[Variables.ambientTemp]?.unit || '')"
+          :prepend-icon="VARIABLES[Variables.ambientTemp]?.icon || ''"
+          :append-icon="mdiThermometerChevronDown"
+        >
+          <YearlyMonthRankingTable variable="minAmbientTemp" :data="aggregatedYearMonths" sort="desc" :highlight="selectedYear" />
         </v-card>
       </v-col>
       <v-col>
@@ -160,7 +181,7 @@
   import { VARIABLES } from '@/plugins/constants'
   import { type AggregatedYearMonth, type AggregatedStats, Variables } from '@/plugins/types/rpi-weather'
   import { coreStore } from '@/stores/app'
-  import { mdiCupWater, mdiThermometer, mdiThermometerHigh, mdiThermometerLow, mdiWeatherPouring, mdiWeatherWindy } from '@mdi/js'
+  import { mdiCupWater, mdiThermometer, mdiThermometerChevronDown, mdiThermometerChevronUp, mdiThermometerHigh, mdiThermometerLow, mdiThermometerMinus, mdiWeatherPouring, mdiWeatherWindy } from '@mdi/js'
 
   const store = coreStore()
 

@@ -103,7 +103,9 @@ export interface Aggregated {
 }
 
 export interface AggregatedYearMonth {
+    minAmbientTemp: number;
     avgAmbientTemp: number;
+    maxAmbientTemp: number;
     avgGroundTemp: number;
     avgLux: number;
     avgPressure: number;
