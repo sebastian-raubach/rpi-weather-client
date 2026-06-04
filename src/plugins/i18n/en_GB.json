@@ -38,6 +38,7 @@
   "variableAmbientTemp": "Ambient temperature",
   "variableGroundTemp": "Ground temperature",
   "variableRainfall": "Rainfall",
+  "variableRainfallMMH": "Hourly rainfall",
   "variableHumidity": "Humidity",
   "variablePressure": "Pressure",
   "variableLux": "Light intensity",

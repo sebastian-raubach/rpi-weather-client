@@ -17,11 +17,13 @@
   import { coreStore } from '@/stores/app'
   import Plotly from 'plotly.js/lib/core'
   import scatter from 'plotly.js/lib/scatter'
+  import bar from 'plotly.js/lib/bar'
   import { useI18n } from 'vue-i18n'
 
   // Only register the chart types we're actually using to reduce the final bundle size
   Plotly.register([
     scatter,
+    bar,
   ])
 
   export interface Trace {
@@ -29,6 +31,7 @@
     fill?: 'tozeroy' | undefined
     name: string
     color: string
+    type?: 'scatter' | 'bar'
   }
 
   const compProps = defineProps<{
@@ -75,10 +78,10 @@
     })
 
     const traces: any = compProps.traces.map(tr => {
-      return {
+      const result: any = {
         x: tr.measurements.map(v => v.created),
         y: tr.measurements.map(v => v.value),
-        type: 'scatter' as const,
+        type: tr.type || 'scatter',
         name: t(tr.name),
         mode: 'lines' as const,
         fill: tr.fill,
@@ -95,6 +98,15 @@
           },
         },
       }
+
+      if (result.type === 'bar') {
+        result.offset = 0
+        result.width = 1000 * 60 * 60
+        result.opacity = 0.5
+        result.hoverinfo = 'skip'
+      }
+
+      return result
     })
 
     if (compProps.forecast) {

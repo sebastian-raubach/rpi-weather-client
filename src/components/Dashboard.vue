@@ -28,11 +28,11 @@
         :key="`variable-card-${variable}`"
       >
         <VariableCard
-          :color="variable.trace.color"
+          :color="variable.traces[0]?.color || '#00acef'"
           :icon="variable.icon"
           :title="variable.title"
           :subtitle="variable.yTitle"
-          :measurements="weatherDataByVariable[variable.key] || []"
+          :measurements="variable.traces[0]?.measurements || []"
         />
       </v-col>
     </v-row>
@@ -58,18 +58,18 @@
         />
       </v-col>
       <template v-for="variable in availableVariables" :key="`chart-${variable.key}`">
-        <v-col cols="12" lg="6" v-if="variable.trace" class="d-flex flex-grow-1">
+        <v-col cols="12" lg="6" v-if="variable.traces" class="d-flex flex-grow-1">
           <LineChart
             class="flex-grow-1"
             :icon="variable.icon"
-            :traces="[variable.trace]"
+            :traces="variable.traces"
             :forecast="variable.forecast"
             :title="variable.title"
             x-title="axisTitleTime"
             :y-title="variable.yTitle"
             @rainfall-range-selected="setRainfallRange"
           >
-            <template #append v-if="variable.trace.name === 'variableRainfall' && rainfallRange">
+            <template #append v-if="variable.traces[0]?.name === 'variableRainfall' && rainfallRange">
               <v-card-actions>
                 <v-spacer />
                 <v-btn color="error" :prepend-icon="mdiVectorSquareRemove" variant="tonal" :text="$t('buttonDeleteRainfall')" @click="attemptDeleteRainfall" />
@@ -109,7 +109,7 @@
     icon: string
     title: string
     yTitle: string
-    trace: Trace
+    traces: Trace[]
     forecast?: Trace
   }
 
@@ -190,78 +190,127 @@
   })
 
   const variables: ComputedRef<Variable[]> = computed(() => {
+    let ms = (weatherDataByVariable.value['rainfall'] || [])
+
+    const ns: MinimalMeasurement[] = []
+    ms.forEach((mm, mi) => {
+      ns.push({
+        created: mm.created,
+        value: mi > 0 ? ((ms[mi]?.value || 0) + (ns[mi - 1]?.value || 0)) : (ms[mi]?.value || 0),
+      })
+    })
+
+    const rainfall = {
+      key: 'rainfall',
+      icon: VARIABLES.rainfall?.icon || '',
+      title: t(VARIABLES.rainfall?.title || ''),
+      yTitle: t(VARIABLES.rainfall?.unit || ''),
+      traces: [{ name: 'variableRainfall', color: VARIABLES.rainfall?.color || '', measurements: ns }],
+      forecast: { name: 'variableForecast', color: VARIABLES.rainfall?.color || '', measurements: forecastDataByVariable.value['rainfall'] || [] },
+    }
+
+    ms = weatherDataByVariable.value['rainfall'] || []
+    if (ms.length > 2) {
+      const xs = ms.map(v => v.created)
+      const ys = ms.map(v => v.value)
+
+      // @ts-ignore
+      const minDate = new Date(xs[0])
+      minDate.setMinutes(0)
+      minDate.setSeconds(0)
+      minDate.setMilliseconds(0)
+      // @ts-ignore
+      const maxDate = new Date(xs[xs.length - 1])
+      const hours = Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60))
+
+      const xr = Array.from(new Array(hours).keys()).map(i => new Date(minDate.getTime() + (i * 1000 * 60 * 60)))
+      const yr = xr.map(_ => 0)
+
+      let yi = 0
+      ys.forEach((yy, i) => {
+        // @ts-ignore
+        yr[yi] += yy
+
+        // @ts-ignore
+        if (new Date(xs[i]) >= xr[yi + 1]) {
+          yi++
+        }
+      })
+
+      rainfall.traces.push({ name: 'variableRainfallMMH', type: 'bar', color: VARIABLES.rainfall?.color || '', measurements: xr.map((xrr, xri) => {
+        return {
+          created: xrr,
+          value: yr[xri] || 0,
+        }
+      }) })
+    }
+
+    console.log(rainfall)
+
     return [{
       key: 'ambientTemp',
       icon: VARIABLES.ambientTemp?.icon || '',
       title: t(VARIABLES.ambientTemp?.title || ''),
       yTitle: t(VARIABLES.ambientTemp?.unit || ''),
-      trace: { name: 'variableAmbientTemp', color: VARIABLES.ambientTemp?.color || '', measurements: weatherDataByVariable.value['ambientTemp'] || [] },
+      traces: [{ name: 'variableAmbientTemp', color: VARIABLES.ambientTemp?.color || '', measurements: weatherDataByVariable.value['ambientTemp'] || [] }],
       forecast: { name: 'variableForecast', color: VARIABLES.ambientTemp?.color || '', measurements: forecastDataByVariable.value['ambientTemp'] || [] },
     }, {
       key: 'groundTemp',
       icon: VARIABLES.groundTemp?.icon || '',
       title: t(VARIABLES.groundTemp?.title || ''),
       yTitle: t(VARIABLES.groundTemp?.unit || ''),
-      trace: { name: 'variableGroundTemp', color: VARIABLES.groundTemp?.color || '', measurements: weatherDataByVariable.value['groundTemp'] || [] },
-    }, {
-      key: 'rainfall',
-      icon: VARIABLES.rainfall?.icon || '',
-      title: t(VARIABLES.rainfall?.title || ''),
-      yTitle: t(VARIABLES.rainfall?.unit || ''),
-      trace: { name: 'variableRainfall', color: VARIABLES.rainfall?.color || '', measurements: weatherDataByVariable.value['rainfall'] || [] },
-      forecast: { name: 'variableForecast', color: VARIABLES.rainfall?.color || '', measurements: forecastDataByVariable.value['rainfall'] || [] },
-
-    }, {
+      traces: [{ name: 'variableGroundTemp', color: VARIABLES.groundTemp?.color || '', measurements: weatherDataByVariable.value['groundTemp'] || [] }],
+    }, rainfall, {
       key: 'humidity',
       icon: VARIABLES.humidity?.icon || '',
       title: t(VARIABLES.humidity?.title || ''),
       yTitle: t(VARIABLES.humidity?.unit || ''),
-      trace: { name: 'variableHumidity', color: VARIABLES.humidity?.color || '', measurements: weatherDataByVariable.value['humidity'] || [] },
+      traces: [{ name: 'variableHumidity', color: VARIABLES.humidity?.color || '', measurements: weatherDataByVariable.value['humidity'] || [] }],
       forecast: { name: 'variableForecast', color: VARIABLES.humidity?.color || '', measurements: forecastDataByVariable.value['humidity'] || [] },
     }, {
       key: 'pressure',
       icon: VARIABLES.pressure?.icon || '',
       title: t(VARIABLES.pressure?.title || ''),
       yTitle: t(VARIABLES.pressure?.unit || ''),
-      trace: { name: 'variablePressure', color: VARIABLES.pressure?.color || '', measurements: weatherDataByVariable.value['pressure'] || [] },
+      traces: [{ name: 'variablePressure', color: VARIABLES.pressure?.color || '', measurements: weatherDataByVariable.value['pressure'] || [] }],
       forecast: { name: 'variableForecast', color: VARIABLES.pressure?.color || '', measurements: forecastDataByVariable.value['pressure'] || [] },
     }, {
       key: 'lux',
       icon: VARIABLES.lux?.icon || '',
       title: t(VARIABLES.lux?.title || ''),
       yTitle: t(VARIABLES.lux?.unit || ''),
-      trace: { name: 'variableLux', color: VARIABLES.lux?.color || '', measurements: weatherDataByVariable.value['lux'] || [] },
+      traces: [{ name: 'variableLux', color: VARIABLES.lux?.color || '', measurements: weatherDataByVariable.value['lux'] || [] }],
     }, {
       key: 'piTemp',
       icon: VARIABLES.piTemp?.icon || '',
       title: t(VARIABLES.piTemp?.title || ''),
       yTitle: t(VARIABLES.piTemp?.unit || ''),
-      trace: { name: 'variablePiTemp', color: VARIABLES.piTemp?.color || '', measurements: weatherDataByVariable.value['piTemp'] || [] },
+      traces: [{ name: 'variablePiTemp', color: VARIABLES.piTemp?.color || '', measurements: weatherDataByVariable.value['piTemp'] || [] }],
     }, {
       key: 'windSpeed',
       icon: VARIABLES.windSpeed?.icon || '',
       title: t(VARIABLES.windSpeed?.title || ''),
       yTitle: t(VARIABLES.windSpeed?.unit || ''),
-      trace: { name: 'variableWindSpeed', color: VARIABLES.windSpeed?.color || '', measurements: weatherDataByVariable.value['windSpeed'] || [] },
+      traces: [{ name: 'variableWindSpeed', color: VARIABLES.windSpeed?.color || '', measurements: weatherDataByVariable.value['windSpeed'] || [] }],
       forecast: { name: 'variableForecast', color: VARIABLES.windSpeed?.color || '', measurements: forecastDataByVariable.value['windSpeed'] || [] },
     }, {
       key: 'windGust',
       icon: VARIABLES.windGust?.icon || '',
       title: t(VARIABLES.windGust?.title || ''),
       yTitle: t(VARIABLES.windGust?.unit || ''),
-      trace: { name: 'variableGustSpeed', color: VARIABLES.windGust?.color || '', measurements: weatherDataByVariable.value['windGust'] || [] },
+      traces: [{ name: 'variableGustSpeed', color: VARIABLES.windGust?.color || '', measurements: weatherDataByVariable.value['windGust'] || [] }],
     }, {
       key: 'loftTemp',
       icon: VARIABLES.loftTemp?.icon || '',
       title: t(VARIABLES.loftTemp?.title || ''),
       yTitle: t(VARIABLES.loftTemp?.unit || ''),
-      trace: { name: 'variableLoftTemp', color: VARIABLES.loftTemp?.color || '', measurements: weatherDataByVariable.value['loftTemp'] || [] },
+      traces: [{ name: 'variableLoftTemp', color: VARIABLES.loftTemp?.color || '', measurements: weatherDataByVariable.value['loftTemp'] || [] }],
     }, {
       key: 'loftHumidity',
       icon: VARIABLES.loftHumidity?.icon || '',
       title: t(VARIABLES.loftHumidity?.title || ''),
       yTitle: t(VARIABLES.loftHumidity?.unit || ''),
-      trace: { name: 'variableLoftHumidity', color: VARIABLES.loftHumidity?.color || '', measurements: weatherDataByVariable.value['loftHumidity'] || [] },
+      traces: [{ name: 'variableLoftHumidity', color: VARIABLES.loftHumidity?.color || '', measurements: weatherDataByVariable.value['loftHumidity'] || [] }],
     }]
   })
 
@@ -317,17 +366,11 @@
             result[k] = []
           }
 
-          let prev = 0
-
-          if (k === 'rainfall' && result[k].length > 0 && result[k][result[k].length - 1]?.value) {
-            prev = result[k][result[k].length - 1]?.value || 0
-          }
-
           result[k].push({
             // @ts-ignore
             created: wv.created,
             // @ts-ignore
-            value: prev + wv[k],
+            value: wv[k],
           })
         })
       })
