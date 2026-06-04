@@ -200,7 +200,7 @@
       })
     })
 
-    const rainfall = {
+    const rainfall: Variable = {
       key: 'rainfall',
       icon: VARIABLES.rainfall?.icon || '',
       title: t(VARIABLES.rainfall?.title || ''),
