@@ -221,9 +221,9 @@
       minDate.setMilliseconds(0)
       // @ts-ignore
       const maxDate = new Date(xs[xs.length - 1])
-      const hours = Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60))
+      const minutes = Math.ceil((maxDate.getTime() - minDate.getTime()) / (1000 * 60 * 60 / 12))
 
-      const xr = Array.from(new Array(hours).keys()).map(i => new Date(minDate.getTime() + (i * 1000 * 60 * 60)))
+      const xr = Array.from(new Array(minutes).keys()).map(i => new Date(minDate.getTime() + (i * 1000 * 60 * 60 / 12)))
       const yr = xr.map(_ => 0)
 
       let yi = 0
@@ -240,7 +240,7 @@
       rainfall.traces.push({ name: 'variableRainfallMMH', type: 'bar', color: VARIABLES.rainfall?.color || '', measurements: xr.map((xrr, xri) => {
         return {
           created: xrr,
-          value: yr[xri] || 0,
+          value: (yr[xri] || 0) * 12,
         }
       }) })
     }

@@ -101,7 +101,7 @@
 
       if (result.type === 'bar') {
         result.offset = 0
-        result.width = 1000 * 60 * 60
+        result.width = 1000 * 60 * 60 / 12
         result.opacity = 0.5
         result.hoverinfo = 'skip'
       }
