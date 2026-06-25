@@ -81,8 +81,6 @@
     let minZ = Number.MAX_SAFE_INTEGER
     let maxZ = -Number.MAX_SAFE_INTEGER
 
-    const aggs = [ValueAggregation.min, ValueAggregation.avg, ValueAggregation.max]
-
     compProps.data.forEach(dp => {
       const date = new Date(dp.date)
       const value = dp[compProps.aggregation][compProps.variable]
@@ -91,22 +89,20 @@
         const month = monthNames.value.length - date.getMonth() - 1
         const day = date.getDate() - 1
 
-        // @ts-ignore
+        // @ts-expect-error
         z[month][day] = value
       }
 
-      aggs.forEach(a => {
-        const v = dp[a][compProps.variable]
-        if (v !== undefined && v !== null && !isNaN(v)) {
-          minZ = Math.min(minZ, v)
-          maxZ = Math.max(maxZ, v)
-        }
-      })
+      const v = dp[compProps.aggregation][compProps.variable]
+      if (v !== undefined && v !== null && !isNaN(v)) {
+        minZ = Math.min(minZ, v)
+        maxZ = Math.max(maxZ, v)
+      }
     })
 
     if (isVertical.value) {
       const copy = z.concat().reverse()
-      // @ts-ignore
+      // @ts-expect-error
       z = z[0].map((col, i) => copy.map(row => row[i]))
     }
 
@@ -149,7 +145,7 @@
     }
 
     if (isVertical.value) {
-      // @ts-ignore
+      // @ts-expect-error
       [xAxis, yAxis] = [yAxis, xAxis]
     }
 
@@ -167,7 +163,7 @@
     }
 
     if (isVertical.value) {
-      // @ts-ignore
+      // @ts-expect-error
       layout.margin.r = 0
     }
 
