@@ -43,6 +43,7 @@
     </div>
 
     <v-card-text class="py-0 pb-3">
+      <!-- @vue-ignore -->
       <v-sparkline
         v-if="sparklineData && hasActualData"
         :model-value="sparklineData"
