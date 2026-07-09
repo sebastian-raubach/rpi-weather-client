@@ -1,4 +1,4 @@
-FROM node:22.11-alpine3.20 AS builder
+FROM node:22-alpine3.19 AS builder
 
 ARG BRANCH=main
 
