@@ -32,7 +32,7 @@
 
         <v-menu>
           <template #activator="{ props }">
-            <v-btn :icon="mdiThemeLightDark" v-bind="props" />
+            <v-btn id="theme-button" :icon="mdiThemeLightDark" v-bind="props" />
           </template>
           <v-list>
             <v-list-subheader class="text-high-emphasis text-uppercase font-weight-black">{{ $t('menuTheme') }}</v-list-subheader>
@@ -79,6 +79,7 @@
           <v-list-item :prepend-icon="mdiViewDashboard" :title="$t('menuDashboard')" to="/" />
           <v-list-item :prepend-icon="mdiCalendarWeekend" :title="$t('menuMonthly')" to="/monthly" />
           <v-list-item :prepend-icon="mdiCalendarExpandHorizontal" :title="$t('menuYearly')" to="/yearly" />
+          <v-list-item :prepend-icon="mdiCalendarClock" :title="$t('menuTotal')" to="/total" />
         </v-list>
       </v-navigation-drawer>
 
@@ -117,7 +118,7 @@
   import { useDark } from '@vueuse/core'
 
   import emitter from 'tiny-emitter/instance'
-  import { mdiTranslate, mdiDesktopTowerMonitor, mdiWeatherNight, mdiWhiteBalanceSunny, mdiThemeLightDark, mdiCheck, mdiViewDashboard, mdiCalendarExpandHorizontal, mdiCalendarWeekend, mdiMoonWaningCrescent } from '@mdi/js'
+  import { mdiTranslate, mdiDesktopTowerMonitor, mdiWeatherNight, mdiWhiteBalanceSunny, mdiThemeLightDark, mdiCheck, mdiViewDashboard, mdiCalendarExpandHorizontal, mdiCalendarWeekend, mdiMoonWaningCrescent, mdiCalendarClock } from '@mdi/js'
 
   const { smAndUp, mdAndUp, smAndDown } = useDisplay()
   const theme = useTheme()
@@ -149,7 +150,8 @@
   // Listen for theme changes in the store
   watchEffect(() => {
     const str = isDark.value ? 'dark' : 'light'
-    theme.change(store.storeTheme === 'system' ? str : store.storeTheme)
+    theme.setTransitionOrigin(document.querySelector('#theme-button'))
+    theme.change(store.storeTheme === 'system' ? str : store.storeTheme, true)
     store.setSystemTheme(str)
   })
 

@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
   import { VARIABLES } from '@/plugins/constants'
-  import { type DailyStats, ValueAggregation, type Variables } from '@/plugins/types/rpi-weather'
+  import type { DailyStats, ValueAggregation, Variables } from '@/plugins/types/rpi-weather'
   import { coreStore } from '@/stores/app'
   import { useResizeObserver } from '@vueuse/core'
   import Plotly, { type ColorScale } from 'plotly.js/lib/core'

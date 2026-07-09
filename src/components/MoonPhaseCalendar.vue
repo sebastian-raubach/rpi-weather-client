@@ -8,8 +8,8 @@
       <v-btn :disabled="disabled.includes('prev-month')" color="primary" icon="$prev" @click="prevMonth " />
       <v-spacer />
       <div class="text-center">
-        <div class="text-caption my-n1 text-primary">{{ monthYearText.split(' ')[1] }}</div>
-        <div class="text-body-1">{{ monthYearText.split(' ')[0] }}</div>
+        <div class="text-body-small my-n1 text-primary">{{ monthYearText.split(' ')[1] }}</div>
+        <div class="text-body-large">{{ monthYearText.split(' ')[0] }}</div>
       </div>
       <v-spacer />
       <v-btn :disabled="disabled.includes('next-month')" color="primary" icon="$next" @click="nextMonth" />

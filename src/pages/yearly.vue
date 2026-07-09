@@ -2,7 +2,7 @@
   <v-container fluid>
     <div class="d-flex flex-row flex-wrap ga-3">
       <div>
-        <div class="text-subtitle-2 mt-3">{{ $t('formLabelYear') }}</div>
+        <div class="text-title-small mt-3">{{ $t('formLabelYear') }}</div>
         <v-btn-toggle
           v-model="selectedYears"
           color="primary"
@@ -19,7 +19,7 @@
         </v-btn-toggle>
       </div>
       <div>
-        <div class="text-subtitle-2 mt-3">{{ $t('formLabelVariable') }}</div>
+        <div class="text-title-small mt-3">{{ $t('formLabelVariable') }}</div>
         <v-select
           v-model="selectedVariable"
           :items="variableOptions"
@@ -29,7 +29,7 @@
         />
       </div>
       <div>
-        <div class="text-subtitle-2 mt-3">{{ $t('formLabelAggregation') }}</div>
+        <div class="text-title-small mt-3">{{ $t('formLabelAggregation') }}</div>
         <v-btn-toggle
           v-model="aggregation"
           color="primary"

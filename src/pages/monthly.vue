@@ -2,7 +2,7 @@
   <v-container fluid>
     <div class="d-flex flex-row flex-wrap ga-3">
       <div>
-        <div class="text-subtitle-2 mt-3">{{ $t('formLabelYear') }}</div>
+        <div class="text-title-small mt-3">{{ $t('formLabelYear') }}</div>
         <v-select
           v-model="selectedYear"
           :items="years"
@@ -11,7 +11,7 @@
         />
       </div>
       <div>
-        <div class="text-subtitle-2 mt-3">{{ $t('formLabelMonth') }}</div>
+        <div class="text-title-small mt-3">{{ $t('formLabelMonth') }}</div>
         <v-select
           v-model="selectedMonth"
           :items="months"

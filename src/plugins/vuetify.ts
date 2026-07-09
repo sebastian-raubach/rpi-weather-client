@@ -12,7 +12,6 @@ import axios from 'axios'
 
 import { aliases as defaultAliases, mdi } from 'vuetify/iconsets/mdi-svg'
 import { createVuetify, type IconAliases } from 'vuetify'
-import { VDateInput } from 'vuetify/labs/VDateInput'
 import { StringDateAdapter } from 'vuetify/date/adapters/string'
 
 import enGB from '@/plugins/i18n/en_GB.json'
@@ -70,9 +69,6 @@ function getVuetify () {
 function initVuetify () {
   // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
   vuetify = createVuetify({
-    components: {
-      VDateInput,
-    },
     date: {
       adapter: StringDateAdapter,
     },

@@ -22,6 +22,7 @@
   "menuDashboard": "Dashboard",
   "menuMonthly": "Monthly statistics",
   "menuYearly": "Yearly statistics",
+  "menuTotal": "Total statistics",
   "menuItemThemeLight": "Light theme",
   "menuItemThemeDark": "Dark theme",
   "menuItemThemeSystem": "System theme",

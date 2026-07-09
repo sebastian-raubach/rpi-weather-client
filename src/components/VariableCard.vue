@@ -7,7 +7,7 @@
       <v-card-text class="py-0">
         <v-row align="center" no-gutters>
           <v-col
-            class="text-h3"
+            class="text-display-medium"
             cols="6"
           >
             {{ lastValue?.toFixed(1) }}
