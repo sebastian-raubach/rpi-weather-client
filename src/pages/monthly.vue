@@ -29,7 +29,7 @@
           :icon="mdiWeatherPouring"
           :title="$t('monthlyStatsMostRainfall')"
           :subtitle="$t(VARIABLES[Variables.rainfall]?.unit || '')"
-          :additional-info="`${new Date(yearMonthStats.mostRain.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.mostRain.date).toLocaleDateString()}`"
+          :additional-info="[`${new Date(yearMonthStats.mostRain.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.mostRain.date).toLocaleDateString()}`]"
           :measurements="[{ value: yearMonthStats.mostRain.value, created: yearMonthStats.mostRain.date }]"
         />
       </v-col>
@@ -50,7 +50,7 @@
           :icon="mdiWeatherWindy"
           :title="$t('monthlyStatsHighestWind')"
           :subtitle="$t(VARIABLES[Variables.windSpeed]?.unit || '')"
-          :additional-info="`${new Date(yearMonthStats.mostWind.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.mostWind.date).toLocaleDateString()}`"
+          :additional-info="[`${new Date(yearMonthStats.mostWind.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.mostWind.date).toLocaleDateString()}`]"
           :measurements="[{ value: yearMonthStats.mostWind.value, created: yearMonthStats.mostWind.date }]"
         />
       </v-col>
@@ -61,7 +61,7 @@
           :icon="mdiThermometerLow"
           :title="$t('monthlyStatsLowestTemperature')"
           :subtitle="$t(VARIABLES[Variables.ambientTemp]?.unit || '')"
-          :additional-info="`${new Date(yearMonthStats.lowestTemp.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.lowestTemp.date).toLocaleDateString()}`"
+          :additional-info="[`${new Date(yearMonthStats.lowestTemp.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.lowestTemp.date).toLocaleDateString()}`]"
           :measurements="[{ value: yearMonthStats.lowestTemp.value, created: yearMonthStats.lowestTemp.date }]"
         />
       </v-col>
@@ -82,7 +82,7 @@
           :icon="mdiThermometerHigh"
           :title="$t('monthlyStatsHighestTemperature')"
           :subtitle="$t(VARIABLES[Variables.ambientTemp]?.unit || '')"
-          :additional-info="`${new Date(yearMonthStats.highestTemp.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.highestTemp.date).toLocaleDateString()}`"
+          :additional-info="[`${new Date(yearMonthStats.highestTemp.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(yearMonthStats.highestTemp.date).toLocaleDateString()}`]"
           :measurements="[{ value: yearMonthStats.highestTemp.value, created: yearMonthStats.highestTemp.date }]"
         />
       </v-col>

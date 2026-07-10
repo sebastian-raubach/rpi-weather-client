@@ -140,6 +140,23 @@ export interface MinimalMeasurement {
     created: Date; 
 }
 
+export interface RankedStats {
+    highestTemp: Day[];
+    lowestTemp: Day[];
+    highestRain: Day[];
+    highestWind: Day[];
+    longestDryPeriod: ViewPeriods;
+    longestWetPeriod: ViewPeriods;
+}
+
+export interface ViewPeriods {
+    type: 'longest_wet_period' | 'longest_dry_period';
+    startDate: Date;
+    endDate: Date;
+    consecutiveDays: number;
+    totalRainAmount: number;
+}
+
 export interface TidalInfo {
     levels: LevelData[];
     extremes: ExtremeData[];

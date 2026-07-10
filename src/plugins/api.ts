@@ -1,6 +1,6 @@
 import { coreStore } from '@/stores/app'
 import axios from 'axios'
-import type { AggregatedStats, DailyStats, ExtendedMeasurement, Measurements, AggregatedStatsMeasurements, AggregatedYearMonth, Location, TidalInfo } from '@/plugins/types/rpi-weather'
+import type { AggregatedStats, DailyStats, ExtendedMeasurement, Measurements, AggregatedStatsMeasurements, AggregatedYearMonth, Location, TidalInfo, RankedStats } from '@/plugins/types/rpi-weather'
 
 /**
  * Sends an axios REST request to the server with the given parameter configuration
@@ -212,6 +212,20 @@ function apiGetTotal () {
   })
 }
 
+function apiGetTotalRanked () {
+  return new Promise<RankedStats | undefined>((resolve, reject) => {
+    axiosCall({ url: 'stats/total/ranked', headers: { Accept: 'application/json' } })
+      .then(result => {
+        if (result && result.data) {
+          resolve(result.data)
+        } else {
+          resolve(undefined)
+        }
+      })
+      .catch(error => reject(error))
+  })
+}
+
 function apiDeleteRainfall (start: string, end: string, uuid: string) {
   return new Promise<void>((resolve, reject) => {
     axiosCall({ url: 'data/rainfall', method: 'delete', params: { start, end, uuid }, headers: { Accept: 'application/json' } })
@@ -267,4 +281,5 @@ export {
   apiDeleteRainfall,
   apiGetYears,
   apiGetTidal,
+  apiGetTotalRanked,
 }

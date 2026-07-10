@@ -17,6 +17,7 @@ declare module 'vue' {
     MoonPhaseCalendar: typeof import('./components/MoonPhaseCalendar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    TotalRankingTable: typeof import('./components/table/TotalRankingTable.vue')['default']
     VariableCard: typeof import('./components/VariableCard.vue')['default']
     YearBoxplot: typeof import('./components/chart/YearBoxplot.vue')['default']
     YearHeatmap: typeof import('./components/chart/YearHeatmap.vue')['default']

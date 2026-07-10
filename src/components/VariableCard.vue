@@ -10,7 +10,7 @@
             class="text-display-medium"
             cols="6"
           >
-            {{ lastValue?.toFixed(1) }}
+            {{ lastValue?.toFixed(toFixed) }}
           </v-col>
 
           <v-col class="text-right" cols="6">
@@ -23,7 +23,14 @@
         </v-row>
       </v-card-text>
 
-      <v-card-subtitle v-if="additionalInfo">{{ additionalInfo }}</v-card-subtitle>
+      <v-card-subtitle v-if="additionalInfo" class="d-flex justify-space-between">
+        <div
+          v-for="(part, index) in additionalInfo"
+          :key="`additional-info-${index}`"
+        >
+          {{ part }}
+        </div>
+      </v-card-subtitle>
     </div>
 
     <div class="d-flex py-0 justify-space-between" v-if="hasActualData">
@@ -31,14 +38,14 @@
         density="compact"
         :prepend-icon="mdiChevronDown"
       >
-        <v-list-item-subtitle>{{ minValue.toFixed(1) }}</v-list-item-subtitle>
+        <v-list-item-subtitle>{{ minValue.toFixed(toFixed) }}</v-list-item-subtitle>
       </v-list-item>
 
       <v-list-item
         density="compact"
         :append-icon="mdiChevronUp"
       >
-        <v-list-item-subtitle>{{ maxValue.toFixed(1) }}</v-list-item-subtitle>
+        <v-list-item-subtitle>{{ maxValue.toFixed(toFixed) }}</v-list-item-subtitle>
       </v-list-item>
     </div>
 
@@ -64,14 +71,17 @@
   import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
   import { useTheme } from 'vuetify'
 
-  const compProps = defineProps<{
+  const compProps = withDefaults(defineProps<{
     title: string
     subtitle?: string
-    additionalInfo?: string
+    additionalInfo?: string[]
     icon: string
     color: string
+    toFixed?: number
     measurements?: MinimalMeasurement[]
-  }>()
+  }>(), {
+    toFixed: 1,
+  })
 
   const theme = useTheme()
   const mutedColor = computed(() => theme.current.value.colors.muted)
