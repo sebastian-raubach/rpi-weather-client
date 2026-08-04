@@ -14,7 +14,7 @@
         <span :class="lastUpdatedMoreThanTenMins ? 'text-error' : undefined">{{ lastUpdateXAgo }}</span>
       </template>
       <template #append>
-        <v-btn @click="update" :icon="mdiRefresh" variant="tonal" color="primary" />
+        <v-btn @click="update(true)" :icon="mdiRefresh" variant="tonal" color="primary" />
       </template>
     </v-date-input>
 
@@ -41,6 +41,7 @@
       <v-col cols="12" lg="6" v-if="arcs && arcs.sun && arcs.moon">
         <LineChart
           :icon="mdiSunAngle"
+          :is-today="isToday"
           :traces="[{ name: 'Sun', color: '#FFC312', measurements: arcs.sun, fill: 'tozeroy' }, { name: 'Moon', color: '#a5b1c2', measurements: arcs.moon, fill: 'tozeroy' }]"
           :title="$t('variableSunMoon')"
           x-title="axisTitleTime"
@@ -50,6 +51,7 @@
       <v-col cols="12" lg="6" v-if="tidalData">
         <LineChart
           :icon="mdiWaves"
+          :is-today="isToday"
           smooth
           :traces="[{ name: 'Tide', color: '#1289A7', measurements: tidalData, fill: 'tozeroy' }]"
           :title="$t('variableTide')"
@@ -61,6 +63,7 @@
         <v-col cols="12" lg="6" v-if="variable.traces" class="d-flex flex-grow-1">
           <LineChart
             class="flex-grow-1"
+            :is-today="isToday"
             :icon="variable.icon"
             :traces="variable.traces"
             :forecast="variable.forecast"
@@ -84,14 +87,14 @@
       app
       color="primary"
       location="bottom right"
-      @click="update"
+      @click="update(true)"
       :icon="mdiRefresh"
     />
   </v-container>
 </template>
 
 <script setup lang="ts">
-  import { apiDeleteRainfall, apiGetData, apiGetForecast, apiGetLatestDate, apiGetLocation, apiGetTidal } from '@/plugins/api'
+  import { apiDeleteRainfall, apiGetData, apiGetForecast, apiGetLatestDate, apiGetLocation, apiGetTidal, apiGetTypicalLux } from '@/plugins/api'
   import VariableCard from '@/components/VariableCard.vue'
   import { mdiRefresh, mdiSunAngle, mdiVectorSquareRemove, mdiWaves } from '@mdi/js'
   import type { Location, ExtendedMeasurement, MinimalMeasurement, Measurements } from '@/plugins/types/rpi-weather'
@@ -117,10 +120,13 @@
   const store = coreStore()
   const { coords } = useGeolocation()
 
+  const route = useRoute('/')
+
   const dateRange = ref<string[]>([new Date().toISOString().slice(0, 10)])
 
   const weatherData = ref<ExtendedMeasurement[]>([])
   const forecast = ref<Measurements[]>([])
+  const luxForecast = ref<Measurements[]>([])
   const loading = ref(false)
   const location = ref<Location>()
   const rainfallRange = ref<string[] | undefined>(undefined)
@@ -139,6 +145,14 @@
     { amount: 12, name: 'months' },
     { amount: Number.POSITIVE_INFINITY, name: 'years' },
   ]
+
+  const isToday = computed(() => {
+    if (dateRange.value && dateRange.value.length === 1) {
+      return dateRange.value[0] === new Date().toISOString().slice(0, 10)
+    } else {
+      return false
+    }
+  })
 
   const arcs = computed(() => {
     if (dateRange.value && dateRange.value.length > 0 && usedLocation.value) {
@@ -245,8 +259,6 @@
       }) })
     }
 
-    console.log(rainfall)
-
     return [{
       key: 'ambientTemp',
       icon: VARIABLES.ambientTemp?.icon || '',
@@ -280,6 +292,7 @@
       title: t(VARIABLES.lux?.title || ''),
       yTitle: t(VARIABLES.lux?.unit || ''),
       traces: [{ name: 'variableLux', color: VARIABLES.lux?.color || '', measurements: weatherDataByVariable.value['lux'] || [] }],
+      forecast: { name: 'variableTypicalLux', color: VARIABLES.lux?.color || '', measurements: forecastDataByVariable.value['lux'] || [] },
     }, {
       key: 'piTemp',
       icon: VARIABLES.piTemp?.icon || '',
@@ -324,6 +337,14 @@
 
   const forecastDataByVariable: ComputedRef<{ [index: string]: MinimalMeasurement[] }> = computed(() => {
     const result: { [index: string]: MinimalMeasurement[] } = {}
+
+    // @ts-ignore
+    result['lux'] = (luxForecast.value || []).map(lux => {
+      return {
+        created: lux.created,
+        value: lux.lux,
+      }
+    })
 
     if (forecast.value) {
       forecast.value.forEach(wv => {
@@ -459,7 +480,7 @@
 
       apiDeleteRainfall(start, end, store.storeAdminUuid)
         .then(() => {
-          update()
+          update(true)
         })
     }
   }
@@ -472,7 +493,7 @@
     rainfallRange.value = range
   }
 
-  function update () {
+  function update (sameRange = false) {
     rainfallRange.value = undefined
 
     if (loading.value) {
@@ -505,41 +526,54 @@
         .catch(() => {
           loading.value = false
         })
-      apiGetForecast(from, to)
-        .then(fc => {
-          if (fc) {
-            fc.forEach(d => {
-              d.created = d.created.slice(0, 19)
-            })
-          }
 
-          forecast.value = fc || []
-        })
-      apiGetTidal()
-        .then(tide => {
-          const tl = tide?.levels
+      if (sameRange !== true) {
+        apiGetTypicalLux(from, to)
+          .then(lux => {
+            if (lux) {
+              lux.forEach(d => {
+                d.created = d.created.slice(0, 19)
+              })
+            }
 
-          if (tl) {
-            tidalData.value = tl.filter((l, i) => {
-              l.time = l.time.slice(0, 19)
-              // @ts-ignore
-              if (i > 0 && tl[i - 1] && new Date(l.time) < new Date(tl[i - 1].time)) {
-                // Sometimes the tidal API will return values that shouldn't be there, just exclude them...
-                return false
-              } else {
-                const str = l.time.split('T')[0] || ''
-                return str >= from && str <= to
-              }
-            }).map(l => {
-              return {
-                created: new Date(l.time),
-                value: l.sg,
-              }
-            })
-          } else {
-            return []
-          }
-        })
+            luxForecast.value = lux || []
+          })
+        apiGetForecast(from, to)
+          .then(fc => {
+            if (fc) {
+              fc.forEach(d => {
+                d.created = d.created.slice(0, 19)
+              })
+            }
+
+            forecast.value = fc || []
+          })
+        apiGetTidal()
+          .then(tide => {
+            const tl = tide?.levels
+
+            if (tl) {
+              tidalData.value = tl.filter((l, i) => {
+                l.time = l.time.slice(0, 19)
+                // @ts-ignore
+                if (i > 0 && tl[i - 1] && new Date(l.time) < new Date(tl[i - 1].time)) {
+                  // Sometimes the tidal API will return values that shouldn't be there, just exclude them...
+                  return false
+                } else {
+                  const str = l.time.split('T')[0] || ''
+                  return str >= from && str <= to
+                }
+              }).map(l => {
+                return {
+                  created: new Date(l.time),
+                  value: l.sg,
+                }
+              })
+            } else {
+              return []
+            }
+          })
+      }
     }
   }
 
@@ -549,7 +583,7 @@
 
   function visibilityListener () {
     if (document.visibilityState === 'visible' && lastUpdatedMoreThanFiveMins.value) {
-      update()
+      update(true)
     }
   }
 
@@ -562,6 +596,10 @@
   })
 
   onMounted(() => {
+    if (route.query && route.query.date) {
+      dateRange.value = [`${route.query.date}`]
+    }
+
     interval = setInterval(setNow, 60_000)
 
     update()
@@ -574,5 +612,5 @@
     document.addEventListener('visibilitychange', visibilityListener)
   })
 
-  watch(dateRange, async () => update())
+  watch(dateRange, async (newValue, oldValue) => update(newValue.length === oldValue.length && newValue.every((val, i) => val === oldValue[i])))
 </script>

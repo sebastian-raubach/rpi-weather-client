@@ -40,6 +40,8 @@
     }
   })
 
+  const router = useRouter()
+
   const { t, locale } = useI18n()
   const store = coreStore()
 
@@ -79,10 +81,15 @@
         index = 11 - index
       }
 
-      const y = compProps.data.filter(dp => {
+      const y = []
+      const customdata: string[] = []
+      compProps.data.filter(dp => {
         const date = new Date(dp.date)
         return date.getFullYear() === compProps.year && date.getMonth() === index
-      }).map(dp => dp[compProps.aggregation][compProps.variable])
+      }).forEach(dp => {
+        customdata.push(formatDate(new Date(dp.date)))
+        y.push(dp[compProps.aggregation][compProps.variable])
+      })
 
       let isEmpty = false
       if (y.length === 0) {
@@ -91,6 +98,7 @@
       }
 
       const result = {
+        customdata,
         opacity: isEmpty ? 0 : 1,
         hoverinfo: isEmpty ? 'none' : 'all',
         type: 'box' as const,
@@ -165,9 +173,27 @@
 
     // @ts-ignore
     Plotly.newPlot(chart.value, traces, layout, config)
-      .then(() => {
+      .then(element => {
         isRedrawing.value = false
+
+        element.on('plotly_click', data => {
+          if (data.points.length === 1) {
+            const date = data.points[0]?.customdata as string
+
+            if (date) {
+              router.push({ path: '/', query: { date } })
+            }
+          }
+        })
       })
+  }
+
+  function formatDate (date: Date) {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+
+    return `${year}-${month}-${day}`
   }
 
   watch(() => compProps.data, async () => redraw())

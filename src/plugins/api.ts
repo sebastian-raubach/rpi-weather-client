@@ -86,6 +86,20 @@ function apiGetForecast (start: string, end: string) {
   })
 }
 
+function apiGetTypicalLux (start: string, end: string) {
+  return new Promise<Measurements[] | undefined>((resolve, reject) => {
+    axiosCall({ url: 'data/lux', params: { start, end }, headers: { Accept: 'application/json' } })
+      .then(result => {
+        if (result && result.data) {
+          resolve(result.data)
+        } else {
+          resolve(undefined)
+        }
+      })
+      .catch(error => reject(error))
+  })
+}
+
 function apiGetYearly (start: Date, end: Date) {
   return new Promise<DailyStats[] | undefined>((resolve, reject) => {
     axiosCall({ url: 'stats/daily', params: { start, end }, headers: { Accept: 'application/json' } })
@@ -268,6 +282,7 @@ export {
   axiosCall,
   apiGetData,
   apiGetForecast,
+  apiGetTypicalLux,
   apiGetYearly,
   apiGetWeekly,
   apiGetWeeklyMeasurements,

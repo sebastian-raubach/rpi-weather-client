@@ -27,6 +27,7 @@
     variable: Variables
   }>()
 
+  const router = useRouter()
   const wrapper = useTemplateRef('wrapper')
   const chart = useTemplateRef('chart')
 
@@ -63,7 +64,7 @@
       // Ignore
     }
 
-    let z = [
+    let z: number[][] = [
       new Array(31).fill(NaN),
       new Array(30).fill(NaN),
       new Array(31).fill(NaN),
@@ -78,6 +79,8 @@
       new Array(31).fill(NaN),
     ]
 
+    const customdata = JSON.parse(JSON.stringify(z)) as string[][]
+
     let minZ = Number.MAX_SAFE_INTEGER
     let maxZ = -Number.MAX_SAFE_INTEGER
 
@@ -91,6 +94,8 @@
 
         // @ts-expect-error
         z[month][day] = value
+        // @ts-expect-error
+        customdata[month][day] = formatDate(date)
       }
 
       const v = dp[compProps.aggregation][compProps.variable]
@@ -104,6 +109,8 @@
       const copy = z.concat().reverse()
       // @ts-expect-error
       z = z[0].map((col, i) => copy.map(row => row[i]))
+      // @ts-expect-error
+      customdata = customdata[0].map((col, i) => copy.map(row => row[i]))
     }
 
     const x = Array.from(new Array(31).keys()).map(i => i + 1)
@@ -113,6 +120,7 @@
       z,
       x: isVertical.value ? y.concat().reverse() : x,
       y: isVertical.value ? x : y,
+      customdata,
       name: '',
       type: 'heatmap' as const,
       zauto: false,
@@ -174,9 +182,27 @@
     }
 
     Plotly.newPlot(chart.value, traces, layout, config)
-      .then(() => {
+      .then(element => {
         isRedrawing.value = false
+
+        element.on('plotly_click', data => {
+          if (data.points.length > 0) {
+            const date = data.points[0]?.customdata as string
+
+            if (date) {
+              router.push({ path: '/', query: { date } })
+            }
+          }
+        })
       })
+  }
+
+  function formatDate (date: Date) {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+
+    return `${year}-${month}-${day}`
   }
 
   watch(() => compProps.data, async () => redraw())

@@ -35,6 +35,7 @@
   }
 
   const compProps = defineProps<{
+    isToday: boolean
     title: string
     xTitle: string
     yTitle: string
@@ -190,9 +191,20 @@
       .then(element => {
         // @ts-ignore
         Plotly.Fx.hover(chart.value, compProps.traces.map((tr, tri) => {
-          return {
-            curveNumber: tri,
-            pointNumber: tr.measurements.length - 1,
+          if (compProps.isToday) {
+            return {
+              curveNumber: tri,
+              pointNumber: tr.measurements.length - 1,
+            }
+          } else {
+            const values = tr.measurements.map(m => m.value)
+            const maxValue = Math.max.apply(null, values)
+            const maxIndex = values.lastIndexOf(maxValue)
+
+            return {
+              curveNumber: tri,
+              pointNumber: maxIndex,
+            }
           }
         }))
 

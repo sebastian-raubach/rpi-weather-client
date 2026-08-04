@@ -27,6 +27,8 @@
     variable: Variables
   }>()
 
+  const router = useRouter()
+
   const wrapper = useTemplateRef('wrapper')
   const chart = useTemplateRef('chart')
 
@@ -146,8 +148,18 @@
     }
 
     Plotly.newPlot(chart.value, traces, layout, config)
-      .then(() => {
+      .then(element => {
         isRedrawing.value = false
+
+        element.on('plotly_click', data => {
+          if (data.points.length > 0) {
+            const date = data.points[0]?.x as string
+
+            if (date) {
+              router.push({ path: '/', query: { date } })
+            }
+          }
+        })
       })
   }
 
