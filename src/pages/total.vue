@@ -1,10 +1,11 @@
 <template>
   <v-container fluid>
     <v-row v-if="totalStats">
-      <v-col cols="12" sm="6" md="4" class="d-flex" v-if="totalStats.mostRain">
+      <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="totalStats.mostRain">
         <VariableCard
           class="flex-grow-1"
           color="#0652DD"
+          :date="totalStats.mostRain.date"
           :icon="mdiWeatherPouring"
           :title="$t('monthlyStatsMostRainfall')"
           :subtitle="$t(VARIABLES[Variables.rainfall]?.unit || '')"
@@ -12,7 +13,19 @@
           :measurements="[{ value: totalStats.mostRain.value, created: totalStats.mostRain.date }]"
         />
       </v-col>
-      <v-col cols="12" sm="6" md="4" class="d-flex" v-if="totalStats.totalRain !== undefined">
+      <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="totalStats.mostIntenseRain">
+        <VariableCard
+          class="flex-grow-1"
+          color="#0652DD"
+          :date="totalStats.mostIntenseRain.date"
+          :icon="mdiWeatherPouring"
+          :title="$t('monthlyStatsMostIntenseRainfall')"
+          :subtitle="$t('axisTitleRainfallIntensity')"
+          :additional-info="[`${new Date(totalStats.mostIntenseRain.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(totalStats.mostIntenseRain.date).toLocaleDateString()} ${new Date(totalStats.mostIntenseRain.date).toLocaleTimeString()}`]"
+          :measurements="[{ value: totalStats.mostIntenseRain.value, created: totalStats.mostIntenseRain.date }]"
+        />
+      </v-col>
+      <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="totalStats.totalRain !== undefined">
         <VariableCard
           class="flex-grow-1"
           color="#1289A7"
@@ -22,21 +35,11 @@
           :measurements="[{ value: totalStats.totalRain, created: new Date }]"
         />
       </v-col>
-      <v-col cols="12" sm="6" md="4" class="d-flex" v-if="totalStats.mostWind">
-        <VariableCard
-          class="flex-grow-1"
-          color="#833471"
-          :icon="mdiWeatherWindy"
-          :title="$t('monthlyStatsHighestWind')"
-          :subtitle="$t(VARIABLES[Variables.windSpeed]?.unit || '')"
-          :additional-info="[`${new Date(totalStats.mostWind.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(totalStats.mostWind.date).toLocaleDateString()}`]"
-          :measurements="[{ value: totalStats.mostWind.value, created: totalStats.mostWind.date }]"
-        />
-      </v-col>
-      <v-col cols="12" sm="6" md="4" class="d-flex" v-if="totalStats.lowestTemp">
+      <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="totalStats.lowestTemp">
         <VariableCard
           class="flex-grow-1"
           color="#F79F1F"
+          :date="totalStats.lowestTemp.date"
           :icon="mdiThermometerLow"
           :title="$t('monthlyStatsLowestTemperature')"
           :subtitle="$t(VARIABLES[Variables.ambientTemp]?.unit || '')"
@@ -44,7 +47,7 @@
           :measurements="[{ value: totalStats.lowestTemp.value, created: totalStats.lowestTemp.date }]"
         />
       </v-col>
-      <v-col cols="12" sm="6" md="4" class="d-flex" v-if="totalStats.avgTemp !== undefined">
+      <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="totalStats.avgTemp !== undefined">
         <VariableCard
           class="flex-grow-1"
           color="#EE5A24"
@@ -54,10 +57,11 @@
           :measurements="[{ value: totalStats.avgTemp, created: new Date() }]"
         />
       </v-col>
-      <v-col cols="12" sm="6" md="4" class="d-flex" v-if="totalStats.highestTemp">
+      <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="totalStats.highestTemp">
         <VariableCard
           class="flex-grow-1"
           color="#EA2027"
+          :date="totalStats.highestTemp.date"
           :icon="mdiThermometerHigh"
           :title="$t('monthlyStatsHighestTemperature')"
           :subtitle="$t(VARIABLES[Variables.ambientTemp]?.unit || '')"
@@ -65,11 +69,8 @@
           :measurements="[{ value: totalStats.highestTemp.value, created: totalStats.highestTemp.date }]"
         />
       </v-col>
-    </v-row>
-
-    <template v-if="rankedStats">
-      <v-row>
-        <v-col cols="12" sm="6" class="d-flex" v-if="rankedStats.longestDryPeriod">
+      <template v-if="rankedStats">
+        <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="rankedStats.longestDryPeriod">
           <VariableCard
             class="flex-grow-1"
             color="#1289A7"
@@ -81,7 +82,7 @@
             :measurements="[{ value: rankedStats.longestDryPeriod.consecutiveDays, created: new Date() }]"
           />
         </v-col>
-        <v-col cols="12" sm="6" class="d-flex" v-if="rankedStats.longestWetPeriod">
+        <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="rankedStats.longestWetPeriod">
           <VariableCard
             class="flex-grow-1"
             color="#0652DD"
@@ -93,8 +94,22 @@
             :measurements="[{ value: rankedStats.longestWetPeriod.consecutiveDays, created: new Date() }]"
           />
         </v-col>
-      </v-row>
+      </template>
+      <v-col cols="12" sm="6" md="4" xl="3" class="d-flex" v-if="totalStats.mostWind">
+        <VariableCard
+          class="flex-grow-1"
+          color="#833471"
+          :date="totalStats.mostWind.date"
+          :icon="mdiWeatherWindy"
+          :title="$t('monthlyStatsHighestWind')"
+          :subtitle="$t(VARIABLES[Variables.windSpeed]?.unit || '')"
+          :additional-info="[`${new Date(totalStats.mostWind.date).toLocaleDateString('en-GB', { weekday: 'long' })} ${new Date(totalStats.mostWind.date).toLocaleDateString()}`]"
+          :measurements="[{ value: totalStats.mostWind.value, created: totalStats.mostWind.date }]"
+        />
+      </v-col>
+    </v-row>
 
+    <template v-if="rankedStats">
       <v-row>
         <v-col>
           <v-card
@@ -162,6 +177,8 @@
   import { VARIABLES } from '@/plugins/constants'
   import { type RankedStats, Variables, type AggregatedStats, type AggregatedYearMonth } from '@/plugins/types/rpi-weather'
   import { mdiCupWater, mdiThermometer, mdiThermometerHigh, mdiThermometerLow, mdiWaterOff, mdiWeatherPouring, mdiWeatherWindy } from '@mdi/js'
+
+  const router = useRouter()
 
   const totalStats = ref<AggregatedStats>()
   const rankedStats = ref<RankedStats>()

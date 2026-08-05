@@ -6,6 +6,7 @@ export interface AggregatedStats {
     highestTemp: Day;
     lowestTemp: Day;
     mostRain: Day;
+    mostIntenseRain: Day;
     mostWind: Day;
     avgTemp: number;
     totalRain: number;

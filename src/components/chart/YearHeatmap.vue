@@ -79,7 +79,7 @@
       new Array(31).fill(NaN),
     ]
 
-    const customdata = JSON.parse(JSON.stringify(z)) as string[][]
+    let customdata = JSON.parse(JSON.stringify(z)) as string[][]
 
     let minZ = Number.MAX_SAFE_INTEGER
     let maxZ = -Number.MAX_SAFE_INTEGER

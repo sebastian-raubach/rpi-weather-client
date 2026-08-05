@@ -2,6 +2,7 @@
   <v-card
     :title="title"
     :subtitle="subtitle"
+    v-bind="date ? { onClick: handleClick } : {}"
   >
     <div>
       <v-card-text class="py-0">
@@ -71,6 +72,8 @@
   import { mdiChevronDown, mdiChevronUp } from '@mdi/js'
   import { useTheme } from 'vuetify'
 
+  const router = useRouter()
+
   const compProps = withDefaults(defineProps<{
     title: string
     subtitle?: string
@@ -78,10 +81,17 @@
     icon: string
     color: string
     toFixed?: number
+    date?: string | Date
     measurements?: MinimalMeasurement[]
   }>(), {
     toFixed: 1,
   })
+
+  function handleClick () {
+    if (compProps.date) {
+      router.push({ path: '/', query: { date: new Date(compProps.date).toISOString().slice(0, 10) } })
+    }
+  }
 
   const theme = useTheme()
   const mutedColor = computed(() => theme.current.value.colors.muted)
