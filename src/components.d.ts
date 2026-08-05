@@ -14,6 +14,7 @@ declare module 'vue' {
     Dashboard: typeof import('./components/Dashboard.vue')['default']
     InputModal: typeof import('./components/modal/InputModal.vue')['default']
     LineChart: typeof import('./components/chart/LineChart.vue')['default']
+    MonthYearRankingTable: typeof import('./components/table/MonthYearRankingTable.vue')['default']
     MoonPhaseCalendar: typeof import('./components/MoonPhaseCalendar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

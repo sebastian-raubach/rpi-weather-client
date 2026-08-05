@@ -132,19 +132,56 @@
             <TotalRankingTable :data="rankedStats.highestWind || []" sort="desc" />
           </v-card>
         </v-col>
+
+        <v-col v-if="highestRainfall && highestRainfall.length > 0">
+          <v-card
+            :title="$t('totalStatsHighestRainfall')"
+            :subtitle="$t(VARIABLES[Variables.rainfall]?.unit || '')"
+            :prepend-icon="mdiWeatherPouring"
+          >
+            <MonthYearRankingTable :data="highestRainfall || []" variable="sumRainfall" sort="desc" />
+          </v-card>
+        </v-col>
+
+        <v-col v-if="lowestRainfall && lowestRainfall.length > 0">
+          <v-card
+            :title="$t('totalStatsLowestRainfall')"
+            :subtitle="$t(VARIABLES[Variables.rainfall]?.unit || '')"
+            :prepend-icon="mdiWaterOff"
+          >
+            <MonthYearRankingTable :data="lowestRainfall || []" variable="sumRainfall" sort="desc" />
+          </v-card>
+        </v-col>
       </v-row>
     </template>
   </v-container>
 </template>
 
 <script setup lang="ts">
-  import { apiGetTotal, apiGetTotalRanked } from '@/plugins/api'
+  import { apiGetMonthlyStats, apiGetTotal, apiGetTotalRanked } from '@/plugins/api'
   import { VARIABLES } from '@/plugins/constants'
-  import { type RankedStats, Variables, type AggregatedStats } from '@/plugins/types/rpi-weather'
+  import { type RankedStats, Variables, type AggregatedStats, type AggregatedYearMonth } from '@/plugins/types/rpi-weather'
   import { mdiCupWater, mdiThermometer, mdiThermometerHigh, mdiThermometerLow, mdiWaterOff, mdiWeatherPouring, mdiWeatherWindy } from '@mdi/js'
 
   const totalStats = ref<AggregatedStats>()
   const rankedStats = ref<RankedStats>()
+  const aggregatedYearMonths = ref<AggregatedYearMonth[] | undefined>([])
+
+  const highestRainfall = computed(() => {
+    if (aggregatedYearMonths.value) {
+      return aggregatedYearMonths.value.concat().sort((a, b) => b.sumRainfall - a.sumRainfall).slice(0, 10)
+    } else {
+      return []
+    }
+  })
+
+  const lowestRainfall = computed(() => {
+    if (aggregatedYearMonths.value) {
+      return aggregatedYearMonths.value.concat().sort((a, b) => a.sumRainfall - b.sumRainfall).slice(0, 10)
+    } else {
+      return []
+    }
+  })
 
   onMounted(() => {
     apiGetTotal()
@@ -154,6 +191,10 @@
     apiGetTotalRanked()
       .then(result => {
         rankedStats.value = result
+      })
+    apiGetMonthlyStats()
+      .then(result => {
+        aggregatedYearMonths.value = result
       })
   })
 </script>

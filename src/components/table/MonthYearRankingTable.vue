@@ -12,13 +12,14 @@
 </template>
 
 <script setup lang="ts">
-  import type { Day } from '@/plugins/types/rpi-weather'
+  import type { AggregatedYearMonth } from '@/plugins/types/rpi-weather'
   import { useI18n } from 'vue-i18n'
 
   const { t } = useI18n()
 
   const compProps = defineProps<{
-    data: Day[]
+    data: AggregatedYearMonth[]
+    variable: string
     sort: 'asc' | 'desc'
   }>()
 
@@ -27,13 +28,14 @@
       key: 'position',
       title: '',
     }, {
-      key: 'date',
-      title: t('tableColumnDate'),
-      value: (value: Day) => value.date ? new Date(value.date).toLocaleDateString() : undefined,
+      key: 'month',
+      title: t('tableColumnMonth'),
+      value: (value: AggregatedYearMonth) => value ? new Date(value.year, value.month - 1).toLocaleDateString(undefined, { month: '2-digit', year: 'numeric' }) : undefined,
     }, {
-      key: 'value',
+      key: compProps.variable,
       title: t('tableColumnValue'),
-      value: (item: Day) => item.value.toFixed(2),
+      // @ts-expect-error
+      value: (value: AggregatedYearMonth) => value[compProps.variable].toFixed(2),
     }]
   })
 

@@ -156,9 +156,9 @@ function apiGetMonthly (month: number, year: number) {
   })
 }
 
-function apiGetMonthlyStats (month: number) {
+function apiGetMonthlyStats (month?: number) {
   return new Promise<AggregatedYearMonth[] | undefined>((resolve, reject) => {
-    axiosCall({ url: `stats/monthly/${month}`, headers: { Accept: 'application/json' } })
+    axiosCall({ url: month === undefined ? 'stats/monthly/null' : `stats/monthly/${month}`, headers: { Accept: 'application/json' } })
       .then(result => {
         if (result && result.data) {
           resolve(result.data)
