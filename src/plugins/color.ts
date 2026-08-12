@@ -30,6 +30,27 @@ function createColorGradient (one: string, two: string, steps: number) {
   return result
 }
 
+function darkenHex (hex: string, percent: number) {
+  let cleanHex = hex.replace(/^#/, '')
+
+  if (cleanHex.length === 3) {
+    cleanHex = cleanHex.split('').map(char => char + char).join('')
+  }
+
+  const num = parseInt(cleanHex, 16)
+  const factor = 1 - percent / 100
+
+  const channels = {
+    r: Math.max(0, Math.floor(((num >> 16) & 255) * factor)),
+    g: Math.max(0, Math.floor(((num >> 8) & 255) * factor)),
+    b: Math.max(0, Math.floor((num & 255) * factor)),
+  }
+
+  const toHex = (channel: number) => channel.toString(16).padStart(2, '0')
+
+  return `#${toHex(channels.r)}${toHex(channels.g)}${toHex(channels.b)}`
+}
+
 /**
  * Converts the given R, G, B values into a HEX color
  * @param {Number} r The red color component
@@ -57,4 +78,5 @@ function hexToRgb (hex: string): RGB | undefined {
 
 export {
   createColorGradient,
+  darkenHex,
 }
