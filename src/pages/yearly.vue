@@ -37,10 +37,10 @@
           mandatory
           :direction="smAndUp ? 'horizontal' : 'vertical'"
         >
-          <v-btn :value="ValueAggregation.min" :text="$t('aggregationMin')" :prepend-icon="mdiFormatVerticalAlignBottom" />
+          <v-btn :value="ValueAggregation.min" :text="$t('aggregationMin')" :prepend-icon="mdiFormatVerticalAlignBottom" :disabled="selectedVariable === Variables.windAverage" />
           <v-btn :value="ValueAggregation.avg" :text="$t('aggregationAvg')" :prepend-icon="mdiFormatVerticalAlignCenter" />
-          <v-btn :value="ValueAggregation.max" :text="$t('aggregationMax')" :prepend-icon="mdiFormatVerticalAlignTop" />
-          <v-btn :value="ValueAggregation.stdv" :text="$t('aggregationStd')" :prepend-icon="mdiChartBellCurve" />
+          <v-btn :value="ValueAggregation.max" :text="$t('aggregationMax')" :prepend-icon="mdiFormatVerticalAlignTop" :disabled="selectedVariable === Variables.windAverage" />
+          <v-btn :value="ValueAggregation.stdv" :text="$t('aggregationStd')" :prepend-icon="mdiChartBellCurve" :disabled="selectedVariable === Variables.windAverage" />
         </v-btn-toggle>
       </div>
     </div>
@@ -143,6 +143,11 @@
   }
 
   watch(sortedYears, async () => getData())
+  watch(selectedVariable, async newValue => {
+    if (newValue === Variables.windAverage) {
+      aggregation.value = ValueAggregation.avg
+    }
+  })
 
   onMounted(() => {
     apiGetVariables()

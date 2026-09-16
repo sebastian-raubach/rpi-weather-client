@@ -149,14 +149,14 @@
       plot_bgcolor: 'transparent',
       dragmode: compProps.traces[0]?.name === 'variableRainfall' ? 'select' : null,
       xaxis: {
-        gridcolor: store.storeIsDarkMode ? 'rgba(1.0, 1.0, 1.0, 0.1)' : 'rgba(0.0, 0.0, 0.0, 0.1)',
+        gridcolor: store.storeIsDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
         title: { text: t(compProps.xTitle), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
         tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
         range: [minDate, maxDate],
         fixedrange: !isInteractive.value,
       },
       yaxis: {
-        gridcolor: store.storeIsDarkMode ? 'rgba(1.0, 1.0, 1.0, 0.1)' : 'rgba(0.0, 0.0, 0.0, 0.1)',
+        gridcolor: store.storeIsDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
         title: { text: t(compProps.yTitle), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
         tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
         fixedrange: !isInteractive.value,

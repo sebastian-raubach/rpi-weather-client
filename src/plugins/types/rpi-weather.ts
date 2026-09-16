@@ -219,6 +219,7 @@ export enum Variables {
     pressure = 'pressure',
     lux = 'lux',
     piTemp = 'piTemp',
+    windAverage = 'windAverage',
     windSpeed = 'windSpeed',
     windGust = 'windGust',
     loftTemp = 'loftTemp',

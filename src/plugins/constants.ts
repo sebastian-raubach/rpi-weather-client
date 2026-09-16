@@ -1,5 +1,5 @@
 import { Variables } from '@/plugins/types/rpi-weather'
-import { mdiChip, mdiGauge, mdiHomePercent, mdiHomeThermometer, mdiSunThermometer, mdiSunWireless, mdiThermometerChevronDown, mdiWaterPercent, mdiWeatherDust, mdiWeatherPouring, mdiWeatherWindy } from '@mdi/js'
+import { mdiChip, mdiCompassRose, mdiGauge, mdiHomePercent, mdiHomeThermometer, mdiSunThermometer, mdiSunWireless, mdiThermometerChevronDown, mdiWaterPercent, mdiWeatherDust, mdiWeatherPouring, mdiWeatherWindy } from '@mdi/js'
 
 export interface VariableConfig {
   title: string
@@ -63,6 +63,13 @@ VARIABLES[Variables.windSpeed] = {
   title: 'variableWindSpeed',
   unit: 'axisTitleWindSpeed',
   icon: mdiWeatherWindy,
+  color: '#38ada9',
+  heatmapGradient: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#B53471']],
+}
+VARIABLES[Variables.windAverage] = {
+  title: 'variableWindDirection',
+  unit: 'axisTitleWindDirection',
+  icon: mdiCompassRose,
   color: '#38ada9',
   heatmapGradient: [[0, 'rgba(255, 255, 255, .2)'], [0.0001, 'white'], [1, '#B53471']],
 }
