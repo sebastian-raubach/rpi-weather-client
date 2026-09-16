@@ -183,6 +183,7 @@ import { darkenHex } from '@/plugins/color'
       modeBarButtonsToRemove: ['toImage' as const],
     }
 
+    // @ts-expect-error
     Plotly.newPlot(chart.value, traces, layout, config)
       .then(element => {
         isRedrawing.value = false
