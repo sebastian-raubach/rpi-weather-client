@@ -8,10 +8,10 @@
       <v-card-text class="py-0">
         <v-row align="center" no-gutters>
           <v-col
-            class="text-display-medium"
+            class="text-display-medium d-flex align-center"
             cols="6"
           >
-            {{ lastValue?.toFixed(toFixed) }}
+            {{ highlightValue }} <v-chip class="ms-5" label v-if="hoveredIdx !== null" :text="new Date(timestamps[hoveredIdx]).toLocaleTimeString()" />
           </v-col>
 
           <v-col class="text-right" cols="6">
@@ -59,6 +59,8 @@
         height="50"
         line-width="2"
         stroke-linecap="round"
+        interactive
+        @update:current-index="hoveredIdx = $event"
         :gradient="gradient"
         gradient-direction="top"
         auto-draw
@@ -93,11 +95,22 @@
     }
   }
 
+  const hoveredIdx = ref<number | null>(null)
+
+  const highlightValue = computed(() => {
+    if (hoveredIdx.value === null) {
+      return lastValue.value?.toFixed(compProps.toFixed)
+    } else {
+      return values.value?.[hoveredIdx.value]?.toFixed(compProps.toFixed)
+    }
+  })
+
   const theme = useTheme()
   const mutedColor = computed(() => theme.current.value.colors.muted)
 
   const hasActualData = computed(() => values.value.length > 1)
   const values = computed(() => (compProps.measurements || []).map(m => m.value))
+  const timestamps = computed(() => (compProps.measurements || []).map(m => m.created))
   const lastValue = computed(() => values.value[values.value.length - 1])
   const minValue = computed(() => Math.min(...values.value))
   const maxValue = computed(() => Math.max(...values.value))
