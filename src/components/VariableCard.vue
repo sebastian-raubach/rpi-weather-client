@@ -11,7 +11,7 @@
             class="text-display-medium d-flex align-center"
             cols="6"
           >
-            {{ highlightValue }} <v-chip class="ms-5" label v-if="hoveredIdx !== null" :text="new Date(timestamps[hoveredIdx] || 0).toLocaleTimeString()" />
+            {{ highlightValue }} <v-chip class="ms-5" label v-if="hoveredIdx !== null" :text="new Date(timestamps[hoveredIdx] || 0).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' })" />
           </v-col>
 
           <v-col class="text-right" cols="6">
