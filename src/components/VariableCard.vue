@@ -55,12 +55,13 @@
       <v-sparkline
         v-if="sparklineData && hasActualData"
         :model-value="sparklineData"
-        color="rgba(255, 255, 255, .7)"
+        color="medium-emphasis"
         height="50"
         line-width="2"
         stroke-linecap="round"
         interactive
         @update:current-index="hoveredIdx = $event"
+        marker-stroke="rgb(var(--v-theme-surface))"
         :gradient="gradient"
         gradient-direction="top"
         auto-draw
