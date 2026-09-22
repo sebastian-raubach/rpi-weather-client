@@ -256,10 +256,10 @@
       const day = date.getDate()
 
       // Normalize into 0-359.
-      const bearing = ((direction % 360) + 360) % 360
+      // const bearing = ((direction % 360) + 360) % 360
       // If windAverage reports the direction wind is blowing FROM (met. convention)
       // rather than the direction it's blowing TOWARD, flip it here:
-      // const bearing = (((direction + 180) % 360) + 360) % 360
+      const bearing = (((direction + 180) % 360) + 360) % 360
 
       // Convert compass bearing (0 = up, clockwise) to a standard math angle
       // (0 = +x axis, counter-clockwise), which is what u/v components expect.
