@@ -1,5 +1,8 @@
 <template>
   <v-card :title="year">
+    <template #append>
+      <v-switch color="primary" hide-details v-model="isInteractive" />
+    </template>
     <v-card-text ref="wrapper">
       <div ref="chart" />
     </v-card-text>
@@ -48,6 +51,7 @@
 
   const chartWidth = ref(1000)
   const isRedrawing = ref(false)
+  const isInteractive = ref(false)
 
   const dateFormat = computed(() => new Intl.DateTimeFormat(store.storeLocale || 'en', { month: 'short' }))
   const monthNames = computed(() => dateFormat.value ? [...new Array(12).keys()].map(m => dateFormat.value.format(new Date(Date.UTC(2000, m, 1, 0, 0, 0)))).reverse() : [])
@@ -155,11 +159,13 @@
       tickvals: Array.from(new Array(31).keys()).map(i => i + 1),
       title: { text: t('widgetChartHeatmapAxisTitleDay'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
       tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
+      fixedrange: !isInteractive.value,
     }
     let yAxis = {
       showgrid: false,
       title: { text: t('widgetChartHeatmapAxisTitleMonth'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
       tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
+      fixedrange: !isInteractive.value,
     }
 
     if (isVertical.value) {
@@ -188,7 +194,7 @@
     const config = {
       responsive: true,
       displaylogo: false,
-      modeBarButtonsToRemove: ['toImage' as const],
+      modeBarButtonsToRemove: ['toImage' as const, 'sendChartToCloud' as const],
     }
 
     Plotly.newPlot(chart.value, traces, layout, config)
@@ -196,7 +202,7 @@
         isRedrawing.value = false
 
         element.on('plotly_click', data => {
-          if (data.points.length > 0) {
+          if (data.points.length > 0 && isInteractive.value) {
             const date = data.points[0]?.customdata as string
 
             if (date) {
@@ -206,6 +212,18 @@
         })
       })
   }
+
+  watch(isInteractive, async newValue => {
+    if (chart.value) {
+      const layoutDelta = {
+        'xaxis.fixedrange': !newValue,
+        'yaxis.fixedrange': !newValue,
+      }
+
+      // @ts-ignore
+      Plotly.relayout(chart.value, layoutDelta)
+    }
+  })
 
   interface ArrowPoint {
     x: number

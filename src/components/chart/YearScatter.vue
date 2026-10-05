@@ -1,5 +1,8 @@
 <template>
   <v-card :title="year">
+    <template #append>
+      <v-switch color="primary" hide-details v-model="isInteractive" />
+    </template>
     <v-card-text ref="wrapper">
       <div ref="chart" />
     </v-card-text>
@@ -48,6 +51,7 @@
   const { t, locale } = useI18n()
   const store = coreStore()
 
+  const isInteractive = ref(false)
   const chartWidth = ref(1000)
   const isRedrawing = ref(false)
 
@@ -143,12 +147,14 @@
       gridcolor: store.storeIsDarkMode ? '#111111' : '#eeeeee',
       tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
       range: isVertical.value ? [endOfYear, startOfYear] : [startOfYear, endOfYear],
+      fixedrange: !isInteractive.value,
     }
     let yAxis = {
       title: { text: t('widgetChartScatterAxisTitleValue'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
       gridcolor: store.storeIsDarkMode ? '#111111' : '#eeeeee',
       tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
       range: [minY - 3, maxY + 3],
+      fixedrange: !isInteractive.value,
     }
 
     if (isVertical.value) {
@@ -180,7 +186,7 @@
     const config = {
       responsive: true,
       displaylogo: false,
-      modeBarButtonsToRemove: ['toImage' as const],
+      modeBarButtonsToRemove: ['toImage' as const, 'sendChartToCloud' as const],
     }
 
     // @ts-expect-error
@@ -189,7 +195,7 @@
         isRedrawing.value = false
 
         element.on('plotly_click', data => {
-          if (data.points.length > 0) {
+          if (data.points.length > 0 && isInteractive.value) {
             const date = data.points[0]?.x as string
 
             if (date) {
@@ -199,6 +205,18 @@
         })
       })
   }
+
+  watch(isInteractive, async newValue => {
+    if (chart.value) {
+      const layoutDelta = {
+        'xaxis.fixedrange': !newValue,
+        'yaxis.fixedrange': !newValue,
+      }
+
+      // @ts-ignore
+      Plotly.relayout(chart.value, layoutDelta)
+    }
+  })
 
   watch(() => compProps.data, async () => redraw())
   watch(() => compProps.aggregation, async () => redraw())

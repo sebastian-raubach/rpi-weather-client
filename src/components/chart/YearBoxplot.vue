@@ -1,5 +1,8 @@
 <template>
   <v-card :title="year">
+    <template #append>
+      <v-switch color="primary" hide-details v-model="isInteractive" />
+    </template>
     <v-card-text ref="wrapper">
       <div ref="chart" />
     </v-card-text>
@@ -41,6 +44,7 @@
   })
 
   const router = useRouter()
+  const isInteractive = ref(false)
 
   const { t, locale } = useI18n()
   const store = coreStore()
@@ -168,7 +172,7 @@
     const config = {
       responsive: true,
       displaylogo: false,
-      modeBarButtonsToRemove: ['toImage' as const],
+      modeBarButtonsToRemove: ['toImage' as const, 'sendChartToCloud' as const],
     }
 
     // @ts-ignore
@@ -177,7 +181,7 @@
         isRedrawing.value = false
 
         element.on('plotly_click', data => {
-          if (data.points.length === 1) {
+          if (data.points.length === 1 && isInteractive.value) {
             const date = data.points[0]?.customdata as string
 
             if (date) {
@@ -195,6 +199,18 @@
 
     return `${year}-${month}-${day}`
   }
+
+  watch(isInteractive, async newValue => {
+    if (chart.value) {
+      const layoutDelta = {
+        'xaxis.fixedrange': !newValue,
+        'yaxis.fixedrange': !newValue,
+      }
+
+      // @ts-ignore
+      Plotly.relayout(chart.value, layoutDelta)
+    }
+  })
 
   watch(() => compProps.data, async () => redraw())
   watch(() => compProps.aggregation, async () => redraw())

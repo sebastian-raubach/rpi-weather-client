@@ -184,7 +184,7 @@
     const config = {
       responsive: true,
       displaylogo: false,
-      modeBarButtonsToRemove: ['toImage' as const, 'lasso2d' as const, 'select2d' as const],
+      modeBarButtonsToRemove: ['toImage' as const, 'lasso2d' as const, 'select2d' as const, 'sendChartToCloud' as const],
     }
 
     Plotly.newPlot(chart.value, traces, layout, config)
