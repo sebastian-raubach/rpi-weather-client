@@ -358,7 +358,8 @@
           if (k === 'rainfall') {
             if (result[k].length === 0 && weatherDataByVariable.value[k] && weatherDataByVariable.value[k].length > 0) {
               // If this is the first forecast value, make sure it starts at the level of the last actual measurement (vertically aligning the forecast with the actuals)
-              prev = weatherDataByVariable.value[k][weatherDataByVariable.value[k].length - 1]?.value || 0
+              prev = weatherDataByVariable.value[k].reduce((a, b) => a + b.value, 0)
+              // prev = weatherDataByVariable.value[k][weatherDataByVariable.value[k].length - 1]?.value || 0
             } else if (result[k].length > 0 && result[k][result[k].length - 1]?.value) {
               prev = result[k][result[k].length - 1]?.value || 0
             }
@@ -372,6 +373,24 @@
           })
         })
       })
+    }
+
+    // Now adjust the forecast to "align" with the latest measurements
+    if (result['rainfall']) {
+      // @ts-expect-error
+      const last = weatherDataByVariable.value['rainfall']?.at(-1)
+      const index = result['rainfall']?.findIndex(v => v.created > last.created)
+
+      if (index !== -1) {
+        const totalRainfall = weatherDataByVariable.value['rainfall']?.map(v => v.value).reduce((a, b) => a + b)
+        const valueAtIndex = (result['rainfall'][index]?.value ?? 0) - (totalRainfall ?? 0)
+
+        if (valueAtIndex) {
+          result['rainfall'].forEach(v => {
+            v.value -= valueAtIndex
+          })
+        }
+      }
     }
 
     return result
