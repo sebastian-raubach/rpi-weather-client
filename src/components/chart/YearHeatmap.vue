@@ -258,7 +258,7 @@
 
       const stats = dp[compProps.aggregation]
       const direction = stats.windAverage // degrees, 0-360
-      const speed = stats.windGust
+      const speed = dp.max.windGust
 
       if (direction === undefined || direction === null || isNaN(direction)) {
         return
