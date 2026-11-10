@@ -131,12 +131,14 @@
       title: { text: t('widgetChartScatterAxisTitleMonth'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
       gridcolor: store.storeIsDarkMode ? '#111111' : '#eeeeee',
       tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
+      fixedrange: !isInteractive.value,
     }
     let yAxis = {
       title: { text: t('widgetChartScatterAxisTitleValue'), font: { color: store.storeIsDarkMode ? 'white' : 'black' } },
       gridcolor: store.storeIsDarkMode ? '#111111' : '#eeeeee',
       tickfont: { color: store.storeIsDarkMode ? 'white' : 'black' },
       range: [minY - 3, maxY + 3],
+      fixedrange: !isInteractive.value,
     }
 
     if (isVertical.value) {

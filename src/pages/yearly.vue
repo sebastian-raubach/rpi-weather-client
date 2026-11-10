@@ -61,35 +61,39 @@
         />
       </v-col>
 
-      <v-col
-        v-for="year in sortedYears"
-        :key="`scatter-${year}`"
-        cols="12"
-        :md="Math.max(1, Math.ceil(12 / sortedYears.length))"
-      >
-        <YearScatter
-          class="mt-5"
-          :year="year"
-          :data="dailyData"
-          :aggregation="aggregation"
-          :variable="selectedVariable"
-        />
-      </v-col>
+      <template v-if="selectedVariable !== Variables.windAverage">
+        <v-col
+          v-for="year in sortedYears"
+          :key="`scatter-${year}`"
+          cols="12"
+          :md="Math.max(1, Math.ceil(12 / sortedYears.length))"
+        >
+          <YearScatter
+            class="mt-5"
+            :year="year"
+            :data="dailyData"
+            :aggregation="aggregation"
+            :variable="selectedVariable"
+          />
+        </v-col>
+      </template>
 
-      <v-col
-        v-for="year in sortedYears"
-        :key="`boxplot-${year}`"
-        cols="12"
-        :md="Math.max(1, Math.ceil(12 / sortedYears.length))"
-      >
-        <YearBoxplot
-          class="mt-5"
-          :year="year"
-          :data="dailyData"
-          :aggregation="aggregation"
-          :variable="selectedVariable"
-        />
-      </v-col>
+      <template v-if="selectedVariable !== Variables.windAverage">
+        <v-col
+          v-for="year in sortedYears"
+          :key="`boxplot-${year}`"
+          cols="12"
+          :md="Math.max(1, Math.ceil(12 / sortedYears.length))"
+        >
+          <YearBoxplot
+            class="mt-5"
+            :year="year"
+            :data="dailyData"
+            :aggregation="aggregation"
+            :variable="selectedVariable"
+          />
+        </v-col>
+      </template>
     </v-row>
   </v-container>
 </template>
